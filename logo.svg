@@ -1,0 +1,32 @@
+<!DOCTYPE xml>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="-128,-128 256,256">
+  <title>Great Seal of the Printing Point Management Administration</title>
+  <defs>
+    <path id="top-text-curve" d="M -104.7380503,-16.30769231 A 106,106 0 0,1 104.7380503,-16.30769231"/>
+    <path id="bottom-text-curve" d="M -116.595188,18.15384615 A 118,118 0 0,0 116.595188,18.15384615"/>
+    <path id="shield" d="M -48,-56 H 48 V 16 C 48,40 16,60 0,64 C -16,60 -48,40 -48,16 Z"/>
+    <clipPath id="shield-clip"><use xlink:href="#shield"/></clipPath>
+  </defs>
+  <g stroke="black" stroke-width="2">
+    <circle r="127" fill="#004000" stroke="black" stroke-width="2"/>
+    <circle r="97" fill="none"/>
+  </g>
+  <g fill="#ffff00">
+    <circle cx="-112" r="4"/>
+    <circle cx="112" r="4"/>
+    <g font-family="Linux Libertine, Times New Roman, serif" font-size="18"
+       style="text-transform: uppercase">
+      <text textLength="300.2633864"><textPath xlink:href="#top-text-curve">Printing Point</textPath></text>
+      <text textLength="334.2554679"><textPath xlink:href="#bottom-text-curve">Management Administration</textPath></text>
+    </g>
+  </g>
+  <g fill="none">
+    <g clip-path="url(#shield-clip)">
+      <path d="M -48,-56 H 0 V 0 H -48 Z" fill="#c00000"/>
+      <path d="M 48,-56 H 0 V 0 H 48 Z" fill="#c0c000"/>
+      <path d="M 48,64 H 0 V 0 H 48 Z" fill="#00c000"/>
+      <path d="M -48,64 H 0 V 0 H -48 Z" fill="#0000c0"/>
+    </g>
+    <use xlink:href="#shield" stroke="black" stroke-width="2"/>
+  </g>
+</svg>
