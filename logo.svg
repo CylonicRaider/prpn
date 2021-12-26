@@ -4,8 +4,14 @@
   <defs>
     <path id="top-text-curve" d="M -104.7380503,-16.30769231 A 106,106 0 0,1 104.7380503,-16.30769231"/>
     <path id="bottom-text-curve" d="M -116.595188,18.15384615 A 118,118 0 0,0 116.595188,18.15384615"/>
-    <path id="shield" d="M -48,-56 H 48 V 16 C 48,40 16,60 0,64 C -16,60 -48,40 -48,16 Z"/>
+    <path id="shield" d="M -48,-56 H 48 V 40 C 48,56 8,48 0,56 C -8,48 -48,56 -48,40 Z"/>
     <clipPath id="shield-clip"><use xlink:href="#shield"/></clipPath>
+    <clipPath id="drone-clip"><path d="M 2,-56 V 2 H -48 V -56 Z"/></clipPath>
+    <clipPath id="apple-clip"><path d="M 0,-56 L 2,-52 L 44,-2 L 48,0 V -56 Z"/></clipPath>
+    <clipPath id="banana-clip"><path d="M 0,-56 L 48,0 L 46,2 H 2 L 0,0 Z"/></clipPath>
+    <clipPath id="printer-clip"><path d="M 0,56 L 2,54 V 2 L 0,0 H -48 V 2 L -2,56 Z"/></clipPath>
+    <clipPath id="scanner-clip"><path d="M 0,56 L -48,0 V 56 Z"/></clipPath>
+    <clipPath id="providence-clip"><path d="M 48,56 H 0 V 0 H 48 Z"/></clipPath>
   </defs>
   <g stroke="black" stroke-width="2">
     <circle r="127" fill="#004000" stroke="black" stroke-width="2"/>
@@ -22,10 +28,12 @@
   </g>
   <g fill="none">
     <g clip-path="url(#shield-clip)">
-      <path d="M -48,-56 H 0 V 0 H -48 Z" fill="#c00000"/>
-      <path d="M 48,-56 H 0 V 0 H 48 Z" fill="#c0c000"/>
-      <path d="M 48,64 H 0 V 0 H 48 Z" fill="#00c000"/>
-      <path d="M -48,64 H 0 V 0 H -48 Z" fill="#0000c0"/>
+      <rect x="-48" y="-56" width="50" height="58" fill="#c00000" clip-path="url(#drone-clip)"/>
+      <rect x="0" y="-56" width="48" height="56" fill="#00c000" clip-path="url(#apple-clip)"/>
+      <rect x="0" y="-56" width="48" height="58" fill="#0000c0" clip-path="url(#banana-clip)"/>
+      <rect x="-48" y="0" width="50" height="56" fill="#00c0c0" clip-path="url(#printer-clip)"/>
+      <rect x="-48" y="0" width="48" height="56" fill="#c000c0" clip-path="url(#scanner-clip)"/>
+      <rect x="0" y="0" width="48" height="56" fill="#c0c000" clip-path="url(#providence-clip)"/>
     </g>
     <use xlink:href="#shield" stroke="black" stroke-width="2"/>
   </g>
