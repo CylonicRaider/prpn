@@ -67,6 +67,10 @@
       </g>
       <g transform="translate(24,-28)" clip-path="url(#apple-clip)">
         <rect x="-24" y="-28" width="48" height="56" fill="#00c000"/>
+        <path d="M 0,-6 Q 2,-8 4,-8 A 6,6 0 0,1 10,-2 A 8,10 0 0,1 2,8 Q 1,8 0,7
+                 Q -1,8 -2,8 A 8,10 0 0,1 -10,-2 A 6,6 0 0,1 -4,-8 Q -2,-8 0,-6 Z"
+              fill="#c00000"/>
+        <path d="M 0,-6 Q 0,-8 2,-10" stroke="#c00000" stroke-width="1"/>
       </g>
       <g transform="translate(24,-28)" clip-path="url(#banana-clip)">
         <rect x="-24" y="-28" width="48" height="58" fill="#0000c0"/>
