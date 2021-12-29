@@ -13,8 +13,7 @@
     <clipPath id="scanner-clip"><path d="M 24,28 L -24,-28 V 28 Z"/></clipPath>
     <clipPath id="drone-clip"><path d="M 24,28 H -24 V -28 H 24 Z"/></clipPath>
     <clipPath id="eye-triangle-clip" clip-rule="evenodd">
-      <path d="M -20,11.54700539 L 0,-23.09401077 L 20,11.54700539 Z
-               M -9,0 A 11,11 0 0,0 9,0 A 11,11 0 0,0 -9,0 Z"/>
+      <path d="M -20,11.54700539 L 0,-23.09401077 L 20,11.54700539 Z"/>
     </clipPath>
     <path id="eye-ray" d="M -0.8980166414,-24 H 0.8980166414 L -0.8980166414,24 H 0.8980166414 Z"/>
   </defs>
@@ -59,7 +58,7 @@
             <use xlink:href="#eye-ray" transform="rotate(162.8571429)"/>
             <use xlink:href="#eye-ray" transform="rotate(171.4285714)"/>
           </g>
-          <path d="M -9,0 A 11,11 0 0,0 9,0 A 11,11 0 0,0 -9,0 Z" fill="#ff0"/>
+          <path d="M -9,0 A 11,11 0 0,0 9,0 A 11,11 0 0,0 -9,0 Z" fill="#ffff00"/>
           <path d="M -10,0 A 12,12 0 0,0 10,0 A 12,12 0 0,0 -10,0 Z
                    M -8,0 A 10,10 0 0,0 8,0 A 10,10 0 0,0 -8,0 Z"
                 fill-rule="evenodd"/>
