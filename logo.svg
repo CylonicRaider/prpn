@@ -16,6 +16,9 @@
       <path d="M -20,11.54700539 L 0,-23.09401077 L 20,11.54700539 Z"/>
     </clipPath>
     <path id="eye-ray" d="M -0.8980166414,-24 H 0.8980166414 L -0.8980166414,24 H 0.8980166414 Z"/>
+    <path id="banana-body" d="M 0,0 A 3,4 0 0,0 -3,4 A 16,16 0 0,0 13,20 Q 15,20 17,18
+                              Q 15,16 13,16 A 12,12 0 0,1 1,4 A 1,4 0 0,0 0,0 Z"
+          stroke-linejoin="bevel"/>
   </defs>
   <g stroke="#000000" stroke-width="2">
     <circle r="127" fill="#004000"/>
@@ -74,6 +77,21 @@
       </g>
       <g transform="translate(24,-28)" clip-path="url(#banana-clip)">
         <rect x="-24" y="-28" width="48" height="58" fill="#0000c0"/>
+        <g fill="#c0c000" stroke="#c0c000" stroke-width="2">
+          <g transform="translate(-3,-12) rotate(60)">
+            <use xlink:href="#banana-body"/>
+          </g>
+          <g transform="translate(0,-9) rotate(45)">
+            <use xlink:href="#banana-body" stroke="#0000c0" stroke-width="3"/>
+            <use xlink:href="#banana-body"/>
+          </g>
+          <path d="M -1,-9 L 2.5,-14"/>
+          <g transform="translate(3,-8) rotate(30) ">
+            <use xlink:href="#banana-body" stroke="#0000c0" stroke-width="3"/>
+            <use xlink:href="#banana-body"/>
+          </g>
+          <path d="M -3.5,-12.5 L 1,-16 Q 2.5,-13.5 5,-13 L 2.5,-8" fill="none"/>
+        </g>
       </g>
       <g transform="translate(-24,28)" clip-path="url(#printer-clip)">
         <rect x="-24" y="-28" width="50" height="56" fill="#00c0c0"/>
