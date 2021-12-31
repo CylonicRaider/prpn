@@ -95,6 +95,13 @@
       </g>
       <g transform="translate(-24,28)" clip-path="url(#printer-clip)">
         <rect x="-24" y="-28" width="50" height="56" fill="#00c0c0"/>
+        <g stroke="#000000" stroke-width="2">
+          <path d="M -18,-3 A 6,6 0 0,1 -12,-9 H 12 A 6,6 0 0,1 18,-3 V 6 H -18 Z"
+                fill="#000000"/>
+          <path d="M -11,-9 V -18 H 11 V -9 Z"/>
+          <path d="M -11,0 V 13 H 11 V 0 Z" fill="#00c0c0"/>
+        </g>
+        <circle cx="14" cy="-5" r="1" fill="#00c0c0" stroke="none"/>
       </g>
       <g transform="translate(-24,28)" clip-path="url(#scanner-clip)">
         <rect x="-24" y="-28" width="48" height="56" fill="#c000c0"/>
