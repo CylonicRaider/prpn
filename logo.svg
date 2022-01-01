@@ -105,6 +105,11 @@
       </g>
       <g transform="translate(-24,28)" clip-path="url(#scanner-clip)">
         <rect x="-24" y="-28" width="48" height="56" fill="#c000c0"/>
+        <g stroke="#c0c000" stroke-width="2" fill="#c0c000">
+          <path d="M -18,0 V 3 A 3,3 0 0,0 -15,6 H 15 A 3,3 0 0,0 18,3 V 0 Z"/>
+          <path d="M 18,-3 H -17 A 1,1 0 0,1 -17,-5 H 17 A 1,1 0 0,1 18,-4 Z"
+                transform="rotate(-15 -17 -4)"/>
+        </g>
       </g>
       <g transform="translate(24,28)" clip-path="url(#drone-clip)">
         <rect x="-24" y="-28" width="48" height="56" fill="#c00000"/>
