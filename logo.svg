@@ -19,6 +19,13 @@
     <path id="banana-body" d="M 0,0 A 3,4 0 0,0 -3,4 A 16,16 0 0,0 13,20 Q 15,20 17,18
                               Q 15,16 13,16 A 12,12 0 0,1 1,4 A 1,4 0 0,0 0,0 Z"
           stroke-linejoin="bevel"/>
+    <g id="toothbrush">
+      <path d="m 0,-32 h 8 m -8,1 h 8 m -8,1 h 8 m -8,1 h 8 m -8,1 h 8 m -8,1 h 8 m -8,1 h 8
+                           m -8,1 h 8 m -8,1 h 8 m -8,1 h 8 m -8,1 h 8 m -8,1 h 8 m -8,1 h 8"
+            stroke="#ffffff" stroke-width="0.5"/>
+      <line y1="-32" y2="32" stroke-width="2" stroke-linecap="round"/>
+      <line y1="-32" y2="-20" stroke-width="3" stroke-linecap="round"/>
+    </g>
   </defs>
   <g id="background" stroke="#000000" stroke-width="2">
     <circle r="127" fill="#004000"/>
@@ -32,6 +39,10 @@
       <text textLength="300.2633864"><textPath xlink:href="#top-text-curve">Printing Point</textPath></text>
       <text textLength="334.2554679"><textPath xlink:href="#bottom-text-curve">Management Administration</textPath></text>
     </g>
+  </g>
+  <g id="supporters">
+    <use xlink:href="#toothbrush" stroke="#0000c0" transform="translate(-64 16) rotate(15)"/>
+    <use xlink:href="#toothbrush" stroke="#c000c0" transform="scale(-1 1) translate(-64 16) rotate(15)"/>
   </g>
   <g id="shield" fill="none">
     <g clip-path="url(#shield-clip)">
