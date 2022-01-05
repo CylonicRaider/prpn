@@ -15,7 +15,7 @@
     <clipPath id="eye-triangle-clip" clip-rule="evenodd">
       <path d="M -20,11.54700539 L 0,-23.09401077 L 20,11.54700539 Z"/>
     </clipPath>
-    <path id="eye-ray" d="M -0.8980166414,-24 H 0.8980166414 L -0.8980166414,24 H 0.8980166414 Z"/>
+    <path id="eye-ray" d="M -1.79855136,-24 H 1.79855136 L 0,0 Z"/>
     <path id="banana-body" d="M 0,0 A 3,4 0 0,0 -3,4 A 16,16 0 0,0 13,20 Q 15,20 17,18
                               Q 15,16 13,16 A 12,12 0 0,1 1,4 A 1,4 0 0,0 0,0 Z"
           stroke-linejoin="bevel"/>
@@ -51,26 +51,26 @@
         <g transform="translate(0,5.773502692)" fill="#004000">
           <g clip-path="url(#eye-triangle-clip)">
             <use xlink:href="#eye-ray" transform="rotate(0)"/>
-            <use xlink:href="#eye-ray" transform="rotate(8.571428571)"/>
             <use xlink:href="#eye-ray" transform="rotate(17.14285714)"/>
-            <use xlink:href="#eye-ray" transform="rotate(25.71428571)"/>
             <use xlink:href="#eye-ray" transform="rotate(34.28571429)"/>
-            <use xlink:href="#eye-ray" transform="rotate(42.85714286)"/>
             <use xlink:href="#eye-ray" transform="rotate(51.42857143)"/>
-            <use xlink:href="#eye-ray" transform="rotate(60)"/>
             <use xlink:href="#eye-ray" transform="rotate(68.57142857)"/>
-            <use xlink:href="#eye-ray" transform="rotate(77.14285714)"/>
             <use xlink:href="#eye-ray" transform="rotate(85.71428571)"/>
-            <use xlink:href="#eye-ray" transform="rotate(94.28571429)"/>
             <use xlink:href="#eye-ray" transform="rotate(102.8571429)"/>
-            <use xlink:href="#eye-ray" transform="rotate(111.4285714)"/>
             <use xlink:href="#eye-ray" transform="rotate(120)"/>
-            <use xlink:href="#eye-ray" transform="rotate(128.5714286)"/>
             <use xlink:href="#eye-ray" transform="rotate(137.1428571)"/>
-            <use xlink:href="#eye-ray" transform="rotate(145.7142857)"/>
             <use xlink:href="#eye-ray" transform="rotate(154.2857143)"/>
-            <use xlink:href="#eye-ray" transform="rotate(162.8571429)"/>
             <use xlink:href="#eye-ray" transform="rotate(171.4285714)"/>
+            <use xlink:href="#eye-ray" transform="rotate(188.5714286)"/>
+            <use xlink:href="#eye-ray" transform="rotate(205.7142857)"/>
+            <use xlink:href="#eye-ray" transform="rotate(222.8571429)"/>
+            <use xlink:href="#eye-ray" transform="rotate(240)"/>
+            <use xlink:href="#eye-ray" transform="rotate(257.1428571)"/>
+            <use xlink:href="#eye-ray" transform="rotate(274.2857143)"/>
+            <use xlink:href="#eye-ray" transform="rotate(291.4285714)"/>
+            <use xlink:href="#eye-ray" transform="rotate(308.5714286)"/>
+            <use xlink:href="#eye-ray" transform="rotate(325.7142857)"/>
+            <use xlink:href="#eye-ray" transform="rotate(342.8571429)"/>
           </g>
           <path d="M -9,0 A 11,11 0 0,0 9,0 A 11,11 0 0,0 -9,0 Z" fill="#ffff00"/>
           <path d="M -10,0 A 12,12 0 0,0 10,0 A 12,12 0 0,0 -10,0 Z
