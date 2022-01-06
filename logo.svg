@@ -44,6 +44,19 @@
     <use xlink:href="#toothbrush" stroke="#0000c0" transform="translate(-64 16) rotate(15)"/>
     <use xlink:href="#toothbrush" stroke="#c000c0" transform="scale(-1 1) translate(-64 16) rotate(15)"/>
   </g>
+  <g id="compartment">
+    <g id="sword" fill="none" transform="translate(0 76) rotate(-15)">
+      <path d="M 32,-4 H -28 L -32,0 L -28,4 H 32" fill="#ffffff" stroke="#000000"/>
+      <path d="M 44,-2 H 35 V -8 H 32 V 8 H 35 V 2 H 44 Z" fill="#404040" stroke="#000000"/>
+      <line x1="-32" x2="32" stroke="#000000" stroke-width="0.5"/>
+    </g>
+    <g id="scythe" fill="none" transform="translate(0 76) rotate(15)">
+      <rect x="-44" y="-2" width="72" height="4" fill="#404040"/>
+      <path d="M 28,-2 Q 28,-16 16,-32 Q 23,-16 23,-2 Z" fill="#ffffff"/>
+      <rect x="-44" y="-2" width="72" height="4" stroke="#000000"/>
+      <path d="M 28,-2 Q 28,-16 16,-32 Q 23,-16 23,-2" stroke="#000000" stroke-miterlimit="64"/>
+    </g>
+  </g>
   <g id="shield" fill="none">
     <g clip-path="url(#shield-clip)">
       <g transform="translate(-24,-28)" clip-path="url(#eye-clip)">
