@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: ascii -*-
 
-from flask import Flask
+import os
 
-app = Flask('prpn')
+import flask
+
+from . import db
+
+app = flask.Flask('prpn')
+
+_database = db.LockedDatabase(os.environ.get('DATABASE',
+    os.path.join(app.root_path, '..', 'db.sqlite')))
+get_db = _database.register_to(app, flask.g)
 
 @app.route('/')
 def handle_root():
