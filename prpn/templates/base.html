@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {%block head%}
+    <meta charset="utf-8"/>
+    <title>{%block title%}Printing Point Management Administration{%endblock%}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}"/>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/local.css')}}"/>
+    <script src="{{url_for('static', filename='js/bootstrap.bundle.min.js')}}" defer="defer"></script>
+    {%endblock%}
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="{{url_for('index')}}">
+          <img src="{{url_for('static', filename='img/logo.svg')}}" class="logo d-inline-block align-text-top"/>
+          PPMA
+        </a>
+        {%block nav%}{%endblock%}
+      </div>
+    </nav>
+    <div class="container">
+      {%block content%}
+      <p><em>You should never see this...</em></p>
+      {%endblock%}
+    </div>
+  </body>
+</html>
