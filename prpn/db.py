@@ -13,6 +13,13 @@ class Database:
         self.curs = self.conn.cursor()
         self.init()
 
+    def __enter__(self):
+        self.conn.__enter__()
+        return self.curs
+
+    def __exit__(self, *exc_info):
+        self.conn.__exit__(*exc_info)
+
     def init(self):
         self.conn.row_factory = sqlite3.Row
         self.curs.execute('PRAGMA foreign_keys = ON')
