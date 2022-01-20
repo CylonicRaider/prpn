@@ -7,11 +7,12 @@ import threading
 # matter.
 
 class Database:
-    def __init__(self, path, **kwargs):
+    def __init__(self, path, init, **kwargs):
         self.path = path
         self.conn = sqlite3.connect(path, **kwargs)
         self.curs = self.conn.cursor()
         self.init()
+        if init is not None: init(self)
 
     def __enter__(self):
         self.conn.__enter__()
@@ -45,20 +46,29 @@ class Database:
         self.conn.close()
 
 class LockedDatabase:
-    def __init__(self, path):
-        self.db = Database(path, check_same_thread=False)
+    def __init__(self, path, init_schema=None):
+        self.path = path
+        self.init_schema = init_schema
+        self.db = None
         self.lock = threading.RLock()
-        self.db._lock = self
+
+    def _init(self):
+        self.db = Database(self.path, self.init_schema,
+                           check_same_thread=False)
+        self.db._parent = self
 
     def acquire(self):
         self.lock.acquire()
+        if self.db is None:
+            self._init()
         return self.db
 
     def release(self):
         self.lock.release()
 
     def close(self):
-        self.db.close()
+        db, self.db = self.db, None
+        if db is not None: db.close()
 
     def __enter__(self):
         return self.acquire()
@@ -74,7 +84,7 @@ class LockedDatabase:
     def put(self, context):
         ref = context.pop('_DB', None)
         if ref is not None:
-            ref._lock.release()
+            ref._parent.release()
 
     def register_to(self, app, namespace):
         atexit.register(self.close)
