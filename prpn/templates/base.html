@@ -20,6 +20,18 @@
         {%block nav%}{%endblock%}
       </div>
     </nav>
+    {%with messages = get_flashed_messages(with_categories=True)%}
+    {%if messages%}
+    <div class="container">
+      {%for category, message in messages%}
+      <div class="alert alert-{{category}} alert-dismissible">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <strong>{{category.capitalize()}}:</strong> {{message}}
+      </div>
+      {%endfor%}
+    </div>
+    {%endif%}
+    {%endwith%}
     <div class="container">
       {%block content%}
       <p><em>You should never see this...</em></p>
