@@ -24,7 +24,9 @@
     {%if messages%}
     <div class="container">
       {%for category, message in messages%}
-      <div class="alert alert-{{category}} alert-dismissible">
+      {%set bootstrapClass = {'success': 'success', 'info': 'info', 'warning': 'warning',
+                              'error': 'danger'}.get(category, 'secondary')%}
+      <div class="alert alert-{{bootstrapClass}} alert-dismissible">
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         <strong>{{category.capitalize()}}:</strong> {{message}}
       </div>
