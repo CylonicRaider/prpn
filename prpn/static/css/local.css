@@ -2,3 +2,10 @@
 .logo {
   height: 1.2em;
 }
+
+.mini-form {
+  max-width: 360px;
+}
+.form-label {
+  font-weight: bold;
+}

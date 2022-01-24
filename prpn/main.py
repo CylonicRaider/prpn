@@ -5,11 +5,12 @@ import os
 
 import flask
 
-from . import db, schema
+from . import db, forms, schema
 
 app = flask.Flask('prpn')
 
 app.jinja_options = {'trim_blocks': True, 'lstrip_blocks': True}
+app.jinja_env.globals['render_form'] = forms.render_form
 
 _database = db.LockedDatabase(
     os.environ.get('DATABASE',
