@@ -9,15 +9,35 @@ from . import db, forms, schema
 
 app = flask.Flask('prpn')
 
+DATA_ROOT = os.path.join(app.root_path, '..')
+
+try:
+    KEY_FILE = os.environ.get('KEY_FILE', os.path.join(DATA_ROOT,
+                                                       'cookie-key.bin'))
+    with open(KEY_FILE, 'rb') as fp:
+        app.secret_key = fp.read()
+except FileNotFoundError:
+    app.logger.warn('Secret key file not found!')
+
 app.jinja_options = {'trim_blocks': True, 'lstrip_blocks': True}
 app.jinja_env.globals['render_form'] = forms.render_form
 
 _database = db.LockedDatabase(
-    os.environ.get('DATABASE',
-        os.path.join(app.root_path, '..', 'db.sqlite')),
+    os.environ.get('DATABASE', os.path.join(DATA_ROOT, 'db.sqlite')),
     schema.init_schema
 )
 get_db = _database.register_to(app, flask.g)
+
+@app.cli.command('init-key')
+def init_cookie_key():
+    with open(KEY_FILE, 'ab+') as fp:
+        stats = os.fstat(fp.fileno())
+        if stats.st_size != 0:
+            print('Key file already exists')
+            return
+        fp.write(os.urandom(32))
+        os.fchmod(fp.fileno(), 0o600)
+    print('OK (key file created)')
 
 @app.route('/')
 def index():
