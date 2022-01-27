@@ -14,11 +14,13 @@ def render_form(action, fields, method=None, enctype=None):
         name, ftype, label = record[:3]
         value = None if len(record) == 3 else record[3]
         if ftype in ('submit', 'reset', 'button'):
-            result.append(
-                Markup('  <input type="%s" id="%s" value="%s" '
-                                'class="btn btn-primary"/>\n') %
-                    (ftype, name, label)
-            )
+            result.extend((
+                Markup('  <div class="d-grid">\n'),
+                Markup('    <input type="%s" id="%s" value="%s" '
+                                  'class="btn btn-primary"/>\n') %
+                    (ftype, name, label),
+                Markup('  </div>\n')
+            ))
         elif ftype in ('checkbox', 'radio'):
             result.extend((
                 Markup('  <div class="form-check mb-3">\n'),
