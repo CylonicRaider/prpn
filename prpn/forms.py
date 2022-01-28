@@ -4,12 +4,13 @@ from markupsafe import Markup, escape
 DEFAULT_METHOD = 'POST'
 DEFAULT_ENCTYPE = 'application/x-www-form-urlencoded'
 
-def render_form(action, fields, method=None, enctype=None):
+def render_form(title, action, fields, method=None, enctype=None):
     if method is None: method = DEFAULT_METHOD
     if enctype is None: enctype = DEFAULT_ENCTYPE
     result = [Markup('<form action="%s" method="%s" enctype="%s" '
-                           'class="mini-form">\n') %
-                  (action, method, enctype)]
+                           'class="mini-form mx-auto">\n') %
+                  (action, method, enctype),
+              (Markup('  <h2>%s</h2>\n') % (title,) if title else '')]
     for record in fields:
         name, ftype, label = record[:3]
         value = None if len(record) == 3 else record[3]
