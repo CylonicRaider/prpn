@@ -12,6 +12,7 @@ def render_form(title, action, fields, method=None, enctype=None):
                   (action, method, enctype),
               (Markup('  <h2>%s</h2>\n') % (title,) if title else '')]
     for record in fields:
+        if not record: continue
         name, ftype, label = record[:3]
         value = None if len(record) == 3 else record[3]
         if ftype in ('submit', 'reset', 'button'):
