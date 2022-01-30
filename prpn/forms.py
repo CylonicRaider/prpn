@@ -9,8 +9,9 @@ def render_form(title, action, fields, method=None, enctype=None):
     if enctype is None: enctype = DEFAULT_ENCTYPE
     result = [Markup('<form action="%s" method="%s" enctype="%s" '
                            'class="mini-form mx-auto">\n') %
-                  (action, method, enctype),
-              (Markup('  <h2>%s</h2>\n') % (title,) if title else '')]
+                  (action, method, enctype)]
+    if title is not None:
+        result.append(Markup('  <h2>%s</h2>\n') % (title,) if title else '')
     for record in fields:
         if not record: continue
         name, ftype, label = record[:3]
