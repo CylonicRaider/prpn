@@ -1,7 +1,7 @@
 
 from markupsafe import Markup, escape
 
-DEFAULT_METHOD = 'POST'
+DEFAULT_METHOD = 'post'
 DEFAULT_ENCTYPE = 'application/x-www-form-urlencoded'
 
 def render_form(title, action, fields, method=None, enctype=None):
