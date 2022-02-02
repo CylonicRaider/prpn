@@ -2,6 +2,9 @@
 .logo {
   height: 1.2em;
 }
+.header-user-form {
+  align-items: baseline;
+}
 
 .mini-form {
   max-width: 30em;

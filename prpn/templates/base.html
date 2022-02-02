@@ -17,7 +17,26 @@
           <img src="{{url_for('static', filename='img/logo.svg')}}" class="logo d-inline-block align-text-top"/>
           PPMA
         </a>
-        {%block nav%}{%endblock%}
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-content">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar-content">
+          {%block nav%}{%endblock%}
+          {%with user = get_user_info()%}
+          {%if user.logged_in%}
+          <form action="/logout" method="post" class="d-flex ms-auto header-user-form">
+            <span>{{user.user_type}}: <b>{{user.user_name}}</b></span>
+            <button type="submit" class="btn btn-outline-primary ms-1">Log out</button>
+          </form>
+          {%else%}
+          <form action="/login" method="get" class="d-flex ms-auto header-user-form">
+            <input type="hidden" name="continue" value="{{request.full_path}}"/>
+            <button type="submit" class="btn btn-outline-primary">Log in</button>
+            <button type="submit" name="register" value="yes" class="btn btn-outline-primary ms-1">Sign up</button>
+          </form>
+          {%endif%}
+          {%endwith%}
+        </div>
       </div>
     </nav>
     {%with messages = get_flashed_messages(with_categories=True)%}

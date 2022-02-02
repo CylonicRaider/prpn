@@ -1,4 +1,5 @@
 
+import flask
 from markupsafe import Markup, escape
 
 DEFAULT_METHOD = 'post'
@@ -11,8 +12,7 @@ def render_form(title, action, fields, method=None, enctype=Ellipsis):
     if method is None: method = DEFAULT_METHOD
     if enctype is Ellipsis: enctype = DEFAULT_ENCTYPE
 
-    result = [Markup('<form action="%s" method="%s"%s '
-                           'class="mini-form mx-auto">') %
+    result = [Markup('<form action="%s" method="%s"%s>') %
                   (action, method, maybe_attr('enctype', enctype))]
 
     if title is not None:
@@ -73,3 +73,22 @@ def render_form(title, action, fields, method=None, enctype=Ellipsis):
 
     result.extend((Markup('</form>'), ''))
     return Markup('\n').join(result)
+
+def execute_form_or_redirect(params, template_name, **template_params):
+    code = params[0]
+    if 200 <= code < 300:
+        if len(params) == 2:
+            text = params[1]
+            return flask.render_template(template_name, form_content=text,
+                                         **template_params)
+        action, fields = params[1:3]
+        method = params[3] if len(params) > 3 else None
+        enctype = params[4] if len(params) > 4 else None
+        form_content = render_form(None, action, fields, method, enctype)
+        return flask.render_template(template_name, form_content=form_content,
+                                     **template_params)
+    elif 300 <= code < 400:
+        location = params[1]
+        return flask.redirect(location, code)
+    else:
+        return flask.abort(code)
