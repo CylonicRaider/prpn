@@ -18,6 +18,7 @@ def render_form(title, action, fields, method=None, enctype=Ellipsis):
     if title is not None:
         result.append(Markup('  <h2>%s</h2>') % (title,) if title else '')
 
+    has_autofocus = False
     for record in fields:
         if not record: continue
         name, ftype, label = record[:3]
@@ -61,13 +62,17 @@ def render_form(title, action, fields, method=None, enctype=Ellipsis):
             )
 
         else:
+            aft = ''
+            if ftype == 'text' and not has_autofocus:
+                aft = Markup(' autofocus="autofocus"')
+                has_autofocus = True
             result.extend((
                 Markup('  <div class="mb-3">'),
                 Markup('    <label for="%s" class="form-label">%s</label>') %
                     (name, label),
-                Markup('    <input type="%s" id="%s" name="%s"%s '
+                Markup('    <input type="%s" id="%s" name="%s"%s%s '
                                   'class="form-control"/>') %
-                    (ftype, name, name, maybe_attr('value', value)),
+                    (ftype, name, name, maybe_attr('value', value), aft),
                 Markup('  </div>')
             ))
 
