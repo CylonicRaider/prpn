@@ -59,4 +59,8 @@ def login():
 def logout():
     return _auth_manager.handle_logout_request()
 
+@app.errorhandler(404)
+def error_404(exc):
+    return (flask.render_template('404.html'), 404)
+
 if __name__ == '__main__': app.run()
