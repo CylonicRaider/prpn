@@ -59,6 +59,10 @@ def login():
 def logout():
     return _auth_manager.handle_logout_request()
 
+@app.route('/favicon.ico')
+def favicon():
+    return flask.send_from_directory(app.static_folder, 'img/favicon.ico')
+
 @app.errorhandler(404)
 def error_404(exc):
     return (flask.render_template('404.html'), 404)
