@@ -1,7 +1,5 @@
 *.py[co]
 __pycache__/
-
 /build/
 
-/cookie-key.bin
-/db.sqlite
+/data/
