@@ -131,10 +131,12 @@ class AuthManager:
             run_provider = self.providers[0]
         else:
             provider_name = request.args.get('provider')
-            if provider_name:
-                run_provider = self._provider_map[provider_name]
-            else:
+            run_provider = self._provider_map.get(provider_name)
+            if run_provider is None:
                 result = (200, '', [(None, 'label', 'Proceed using:')] +
+                        [(k, 'hidden', None, v)
+                         for k, v in request.args.items()
+                         if k != 'provider'] +
                         [('provider', 'submit', p.display_name, p.name)
                          for p in self.providers],
                     'get')
