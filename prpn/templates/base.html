@@ -3,7 +3,7 @@
   <head>
     {%block head%}
     <meta charset="utf-8"/>
-    <title>{%block title%}Printing Point Management Administration{%endblock%}</title>
+    <title>{%block title%}{%if subtitle%}{{subtitle}} &#8212; {%endif%}Printing Point Management Administration{%endblock%}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}"/>
     <link rel="stylesheet" href="{{url_for('static', filename='css/local.css')}}"/>

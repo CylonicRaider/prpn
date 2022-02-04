@@ -28,8 +28,7 @@ _database = db.LockedDatabase(
     os.environ.get('DATABASE', os.path.join(app.instance_path, 'db.sqlite')),
     schema.init_schema
 )
-get_db = _database.register_to(app, flask.g)
-app.prpn.get_database = get_db
+app.prpn.get_database = _database.register_to(app, flask.g)
 
 _auth_manager = auth.AuthManager(_database, ())
 
@@ -52,9 +51,17 @@ def init_files():
 @app.route('/')
 def index():
     user_info = app.prpn.get_user_info()
-    if user_info['logged_in'] and user_info['user_status'] < 2:
-        return flask.redirect(flask.url_for('application'))
-    return flask.render_template('index.html')
+    points = None
+    if user_info['logged_in']:
+        if user_info['user_status'] < 2:
+            return flask.redirect(flask.url_for('application'))
+        else:
+            row = app.prpn.get_database().query('SELECT points FROM users '
+                                                    'WHERE id = ?',
+                                                (user_info['user_id'],))
+            if row is not None:
+                points = row['points']
+    return flask.render_template('index.html', points=points)
 
 @app.route('/favicon.ico')
 def favicon():
