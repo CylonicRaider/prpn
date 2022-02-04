@@ -4,6 +4,7 @@ import base64
 import sqlite3
 import urllib.parse
 
+import click
 from flask import flash, render_template, request, session
 from markupsafe import Markup
 
@@ -62,6 +63,14 @@ class AuthManager:
         self.db = db
         self.providers = providers
         self._provider_map = {p.name: p for p in providers}
+
+    def set_level_of(self, username, level):
+        with self.db as db:
+            if not db.query('SELECT status FROM allUsers WHERE name = ?',
+                            (username,)):
+                raise ValueError('Unrecognized user {!r}'.format(username))
+            db.update('UPDATE allUsers SET status = ? WHERE name = ?',
+                      (level, username))
 
     def do_register(self, info):
         try:
@@ -194,7 +203,16 @@ class AuthManager:
         return forms.execute_form_or_redirect(result, 'form.html',
                                               heading='Log out')
 
-    def register_routes(self, app):
+    def register_at(self, app):
+        @app.cli.command('set-level',
+                         help='Set the privilege level of the given user to '
+                              'the given value')
+        @click.argument('name')
+        @click.argument('level', type=int)
+        def set_user_level(name, level):
+            self.set_level_of(name, level)
+            print('OK')
+
         @app.route('/login', methods=('GET', 'POST'))
         def login():
             if request.args.get('register'):

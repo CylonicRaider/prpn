@@ -10,5 +10,6 @@ def init_schema(db):
                          'points INTEGER NOT NULL DEFAULT 0'
                      ')')
         curs.execute('CREATE VIEW IF NOT EXISTS users AS '
-                     'SELECT id AS id, points AS points FROM allUsers '
+                     'SELECT id AS id, name AS name, points AS points '
+                         'FROM allUsers '
                          'WHERE status >= 2')

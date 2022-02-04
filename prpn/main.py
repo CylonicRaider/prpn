@@ -57,6 +57,6 @@ def favicon():
 def error_404(exc):
     return (flask.render_template('404.html'), 404)
 
-_auth_manager.register_routes(app)
+_auth_manager.register_at(app)
 
 if __name__ == '__main__': app.run()
