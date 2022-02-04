@@ -1,0 +1,52 @@
+{%extends "base.html"%}
+{%block content%}
+      <h1>Application for Usership</h1>
+      {%if status_class%}
+      <div class="alert alert-{{status_class}}">
+        <strong>Current application status:</strong> {{status}}
+      </div>
+      {%endif%}
+      {%if may_write%}
+      <form action="" method="post">
+        <p class="mb-1">Provide the following information in your application:</p>
+        <ul>
+          <li>Cover letter</li>
+          <li>Proof of identity (e.g. a recognized passport)</li>
+          <li>Student ID or staff ID (preliminary certificates of enrollment are acceptable; please supply your student ID within one month of applying)</li>
+          <li>Certificate of your Approved Citizen Ranking record or equivalent (e.g. a social credit score statement)</li>
+          <li>Motivation letter (at least 100 words)</li>
+          <li>Miscellaneous remarks (optional)</li>
+        </ul>
+        <div class="mb-3">
+          <label for="text" class="form-label">Your application:</label>
+          <textarea class="form-control font-monospace" id="text" name="text" rows="10" required="required"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Apply for Usership</button>
+      </form>
+      {%elif status == "PENDING"%}
+      <form action="" method="post">
+        <p>Your application will be processed within or after five business days. Be patient.</p>
+        <button type="submit" class="btn btn-primary" name="action" value="check">Check for updates</button>
+      </form>
+      {%elif status == "REJECTED" and not comments%}
+      <p>Your application has been rejected.</p>
+      {%elif status == "ACCEPTED"%}
+      <form action="" method="post">
+        <p>The Printing Point Management Administration is pleased to welcome you to the Mandatory Printing Point Tracking Program.</p>
+        <button type="submit" class="btn btn-primary" name="action" value="finish">Finalize admittance</button>
+      </form>
+      {%elif status == "FINISHED"%}
+      <p>You already are a User.</p>
+      <a href="{{url_for('index')}}" class="btn btn-primary">Back to main page</a>
+      {%endif%}
+      {%if comments%}
+      <h2 class="mt-4">Rejection notice</h2>
+      <p>Your application has been reviewed and rejected. The following issues have been raised:</p>
+      <div class="card mb-3">
+        <div class="card-body">
+          <span class="font-monospace preserve-whitespace">{{comments}}</span>
+        </div>
+      </div>
+      <p>Address them when resubmitting your application.</p>
+      {%endif%}
+{%endblock%}

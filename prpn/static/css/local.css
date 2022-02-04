@@ -12,3 +12,7 @@
 .form-label {
   font-weight: bold;
 }
+
+.preserve-whitespace {
+  white-space: pre;
+}

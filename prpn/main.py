@@ -6,6 +6,7 @@ import os
 import flask
 
 from . import auth, db, forms, schema
+from .content import application
 
 app = flask.Flask('prpn')
 app.instance_path = os.path.normpath(os.path.join(app.root_path, '..',
@@ -50,6 +51,9 @@ def init_files():
 
 @app.route('/')
 def index():
+    user_info = app.prpn.get_user_info()
+    if user_info['logged_in'] and user_info['user_status'] < 2:
+        return flask.redirect(flask.url_for('application'))
     return flask.render_template('index.html')
 
 @app.route('/favicon.ico')
@@ -61,5 +65,6 @@ def error_404(exc):
     return (flask.render_template('404.html'), 404)
 
 _auth_manager.register_at(app)
+application.register_at(app)
 
 if __name__ == '__main__': app.run()

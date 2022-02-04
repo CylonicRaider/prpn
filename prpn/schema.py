@@ -1,4 +1,6 @@
 
+from .content import application
+
 def init_schema(db):
     with db as curs:
         curs.execute('CREATE TABLE IF NOT EXISTS allUsers ('
@@ -13,3 +15,4 @@ def init_schema(db):
                      'SELECT id AS id, name AS name, points AS points '
                          'FROM allUsers '
                          'WHERE status >= 2')
+        application.init_schema(curs)
