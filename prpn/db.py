@@ -33,14 +33,20 @@ class Database:
         self.curs.execute(query, params)
         return self.curs.fetchall()
 
-    def update(self, query, params=()):
+    def insert(self, query, params=()):
         with self.conn:
             self.curs.execute(query, params)
             return self.curs.lastrowid
 
+    def update(self, query, params=()):
+        with self.conn:
+            self.curs.execute(query, params)
+            return self.curs.rowcount
+
     def update_many(self, query, params):
         with self.conn:
             self.curs.executemany(query, params)
+            return self.curs.rowcount
 
     def close(self):
         self.conn.close()

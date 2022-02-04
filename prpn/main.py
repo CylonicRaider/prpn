@@ -30,6 +30,7 @@ _database = db.LockedDatabase(
     schema.init_schema
 )
 get_db = _database.register_to(app, flask.g)
+app.get_database = get_db
 
 _auth_manager = auth.AuthManager(_database, ())
 

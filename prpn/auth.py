@@ -66,16 +66,15 @@ class AuthManager:
 
     def set_level_of(self, username, level):
         with self.db as db:
-            if not db.query('SELECT status FROM allUsers WHERE name = ?',
-                            (username,)):
+            count = db.update('UPDATE allUsers SET status = ? WHERE name = ?',
+                              (level, username))
+            if not count:
                 raise ValueError('Unrecognized user {!r}'.format(username))
-            db.update('UPDATE allUsers SET status = ? WHERE name = ?',
-                      (level, username))
 
     def do_register(self, info):
         try:
             with self.db as db:
-                uid = db.update('INSERT INTO allUsers (name, status) '
+                uid = db.insert('INSERT INTO allUsers (name, status) '
                                 'VALUES (?, ?)',
                                 (info['name'], 1))
                 return {'uid': uid, 'status': 1}
