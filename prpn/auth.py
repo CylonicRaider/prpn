@@ -193,3 +193,15 @@ class AuthManager:
                 result = (200, '', GENERIC_LOGOUT_FORM)
         return forms.execute_form_or_redirect(result, 'form.html',
                                               heading='Log out')
+
+    def register_routes(self, app):
+        @app.route('/login', methods=('GET', 'POST'))
+        def login():
+            if request.args.get('register'):
+                return self.handle_register_request()
+            else:
+                return self.handle_login_request()
+
+        @app.route('/logout', methods=('GET', 'POST'))
+        def logout():
+            return self.handle_logout_request()

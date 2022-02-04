@@ -49,17 +49,6 @@ def init_files():
 def index():
     return flask.render_template('index.html')
 
-@app.route('/login', methods=('GET', 'POST'))
-def login():
-    if flask.request.args.get('register'):
-        return _auth_manager.handle_register_request()
-    else:
-        return _auth_manager.handle_login_request()
-
-@app.route('/logout', methods=('GET', 'POST'))
-def logout():
-    return _auth_manager.handle_logout_request()
-
 @app.route('/favicon.ico')
 def favicon():
     return flask.send_from_directory(app.static_folder, 'img/favicon.ico')
@@ -67,5 +56,7 @@ def favicon():
 @app.errorhandler(404)
 def error_404(exc):
     return (flask.render_template('404.html'), 404)
+
+_auth_manager.register_routes(app)
 
 if __name__ == '__main__': app.run()
