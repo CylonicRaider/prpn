@@ -5,7 +5,7 @@ import sqlite3
 import urllib.parse
 
 import click
-from flask import flash, render_template, request, session
+from flask import flash, g, render_template, request, session
 from markupsafe import Markup
 
 from . import forms
@@ -42,15 +42,19 @@ class AuthProvider:
         raise NotImplementedError
 
 def get_user_info():
+    if '_USER_INFO' in g:
+        return g._USER_INFO
     try:
-        return {'logged_in': True,
-                'session_id': session['sid'],
-                'user_id': session['uid'],
-                'user_name': session['name'],
-                'user_status': session['status'],
-                'user_type': STATUS_TO_NAME[session['status']]}
+        result = {'logged_in': True,
+                  'session_id': session['sid'],
+                  'user_id': session['uid'],
+                  'user_name': session['name'],
+                  'user_status': session['status'],
+                  'user_type': STATUS_TO_NAME[session['status']]}
     except KeyError:
-        return {'logged_in': False}
+        result = {'logged_in': False}
+    g._USER_INFO = result
+    return result
 
 def sanitize_next_url(text):
     if not text: return '/'
@@ -71,6 +75,23 @@ class AuthManager:
             if not count:
                 raise ValueError('Unrecognized user {!r}'.format(username))
 
+    def get_user_info(self):
+        return get_user_info()
+
+    def reload_user_info(self):
+        g.pop('_USER_INFO', None)
+        try:
+            uid = session['uid']
+        except KeyError:
+            return
+        with self.db as db:
+            row = db.query('SELECT name, status FROM allUsers WHERE id = ?',
+                           (uid,))
+            if row is None: return
+        session['name'] = row['name']
+        session['status'] = row['status']
+        return self.get_user_info()
+
     def do_register(self, info):
         try:
             with self.db as db:
@@ -83,11 +104,11 @@ class AuthManager:
 
     def do_login(self, info):
         with self.db as db:
-            result = db.query('SELECT id, status FROM allUsers '
+            row = db.query('SELECT id, status FROM allUsers '
                               'WHERE name = ?',
                               (info['name'],))
-            if result is None: return None
-            return {'uid': result['id'], 'status': result['status']}
+            if row is None: return None
+            return {'uid': row['id'], 'status': row['status']}
 
     def _finish_post(self, reqname, user_details):
         if reqname == 'register':
@@ -122,6 +143,7 @@ class AuthManager:
                     session['uid'] = details['uid']
                     session['name'] = p_result['name']
                     session['status'] = details['status']
+                    g.pop('_USER_INFO', None)
                     result = (302, self._get_next_url())
                 else:
                     self._clear_session()
@@ -166,21 +188,21 @@ class AuthManager:
                                form_content=form_content)
 
     def handle_register_request(self):
-        if get_user_info()['logged_in']:
+        if self.get_user_info()['logged_in']:
             return self._handle_redundant_request('Already logged in',
                 'You already are logged in.')
         return self._handle_generic_request('register', 'Sign up',
             lambda provider, sid, data: provider.register(sid, data))
 
     def handle_login_request(self):
-        if get_user_info()['logged_in']:
+        if self.get_user_info()['logged_in']:
             return self._handle_redundant_request('Already logged in',
                 'You already are logged in.')
         return self._handle_generic_request('login', 'Log in',
             lambda provider, sid, data: provider.login(sid, data))
 
     def handle_logout_request(self):
-        if not get_user_info()['logged_in']:
+        if not self.get_user_info()['logged_in']:
             return self._handle_redundant_request('Already logged out',
                                                   'You are not logged in.')
         elif request.method == 'POST':

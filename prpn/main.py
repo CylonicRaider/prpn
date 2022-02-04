@@ -10,6 +10,7 @@ from . import auth, db, forms, schema
 app = flask.Flask('prpn')
 app.instance_path = os.path.normpath(os.path.join(app.root_path, '..',
                                                   'data'))
+app.prpn = flask.ctx._AppCtxGlobals()
 
 try:
     KEY_FILE = os.environ.get('KEY_FILE', os.path.join(app.instance_path,
@@ -20,19 +21,20 @@ except FileNotFoundError:
     app.logger.warn('Secret key file not found!')
 
 app.jinja_options = {'trim_blocks': True, 'lstrip_blocks': True}
-app.jinja_env.globals.update(
-    get_user_info=auth.get_user_info,
-    render_form=forms.render_form
-)
+app.jinja_env.globals['render_form'] = forms.render_form
 
 _database = db.LockedDatabase(
     os.environ.get('DATABASE', os.path.join(app.instance_path, 'db.sqlite')),
     schema.init_schema
 )
 get_db = _database.register_to(app, flask.g)
-app.get_database = get_db
+app.prpn.get_database = get_db
 
 _auth_manager = auth.AuthManager(_database, ())
+
+app.jinja_env.globals['get_user_info'] = _auth_manager.get_user_info
+app.prpn.get_user_info = _auth_manager.get_user_info
+app.prpn.reload_user_info = _auth_manager.reload_user_info
 
 @app.cli.command('init')
 def init_files():
