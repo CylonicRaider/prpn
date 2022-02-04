@@ -46,7 +46,8 @@ def get_user_info():
                 'session_id': session['sid'],
                 'user_id': session['uid'],
                 'user_name': session['name'],
-                'user_type': session.get('type', 'Account')}
+                'user_status': session['status'],
+                'user_type': STATUS_TO_NAME[session['status']]}
     except KeyError:
         return {'logged_in': False}
 
@@ -67,8 +68,8 @@ class AuthManager:
             with self.db as db:
                 uid = db.update('INSERT INTO allUsers (name, status) '
                                 'VALUES (?, ?)',
-                                (info['name'], 0))
-                return {'uid': uid, 'type': STATUS_TO_NAME[0]}
+                                (info['name'], 1))
+                return {'uid': uid, 'status': 1}
         except sqlite3.IntegrityError:
             return None
 
@@ -78,8 +79,7 @@ class AuthManager:
                               'WHERE name = ?',
                               (info['name'],))
             if result is None: return None
-            return {'uid': result['id'],
-                    'type': STATUS_TO_NAME[result['status']]}
+            return {'uid': result['id'], 'status': result['status']}
 
     def _finish_post(self, reqname, user_details):
         if reqname == 'register':
@@ -94,7 +94,7 @@ class AuthManager:
         return raw_token.decode('ascii').replace('=', '')
 
     def _clear_session(self):
-        for key in ('sid', 'provider', 'name', 'type'):
+        for key in ('sid', 'provider', 'uid', 'name', 'status'):
             session.pop(key, None)
 
     def _get_next_url(self):
@@ -113,7 +113,7 @@ class AuthManager:
                     session['provider'] = provider.name
                     session['uid'] = details['uid']
                     session['name'] = p_result['name']
-                    session['type'] = details['type']
+                    session['status'] = details['status']
                     result = (302, self._get_next_url())
                 else:
                     self._clear_session()
