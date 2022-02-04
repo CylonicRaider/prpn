@@ -24,6 +24,9 @@ class AuthProvider:
         self.name = name
         self.display_name = display_name
 
+    def register_at(self, app):
+        pass
+
     def prepare_form(self, form_id):
         if form_id == 'logout':
             return (200, '', GENERIC_LOGOUT_FORM)
