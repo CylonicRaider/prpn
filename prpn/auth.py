@@ -15,6 +15,11 @@ GENERIC_LOGOUT_FORM = (
     (None, 'label', 'Are you sure you want to log out?'),
     (None, 'submit', 'Log out')
 )
+GENERIC_ERRORS = {
+    'register': 'Invalid credentials or account already exists',
+    'login': 'Invalid credentials or no such account',
+    None: 'Invalid credentials'
+}
 
 STATUS_TO_NAME = {0: 'Non-User', 1: 'Potential User Entity', 2: 'User',
                   3: 'Enhanced User'}
@@ -143,6 +148,7 @@ class AuthManager:
     def _handle_generic_request(self, reqname, heading, post_cb):
         result, run_provider = None, None
         if request.method == 'POST':
+            error_message = GENERIC_ERRORS.get(reqname, GENERIC_ERRORS[None])
             provider = self._provider_map[request.form['provider']]
             sid = self._get_session_id()
             p_result = post_cb(provider, sid, request.form)
@@ -158,10 +164,10 @@ class AuthManager:
                     result = (302, self._get_next_url())
                 else:
                     self._clear_session()
-                    flash('Invalid credentials', 'error')
+                    flash(error_message, 'error')
             else:
                 self._clear_session()
-                flash('Invalid credentials', 'error')
+                flash(error_message, 'error')
         if result is not None:
             # If the operation did not fail, we do not replace its result.
             pass
