@@ -30,7 +30,8 @@ _database = db.LockedDatabase(
 )
 app.prpn.get_database = _database.register_to(app, flask.g)
 
-_auth_manager = auth.AuthManager(_database, ())
+_auth_manager = auth.AuthManager(_database,
+    auth.providers_from_name(os.environ.get('AUTH_PROVIDER')))
 
 app.jinja_env.globals['get_user_info'] = _auth_manager.get_user_info
 app.prpn.get_user_info = _auth_manager.get_user_info

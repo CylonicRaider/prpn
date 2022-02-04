@@ -1,6 +1,7 @@
 
 import os
 import base64
+import importlib
 import sqlite3
 import urllib.parse
 
@@ -40,6 +41,13 @@ class AuthProvider:
 
     def logout(self, session_id):
         raise NotImplementedError
+
+def providers_from_name(text):
+    if not text: return ()
+    modulename, sep, attrname = text.partition(':')
+    module = importlib.import_module(modulename)
+    value = getattr(module, attrname)
+    return (value,)
 
 def get_user_info():
     if '_USER_INFO' in g:
