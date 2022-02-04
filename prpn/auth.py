@@ -73,9 +73,9 @@ def get_user_info():
     return result
 
 def sanitize_next_url(text):
-    if not text: return '/'
+    if not text: return request.root_path + '/'
     components = urllib.parse.urlsplit(text)
-    if components.scheme or components.netloc: return '/'
+    if components.scheme or components.netloc: return request.root_path + '/'
     return text
 
 class AuthManager:
