@@ -10,6 +10,7 @@ class Database:
     def __init__(self, path, init, **kwargs):
         self.path = path
         self.conn = sqlite3.connect(path, **kwargs)
+        self.conn.row_factory = sqlite3.Row
         self.curs = self.conn.cursor()
         self.init()
         if init is not None: init(self)
@@ -22,7 +23,6 @@ class Database:
         self.conn.__exit__(*exc_info)
 
     def init(self):
-        self.conn.row_factory = sqlite3.Row
         self.curs.execute('PRAGMA foreign_keys = ON')
 
     def query(self, query, params=()):
