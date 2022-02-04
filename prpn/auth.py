@@ -189,7 +189,7 @@ class AuthManager:
                     'get')
         if run_provider is not None:
             result = run_provider.prepare_form(reqname)
-            if 200 <= result[0] < 300:
+            if 200 <= result[0] < 300 and len(result) != 2:
                 result = (result[0], result[1],
                     [('provider', 'hidden', None, run_provider.name)] +
                         list(result[2]),
