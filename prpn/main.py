@@ -9,8 +9,8 @@ from . import auth, db, forms, schema
 from .content import application
 
 app = flask.Flask('prpn')
-app.instance_path = os.path.normpath(os.path.join(app.root_path, '..',
-                                                  'data'))
+app.instance_path = os.environ.get('DATA_DIR',
+    os.path.normpath(os.path.join(app.root_path, '..', 'data')))
 app.prpn = flask.ctx._AppCtxGlobals()
 
 try:
