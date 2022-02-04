@@ -31,7 +31,7 @@ _database = db.LockedDatabase(
 )
 get_db = _database.register_to(app, flask.g)
 
-_auth_manager = auth.AuthManager(())
+_auth_manager = auth.AuthManager(_database, ())
 
 @app.cli.command('init-key')
 def init_cookie_key():

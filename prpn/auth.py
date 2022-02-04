@@ -1,6 +1,7 @@
 
 import os
 import base64
+import sqlite3
 import urllib.parse
 
 from flask import flash, render_template, request, session
@@ -12,6 +13,9 @@ GENERIC_LOGOUT_FORM = (
     (None, 'label', 'Are you sure you want to log out?'),
     (None, 'submit', 'Log out')
 )
+
+STATUS_TO_NAME = {0: 'Non-User', 1: 'Potential User Entity', 2: 'User',
+                  3: 'Enhanced User'}
 
 class AuthProvider:
     def __init__(self, name, display_name):
@@ -40,6 +44,7 @@ def get_user_info():
     try:
         return {'logged_in': True,
                 'session_id': session['sid'],
+                'user_id': session['uid'],
                 'user_name': session['name'],
                 'user_type': session.get('type', 'Account')}
     except KeyError:
@@ -52,9 +57,37 @@ def sanitize_next_url(text):
     return text
 
 class AuthManager:
-    def __init__(self, providers):
+    def __init__(self, db, providers):
+        self.db = db
         self.providers = providers
         self._provider_map = {p.name: p for p in providers}
+
+    def do_register(self, info):
+        try:
+            with self.db as db:
+                uid = db.update('INSERT INTO allUsers (name, status) '
+                                'VALUES (?, ?)',
+                                (info['name'], 0))
+                return {'uid': uid, 'type': STATUS_TO_NAME[0]}
+        except sqlite3.IntegrityError:
+            return None
+
+    def do_login(self, info):
+        with self.db as db:
+            result = db.query('SELECT id, status FROM allUsers '
+                              'WHERE name = ?',
+                              (info['name'],))
+            if result is None: return None
+            return {'uid': result['id'],
+                    'type': STATUS_TO_NAME[result['status']]}
+
+    def _finish_post(self, reqname, user_details):
+        if reqname == 'register':
+            return self.do_register(user_details)
+        elif reqname == 'login':
+            return self.do_login(user_details)
+        else:
+            raise RuntimeError('Unrecognized request type {}'.format(reqname))
 
     def _get_session_id(self):
         raw_token = base64.b64encode(os.urandom(32))
@@ -74,12 +107,17 @@ class AuthManager:
             sid = self._get_session_id()
             p_result = post_cb(provider, sid, request.form)
             if p_result:
-                session['sid'] = sid
-                session['provider'] = provider.name
-                session['name'] = p_result['name']
-                if 'type' in p_result:
-                    session['type'] = p_result.get('type')
-                result = (302, self._get_next_url())
+                details = self._finish_post(reqname, p_result)
+                if details is not None:
+                    session['sid'] = sid
+                    session['provider'] = provider.name
+                    session['uid'] = details['uid']
+                    session['name'] = p_result['name']
+                    session['type'] = details['type']
+                    result = (302, self._get_next_url())
+                else:
+                    self._clear_session()
+                    flash('Invalid credentials', 'error')
             else:
                 self._clear_session()
                 flash('Invalid credentials', 'error')
