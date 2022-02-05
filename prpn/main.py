@@ -3,6 +3,7 @@
 
 import os
 
+import click
 import flask
 
 from . import auth, db, forms, schema
@@ -48,6 +49,20 @@ def init_files():
         if stats.st_size == 0:
             fp.write(os.urandom(32))
             os.fchmod(fp.fileno(), 0o600)
+    print('OK')
+
+@app.cli.command('add-points',
+                 help='Add (positive or negative) printing points to the '
+                      'given account\'s balance')
+@click.argument('name')
+@click.argument('points', type=int)
+def add_points(name, points):
+    with _database as db:
+        count = db.update('UPDATE allUsers SET points = points + ? '
+                              'WHERE name = ?',
+                          (points, name))
+        if not count:
+            raise ValueError('Unrecognized user {!r}'.format(name))
     print('OK')
 
 @app.route('/')
