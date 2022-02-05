@@ -242,7 +242,7 @@ class AuthManager:
                                               heading='Log out')
 
     def register_at(self, app):
-        @app.cli.command('set-level',
+        @app.cli.command('set-user-level',
                          help='Set the privilege level of the given user to '
                               'the given value')
         @click.argument('name')
