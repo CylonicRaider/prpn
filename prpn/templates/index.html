@@ -4,17 +4,19 @@
       {%with user = get_user_info()%}
       {%if user.logged_in%}
       <div class="row">
-        <div class="col-lg-8 col-xxl-6 mx-auto">
+        <div class="col-lg-6 mx-auto">
           <div class="card border-primary">
             <div class="card-header border-primary text-primary">User information</div>
-            <dl class="card-body mb-0">
-              <dt>User name:</dt>
-              <dd>{{user.user_name}}</dd>
-              <dt>Status:</dt>
-              <dd>{{user.user_type}}</dd>
-              <dt>Printing points:</dt>
-              <dd class="mb-0">{%if points == None%}<i>N/A</i>{%else%}{{points}}{%endif%}</dd>
-            </dl>
+            <div class="card-body">
+              <dl class="mb-0 row">
+                <dt class="col-md-4 mb-0 text-md-end">User name:</dt>
+                <dd class="col-md-8">{{user.user_name}}</dd>
+                <dt class="col-md-4 mb-0 text-md-end">Status:</dt>
+                <dd class="col-md-8">{{user.user_type}}</dd>
+                <dt class="col-md-4 mb-0 text-md-end">Printing points:</dt>
+                <dd class="col-md-8 mb-0">{%if points == None%}<i>N/A</i>{%else%}{{points}}{%endif%}</dd>
+              </dl>
+            </div>
           </div>
         </div>
       </div>
