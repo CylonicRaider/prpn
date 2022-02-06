@@ -56,8 +56,8 @@ def handle_post(user_info, app_info, app):
         return
     now = time.time()
     db = app.prpn.get_database()
-    ok = db.update('UPDATE applications SET timestamp = ?, content = ? '
-                       'WHERE user = ?',
+    ok = db.update('UPDATE applications SET timestamp = ?, content = ?, '
+                       'comments = NULL WHERE user = ?',
                    (now, text, user_info['user_id']))
     if not ok:
         db.update('INSERT INTO applications(user, timestamp, content) '
