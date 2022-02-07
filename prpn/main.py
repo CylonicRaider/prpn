@@ -79,8 +79,9 @@ def index():
         if row is not None:
             points = row['points']
         if user_info['user_status'] >= 3:
-            applications = len(db.query_many('SELECT 1 FROM applications '
-                                                 'LIMIT 11'))
+            applications = len(db.query_many('SELECT 1 '
+                                             'FROM pendingApplications '
+                                             'LIMIT 11'))
             if applications > 10: applications = '10+'
         else:
             applications = db.query('SELECT 1 FROM applications '
