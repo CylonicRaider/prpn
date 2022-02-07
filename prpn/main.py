@@ -69,17 +69,25 @@ def add_points(name, points):
 @app.route('/')
 def index():
     user_info = app.prpn.get_user_info()
-    points = None
+    points, applications = None, False
     if user_info['logged_in']:
         if user_info['user_status'] < 2:
             return flask.redirect(flask.url_for('application'))
+        db = app.prpn.get_database()
+        row = db.query('SELECT points FROM users WHERE id = ?',
+                       (user_info['user_id'],))
+        if row is not None:
+            points = row['points']
+        if user_info['user_status'] >= 3:
+            applications = len(db.query_many('SELECT 1 FROM applications '
+                                                 'LIMIT 11'))
+            if applications > 10: applications = '10+'
         else:
-            row = app.prpn.get_database().query('SELECT points FROM users '
-                                                    'WHERE id = ?',
-                                                (user_info['user_id'],))
-            if row is not None:
-                points = row['points']
-    return flask.render_template('index.html', points=points)
+            applications = db.query('SELECT 1 FROM applications '
+                                        'WHERE user = ?',
+                                    (user_info['user_id'],))
+    return flask.render_template('index.html', points=points,
+                                 applications=applications)
 
 @app.route('/favicon.ico')
 def favicon():

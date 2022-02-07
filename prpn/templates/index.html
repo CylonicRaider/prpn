@@ -24,7 +24,14 @@
             <div class="card-header border-secondary">Actions</div>
             <div class="list-group list-group-flush">
               {%if user.user_status >= 3%}
-              <a href="{{url_for('application_review_list')}}" class="list-group-item list-group-item-action">Review applications</a>
+              <a href="{{url_for('application_review_list')}}" class="list-group-item list-group-item-action">
+                Review applications
+                {%if applications%}
+                <span class="badge rounded-pill bg-primary">{{applications}}</span>
+                {%endif%}
+              </a>
+              {%elif applications%}
+              <a href="{{url_for('application')}}" class="list-group-item list-group-item-action">Finish application process</a>
               {%else%}
               <i class="list-group-item">None</i>
               {%endif%}
