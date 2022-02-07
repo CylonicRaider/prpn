@@ -11,7 +11,7 @@
 }
 
 .preserve-whitespace {
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 dl.inverted > dt {
