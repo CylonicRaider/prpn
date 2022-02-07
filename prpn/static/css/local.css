@@ -2,9 +2,6 @@
 .logo {
   height: 1.2em;
 }
-.header-user-form {
-  align-items: baseline;
-}
 
 .mini-form {
   max-width: 30em;
@@ -22,4 +19,8 @@ dl.inverted > dt {
 }
 dl.inverted > dd {
   font-weight: bold;
+}
+
+.form-tight-numbers input[type=number] {
+  width: 5em;
 }

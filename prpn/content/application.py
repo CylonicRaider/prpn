@@ -1,10 +1,13 @@
 
 import time
+import random
 
 import flask
 
 PAGE_SIZE = 10
 MAX_OFFSET = 2 ** 63 - 1
+
+RANDOM = random.SystemRandom()
 
 def init_schema(curs):
     curs.execute('CREATE TABLE IF NOT EXISTS applications ('
@@ -26,21 +29,19 @@ def init_schema(curs):
 
 def handle_get(user_info, app_info):
     now = time.time()
-    may_write = (app_info['content'] is None)
-    if app_info['revealAt'] is None or now >= app_info['revealAt']:
-        comments = app_info['comments']
-    else:
-        comments = None
+    is_revealed = (app_info['revealAt'] is None or
+                   now >= app_info['revealAt'])
+    comments = app_info['comments'] if is_revealed else None
+    may_write = (user_info['user_status'] == 1 and
+                 app_info['content'] is None and is_revealed)
     if user_info['user_status'] >= 2:
         if app_info['timestamp'] is None:
-            status, status_class, may_write = 'FINISHED', None, False
+            status, status_class = 'FINISHED', None
         else:
-            status, status_class, may_write = 'ACCEPTED', 'success', False
-    elif user_info['user_status'] == 0:
-        status, status_class, may_write = 'REJECTED', 'warning', False
-    elif comments is not None:
+            status, status_class = 'ACCEPTED', 'success'
+    elif user_info['user_status'] == 0 or comments is not None:
         status, status_class = 'REJECTED', 'warning'
-    elif app_info['content'] is not None:
+    elif app_info['content'] is not None or app_info['revealAt'] is not None:
         status, status_class = 'PENDING', 'info'
     else:
         status, status_class = None, None
@@ -70,13 +71,13 @@ def handle_post(user_info, app_info, app):
     now = time.time()
     db = app.prpn.get_database()
     ok = db.update('UPDATE applications SET timestamp = ?, content = ?, '
-                       'comments = NULL WHERE user = ?',
+                       'comments = NULL, revealAt = NULL WHERE user = ?',
                    (now, text, user_info['user_id']))
     if not ok:
         db.update('INSERT INTO applications(user, timestamp, content) '
                       'VALUES (?, ?, ?)',
                   (user_info['user_id'], now, text))
-    app_info.update(timestamp=now, content=text, comments=None)
+    app_info.update(timestamp=now, content=text, comments=None, revealAt=None)
 
 def handle_review_list(app):
     try:
@@ -108,7 +109,8 @@ def handle_review_get(uid, app):
     return flask.render_template('content/apply-review.html', entry=entry)
 
 def handle_review_post(uid, app):
-    action = flask.request.form.get('action', 'none')
+    form = flask.request.form
+    action = form.get('action', 'none')
     db = app.prpn.get_database()
     if action == 'accept':
         with db:
@@ -121,9 +123,25 @@ def handle_review_post(uid, app):
                       (uid,))
         return flask.redirect(flask.url_for('application_review_list'))
     elif action == 'reject':
-        db.update('UPDATE applications SET content = NULL, comments = ? '
+        try:
+            reveal_delay = (int(form.get('delay-days', '0'), 10) * 86400 +
+                            int(form.get('delay-hours', '0'), 10) * 3600 +
+                            int(form.get('delay-minutes', '0'), 10) * 60 +
+                            int(form.get('delay-seconds', '0'), 10))
+            if reveal_delay < 0:
+                raise ValueError('Negative reveal delay')
+        except ValueError:
+            return flask.abort(400)
+        if reveal_delay:
+            if form.get('delay-randomize'):
+                reveal_delay *= RANDOM.random()
+            reveal_at = time.time() + reveal_delay
+        else:
+            reveal_at = None
+        db.update('UPDATE applications SET content = NULL, comments = ?, '
+                                          'revealAt = ? '
                       'WHERE user = ?',
-                  (flask.request.form.get('comments', ''), uid))
+                  (flask.request.form.get('comments', ''), reveal_at, uid))
         return flask.redirect(flask.url_for('application_review_list'))
     elif action == 'reject-permanent':
         with db:

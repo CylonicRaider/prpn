@@ -32,12 +32,12 @@
           {%block nav%}{%endblock%}
           {%with user = get_user_info()%}
           {%if user.logged_in%}
-          <form action="{{url_for('logout')}}" method="post" class="d-flex ms-auto header-user-form">
+          <form action="{{url_for('logout')}}" method="post" class="d-flex ms-auto align-items-baseline">
             <span>{{user.user_type}}: <b>{{user.user_name}}</b></span>
             <button type="submit" class="btn btn-outline-primary ms-1">Log out</button>
           </form>
           {%else%}
-          <form action="{{url_for('login')}}" method="get" class="d-flex ms-auto header-user-form">
+          <form action="{{url_for('login')}}" method="get" class="d-flex ms-auto align-items-baseline">
             <input type="hidden" name="continue" value="{{request.full_path}}"/>
             <button type="submit" class="btn btn-outline-primary">Log in</button>
             <button type="submit" name="register" value="yes" class="btn btn-outline-primary ms-1">Sign up</button>

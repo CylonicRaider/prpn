@@ -29,6 +29,29 @@
           <label for="comments" class="form-label">Comments:</label>
           <textarea class="form-control font-monospace" name="comments" id="comments" rows="5"></textarea>
         </div>
+        <div class="row row-cols-lg-auto align-items-baseline mb-3">
+          <div class="col-12">
+            <span class="form-label">Delay rejection:</span>
+          </div>
+          <div class="col-12">
+            <div class="input-group form-tight-numbers">
+              <input class="form-control text-end" type="number" min="0" value="0" name="delay-days" id="delay-days"/>
+              <label class="input-group-text" for="delay-days">d</label>
+              <input class="form-control text-end" type="number" min="0" value="0" name="delay-hours" id="delay-hours"/>
+              <label class="input-group-text" for="delay-hours">h</label>
+              <input class="form-control text-end" type="number" min="0" value="0" name="delay-minutes" id="delay-minutes"/>
+              <label class="input-group-text" for="delay-minutes">m</label>
+              <input class="form-control text-end" type="number" min="0" value="0" name="delay-seconds" id="delay-seconds"/>
+              <label class="input-group-text" for="delay-seconds">s</label>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="delay-randomize" id="delay-randomize"/>
+              <label for="delay-randomize">Randomize below that</label>
+            </div>
+          </div>
+        </div>
         <div>
           <button class="btn btn-success" type="submit" name="action" value="accept">Accept</button>
           <button class="btn btn-warning" type="submit" name="action" value="reject">Reject</button>
