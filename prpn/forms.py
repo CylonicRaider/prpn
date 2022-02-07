@@ -1,9 +1,18 @@
 
+import time
+
 import flask
 from markupsafe import Markup, escape
 
 DEFAULT_METHOD = 'post'
 DEFAULT_ENCTYPE = 'application/x-www-form-urlencoded'
+
+def render_timestamp(ts):
+    parts = time.gmtime(ts)
+    return Markup('<time datetime="%s" class="localize">%s</time>' % (
+        time.strftime('%Y-%m-%dT%H:%M:%SZ', parts),
+        time.strftime('%Y-%m-%d %H:%M:%S UTC', parts)
+    ))
 
 def render_form(title, action, fields, method=None, enctype=Ellipsis):
     def maybe_attr(name, value):

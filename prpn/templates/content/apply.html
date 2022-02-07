@@ -2,6 +2,9 @@
 {%set subtitle = "Application for Usership"%}
 {%block nav%}
 {{nav_breadcrumb("", "Application", True)}}
+{%if get_user_info().user_status >= 3%}
+{{nav_breadcrumb(url_for("application_review_list"), "Review")}}
+{%endif%}
 {%endblock%}
 {%block content%}
       <h1>Application for Usership</h1>

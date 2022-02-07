@@ -4,7 +4,7 @@
       {%with user = get_user_info()%}
       {%if user.logged_in%}
       <div class="row">
-        <div class="col-lg-6 mx-auto">
+        <div class="col-lg-6 mb-3 mb-lg-0">
           <div class="card border-primary">
             <div class="card-header border-primary text-primary">User information</div>
             <div class="card-body">
@@ -16,6 +16,18 @@
                 <dt class="col-md-4 mb-0 text-md-end">Printing points:</dt>
                 <dd class="col-md-8 mb-0">{%if points == None%}<i>N/A</i>{%else%}{{points}}{%endif%}</dd>
               </dl>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 mb-3 mb-lg-0">
+          <div class="card border-secondary">
+            <div class="card-header border-secondary">Actions</div>
+            <div class="list-group list-group-flush">
+              {%if user.user_status >= 3%}
+              <a href="{{url_for('application_review')}}" class="list-group-item list-group-item-action">Review applications</a>
+              {%else%}
+              <i class="list-group-item">None</i>
+              {%endif%}
             </div>
           </div>
         </div>

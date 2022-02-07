@@ -1,0 +1,38 @@
+{%extends "base.html"%}
+{%set subtitle = "Detail \u2014 Application Review"%}
+{%block extrahead%}
+{{load_script('js/localize-time.js')}}
+{%endblock%}
+{%block nav%}
+{{nav_breadcrumb(url_for("application"), "Application")}}
+{{nav_breadcrumb(url_for("application_review_list"), "Review")}}
+{{nav_breadcrumb("", "Detail", True)}}
+{%endblock%}
+{%block content%}
+      <h1>Application Review</h1>
+      <div class="card mb-3">
+        <div class="card-header">
+          <dl class="inverted d-flex mb-0">
+            <dt class="mb-0 me-1">Name: </dt>
+            <dd class="mb-0">{{entry.name}}</dd>
+            <dt class="mb-0 ms-3 me-1"> Application time: </dt>
+            <dd class="mb-0">{{render_timestamp(entry.timestamp)}}</dd>
+          </dl>
+        </div>
+        <div class="card-body">
+          <span class="font-monospace preserve-whitespace">{{entry.content}}</span>
+        </div>
+      </div>
+      <form action="" method="post">
+        <h2>Reply</h2>
+        <div class="mb-3">
+          <label for="comments" class="form-label">Comments:</label>
+          <textarea class="form-control font-monospace" name="comments" id="comments" rows="5"></textarea>
+        </div>
+        <div>
+          <button class="btn btn-success" type="submit" name="action" value="accept">Accept</button>
+          <button class="btn btn-warning" type="submit" name="action" value="reject">Reject</button>
+          <button class="btn btn-danger" type="submit" name="action" value="reject-permanent">Reject with prejudice</button>
+        </div>
+      </form>
+{%endblock%}

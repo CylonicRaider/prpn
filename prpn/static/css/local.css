@@ -16,3 +16,10 @@
 .preserve-whitespace {
   white-space: pre;
 }
+
+dl.inverted > dt {
+  font-weight: normal;
+}
+dl.inverted > dd {
+  font-weight: bold;
+}

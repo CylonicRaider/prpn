@@ -23,6 +23,7 @@ except FileNotFoundError:
     app.logger.warn('Secret key file not found!')
 
 app.jinja_options = {'trim_blocks': True, 'lstrip_blocks': True}
+app.jinja_env.globals['render_timestamp'] = forms.render_timestamp
 app.jinja_env.globals['render_form'] = forms.render_form
 
 _database = db.LockedDatabase(

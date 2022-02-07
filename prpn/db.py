@@ -1,5 +1,6 @@
 
 import atexit
+import contextlib
 import sqlite3
 import threading
 
@@ -22,6 +23,14 @@ class Database:
     def __exit__(self, *exc_info):
         self.conn.__exit__(*exc_info)
 
+    @contextlib.contextmanager
+    def _transaction(self):
+        if self.conn.in_transaction:
+            yield
+            return
+        with self.conn:
+            yield
+
     def init(self):
         self.curs.execute('PRAGMA foreign_keys = ON')
 
@@ -34,17 +43,17 @@ class Database:
         return self.curs.fetchall()
 
     def insert(self, query, params=()):
-        with self.conn:
+        with self._transaction():
             self.curs.execute(query, params)
             return self.curs.lastrowid
 
     def update(self, query, params=()):
-        with self.conn:
+        with self._transaction():
             self.curs.execute(query, params)
             return self.curs.rowcount
 
     def update_many(self, query, params):
-        with self.conn:
+        with self._transaction():
             self.curs.executemany(query, params)
             return self.curs.rowcount
 
