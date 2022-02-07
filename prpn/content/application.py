@@ -18,6 +18,8 @@ MANDATORY_ITEMS = (
 PROHIBITED_ITEMS = (
     # These ones I did think of ahead-of-time.
     ('swearing', 'Swearing', 'Swearing'),
+    ('misrepresentation', 'Misrepresentation',
+         'Misrepresenting your identity'),
     ('nonsense', 'Nonsense', 'Including nonsensical text'),
     # These ones, not.
     ('threatening', 'Threatening', 'Threatening the Printing Point '
