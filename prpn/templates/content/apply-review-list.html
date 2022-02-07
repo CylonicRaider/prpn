@@ -33,4 +33,12 @@
       {%else%}
       <p><i>No applications</i></p>
       {%endif%}
+      <nav>
+        <ul class="pagination justify-content-center">
+          <li class="page-item{%if offset == 0%} disabled{%endif%}"><a class="page-link" href="?">&#171;</a></li>
+          <li class="page-item{%if offset == 0%} disabled{%endif%}"><a class="page-link" href="?offset={{(offset - amount, 0)|max}}">&#8249;</a></li>
+          <li class="page-item active"><a class="page-link" href="">{{(offset // amount) + 1}}</a></li>
+          <li class="page-item{%if not has_next%} disabled{%endif%}"><a class="page-link" href="?offset={{offset + amount}}">&#8250;</a></li>
+        </ul>
+      </nav>
 {%endblock%}
