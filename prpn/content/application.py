@@ -9,6 +9,26 @@ MAX_OFFSET = 2 ** 63 - 1
 
 RANDOM = random.SystemRandom()
 
+MANDATORY_ITEMS = (
+    ('cover', 'Cover letter', 'a cover letter'),
+    ('id', 'ID', 'an ID or an enrollment certificate'),
+    ('acrr', 'ACRR', 'an Approved Citizen Ranking record'),
+    ('motivation', 'Motivation letter', 'a motivation letter')
+)
+PROHIBITED_ITEMS = (
+    # These ones I did think of ahead-of-time.
+    ('swearing', 'Swearing', 'Swearing'),
+    ('nonsense', 'Nonsense', 'Including nonsensical text'),
+    # These ones, not.
+    ('threatening', 'Threatening', 'Threatening the Printing Point '
+         'Management Administration and/or Printing Point Management '
+         'Administration staff'),
+    ('misunderstanding', 'Misunderstanding', 'Deliberately misunderstanding '
+         'the instructions')
+)
+ITEM_LINE = ('{} in Mandatory Printing Point Tracking Program applications '
+             'is {}.')
+
 def init_schema(curs):
     curs.execute('CREATE TABLE IF NOT EXISTS applications ('
                      'user INTEGER PRIMARY KEY REFERENCES allUsers '
@@ -26,6 +46,22 @@ def init_schema(curs):
                      'WHERE content IS NOT NULL AND comments IS NULL')
     curs.execute('CREATE INDEX IF NOT EXISTS applications_timestamp '
                      'ON applications(timestamp)')
+
+def format_rejection_comments(form_data):
+    paragraphs = []
+    for name, _, description in MANDATORY_ITEMS:
+        if not form_data.get('missing-' + name): continue
+        paragraphs.append(ITEM_LINE.format('Supplying ' + description,
+                                           'mandatory'))
+    for name, _, description in PROHIBITED_ITEMS:
+        if not form_data.get('prohibited-' + name): continue
+        paragraphs.append(ITEM_LINE.format(description, 'prohibited'))
+    for para in form_data.get('extra-comments', '').split('\n\n'):
+        para = para.strip()
+        if not para: continue
+        paragraphs.append(para)
+    RANDOM.shuffle(paragraphs)
+    return '\n\n'.join(paragraphs)
 
 def handle_get(user_info, app_info):
     now = time.time()
@@ -106,7 +142,8 @@ def handle_review_get(uid, app):
                                           (uid,))
     if entry is None:
         return flask.abort(404)
-    return flask.render_template('content/apply-review.html', entry=entry)
+    return flask.render_template('content/apply-review.html', entry=entry,
+        mandatory_items=MANDATORY_ITEMS, prohibited_items=PROHIBITED_ITEMS)
 
 def handle_review_post(uid, app):
     form = flask.request.form
@@ -138,10 +175,11 @@ def handle_review_post(uid, app):
             reveal_at = time.time() + reveal_delay
         else:
             reveal_at = None
+        comments = format_rejection_comments(form)
         db.update('UPDATE applications SET content = NULL, comments = ?, '
                                           'revealAt = ? '
                       'WHERE user = ?',
-                  (flask.request.form.get('comments', ''), reveal_at, uid))
+                  (comments, reveal_at, uid))
         return flask.redirect(flask.url_for('application_review_list'))
     elif action == 'reject-permanent':
         with db:
