@@ -182,6 +182,9 @@ def handle_review_post(uid, app):
                   (comments, reveal_at, uid))
         return flask.redirect(flask.url_for('application_review_list'))
     elif action == 'reject-permanent':
+        if not form.get('confirm-reject-permanent'):
+            flask.flash('Please confirm rejection with prejudice', 'warning')
+            return None
         with db:
             db.update('DELETE FROM applications WHERE user = ?', (uid,))
             db.update('UPDATE allUsers SET status = 0 '

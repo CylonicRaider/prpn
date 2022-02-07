@@ -33,7 +33,7 @@
           <div class="col-12">
             <div class="form-check" title="&quot;...{{description}}...&quot;">
               <input class="form-check-input" type="checkbox" name="missing-{{name}}" id="missing-{{name}}"/>
-              <label for="missing-{{name}}">{{abbrev}}</label>
+              <label class="form-check-label" for="missing-{{name}}">{{abbrev}}</label>
             </div>
           </div>
           {%endfor%}
@@ -46,7 +46,7 @@
           <div class="col-12">
             <div class="form-check" title="&quot;{{description}}...&quot;">
               <input class="form-check-input" type="checkbox" name="prohibited-{{name}}" id="prohibited-{{name}}"/>
-              <label for="prohibited-{{name}}">{{abbrev}}</label>
+              <label class="form-check-label" for="prohibited-{{name}}">{{abbrev}}</label>
             </div>
           </div>
           {%endfor%}
@@ -75,14 +75,26 @@
           <div class="col-12">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" name="delay-randomize" id="delay-randomize"/>
-              <label for="delay-randomize">Randomize below that</label>
+              <label class="form-check-label" for="delay-randomize">Randomize below that</label>
             </div>
           </div>
         </div>
-        <div>
-          <button class="btn btn-success" type="submit" name="action" value="accept">Accept</button>
-          <button class="btn btn-warning" type="submit" name="action" value="reject">Reject</button>
-          <button class="btn btn-danger" type="submit" name="action" value="reject-permanent">Reject with prejudice</button>
+        <div class="row row-cols-auto g-2 align-items-baseline">
+          <div class="col">
+            <button class="btn btn-success" type="submit" name="action" value="accept">Accept</button>
+          </div>
+          <div class="col">
+            <button class="btn btn-warning" type="submit" name="action" value="reject">Reject</button>
+          </div>
+          <div class="col">
+            <button class="btn btn-danger" type="submit" name="action" value="reject-permanent">Reject with prejudice</button>
+          </div>
+          <div class="col">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="confirm-reject-permanent" id="confirm-reject-permanent"/>
+              <label class="form-check-label" for="confirm-reject-permanent">Confirm permanent rejection</label>
+            </div>
+          </div>
         </div>
       </form>
 {%endblock%}
