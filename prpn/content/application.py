@@ -26,7 +26,10 @@ PROHIBITED_ITEMS = (
          'Management Administration and/or Printing Point Management '
          'Administration staff'),
     ('misunderstanding', 'Misunderstanding', 'Deliberately misunderstanding '
-         'the instructions')
+         'the instructions'),
+    ('bribery', 'Bribery', 'Attempting to bribe and/or seduce the Printing '
+         'Point Management Administration and/or Printing Point Management '
+         'Administration staff')
 )
 ITEM_LINE = ('{} in Mandatory Printing Point Tracking Program applications '
              'is {}.')
