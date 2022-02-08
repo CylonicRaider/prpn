@@ -29,6 +29,9 @@
                 {%if applications%}
                 <span class="badge rounded-pill bg-primary">{{applications}}</span>
                 {%endif%}
+                {%if queued_applications%}
+                <span class="badge rounded-pill bg-secondary">{{queued_applications}}</span>
+                {%endif%}
               </a>
               {%elif applications%}
               <a href="{{url_for('application')}}" class="list-group-item list-group-item-action">Finish application process</a>
