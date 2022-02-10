@@ -198,6 +198,38 @@ def handle_review_post(uid, app):
                       (uid,))
         return flask.redirect(flask.url_for('application_review_list'))
 
+def get_application_counts(db):
+    def len_to_str(rows):
+        l = len(rows)
+        return '10+' if l > 10 else str(l) if l else ''
+
+    now = time.time()
+    pending = len_to_str(db.query_many(
+        'SELECT 1 FROM pendingApplications LIMIT 11'
+    ))
+    accepted = len_to_str(db.query_many(
+        'SELECT 1 FROM applications JOIN users ON id = user LIMIT 11'
+    ))
+    rejected_hidden = len_to_str(db.query_many(
+        'SELECT 1 '
+        'FROM applications '
+        'WHERE comments IS NOT NULL AND revealAt > ? '
+        'LIMIT 11',
+        (now,)
+    ))
+    rejected_public = len_to_str(db.query_many(
+        'SELECT 1 '
+        'FROM applications '
+        'WHERE comments IS NOT NULL AND (revealAt IS NULL OR revealAt <= ?)'
+        'LIMIT 11',
+        (now,)
+    ))
+
+    return {'pending': pending,
+            'accepted': accepted,
+            'rejected_hidden': rejected_hidden,
+            'rejected_public': rejected_public}
+
 def register_at(app):
     @app.route('/apply', methods=('GET', 'POST'))
     def application():

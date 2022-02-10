@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: ascii -*-
 
-import os, time
+import os
 
 import click
 import flask
@@ -69,7 +69,7 @@ def add_points(name, points):
 @app.route('/')
 def index():
     user_info = app.prpn.get_user_info()
-    points, applications, queued_applications = None, None, None
+    points, has_app, app_counts = None, None, None
     if user_info['logged_in']:
         if user_info['user_status'] < 2:
             return flask.redirect(flask.url_for('application'))
@@ -78,25 +78,12 @@ def index():
                        (user_info['user_id'],))
         if row is not None:
             points = row['points']
+        has_app = db.query('SELECT 1 FROM applications WHERE user = ?',
+                           (user_info['user_id'],))
         if user_info['user_status'] >= 3:
-            applications = len(db.query_many('SELECT 1 '
-                                             'FROM pendingApplications '
-                                             'LIMIT 11'))
-            if applications > 10: applications = '10+'
-            now = time.time()
-            queued_applications = len(db.query_many(
-                'SELECT 1 '
-                    'FROM applications '
-                    'WHERE comments IS NOT NULL AND revealAt > ? '
-                    'LIMIT 11',
-                (now,)))
-            if queued_applications > 10: queued_applications = '10+'
-        else:
-            applications = db.query('SELECT 1 FROM applications '
-                                        'WHERE user = ?',
-                                    (user_info['user_id'],))
+            app_counts = application.get_application_counts(db)
     return flask.render_template('index.html', points=points,
-        applications=applications, queued_applications=queued_applications)
+        has_application=has_app, app_counts=app_counts)
 
 @app.route('/favicon.ico')
 def favicon():

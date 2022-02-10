@@ -26,14 +26,13 @@
               {%if user.user_status >= 3%}
               <a href="{{url_for('application_review_list')}}" class="list-group-item list-group-item-action">
                 Review applications
-                {%if applications%}
-                <span class="badge rounded-pill bg-primary">{{applications}}</span>
+                {%for key, cls in (('pending', 'primary'), ('accepted', 'success'), ('rejected_hidden', 'secondary'), ('rejected_public', 'warning'))%}
+                {%if app_counts[key]%}
+                <span class="badge rounded-pill bg-{{cls}}{%if cls == "warning"%} text-dark{%endif%}">{{app_counts[key]}}</span>
                 {%endif%}
-                {%if queued_applications%}
-                <span class="badge rounded-pill bg-secondary">{{queued_applications}}</span>
-                {%endif%}
+                {%endfor%}
               </a>
-              {%elif applications%}
+              {%elif has_application%}
               <a href="{{url_for('application')}}" class="list-group-item list-group-item-action">Finish application process</a>
               {%else%}
               <i class="list-group-item">None</i>
