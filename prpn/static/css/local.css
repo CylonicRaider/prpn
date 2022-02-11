@@ -14,6 +14,21 @@
   white-space: pre-wrap;
 }
 
+.badge-group > .badge:not(:first-child) {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  padding-left: 0.35em;
+}
+.badge-group > .badge:not(:last-child) {
+  border-top-right-radius: 0rem !important;
+  border-bottom-right-radius: 0rem !important;
+  padding-right: 0.35em;
+}
+
+.btn-tight {
+  padding: 0.125rem 0.25rem;
+}
+
 dl.inverted > dt {
   font-weight: normal;
 }

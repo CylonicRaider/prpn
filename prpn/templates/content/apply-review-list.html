@@ -14,6 +14,7 @@
         <thead>
           <tr>
             <th>User</th>
+            <th>Status</th>
             <th>Submitted</th>
             <th>Actions</th>
           </tr>
@@ -22,9 +23,22 @@
           {%for entry in entries%}
           <tr>
             <td>{{entry.name}}</td>
-            <td>{{render_timestamp(entry.timestamp)}}</td>
             <td>
-              <a href="{{url_for('application_review', uid=entry.uid)}}" class="btn btn-outline-primary">Review</a>
+              <span class="badge-group">
+                {%-for keyword in entry.status.split('_')-%}
+                {%-set badge_cls = {'PENDING': 'bg-primary',
+                                    'ACCEPTED': 'bg-success',
+                                    'REJECTED': 'bg-warning text-dark',
+                                    'HIDDEN': 'bg-secondary'}.get(keyword, '')-%}
+                <span class="badge rounded-pill {{badge_cls}}">{{keyword}}</span>
+                {%-endfor-%}
+              </span>
+            </td>
+            <td>{{render_timestamp(entry.timestamp)}}</td>
+            <td class="py-0">
+              {%if entry.status == 'PENDING'%}
+              <a href="{{url_for('application_review', uid=entry.uid)}}" class="btn btn-outline-primary btn-sm btn-tight">Review</a>
+              {%endif%}
             </td>
           </tr>
           {%endfor%}

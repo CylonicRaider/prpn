@@ -43,14 +43,19 @@ def init_schema(curs):
                      'comments TEXT, '
                      'revealAt REAL'
                  ')')
+    curs.execute('CREATE INDEX IF NOT EXISTS applications_timestamp '
+                     'ON applications(timestamp)')
     curs.execute('CREATE VIEW IF NOT EXISTS pendingApplications AS '
                      'SELECT id AS uid, name AS name, '
                             'timestamp AS timestamp, content AS content, '
                             'comments AS comments '
                      'FROM applications JOIN allUsers ON user = id '
                      'WHERE content IS NOT NULL AND comments IS NULL')
-    curs.execute('CREATE INDEX IF NOT EXISTS applications_timestamp '
-                     'ON applications(timestamp)')
+    curs.execute('CREATE VIEW IF NOT EXISTS allApplications AS '
+                     'SELECT id AS uid, name AS name, status AS userStatus, '
+                            'timestamp AS timestamp, content AS content, '
+                            'comments AS comments, revealAt AS revealAt '
+                     'FROM applications JOIN allUsers ON user = id')
 
 def format_rejection_comments(form_data):
     paragraphs = []
@@ -121,6 +126,7 @@ def handle_post(user_info, app_info, app):
     app_info.update(timestamp=now, content=text, comments=None, revealAt=None)
 
 def handle_review_list(app):
+    now = time.time()
     try:
         offset = int(flask.request.args.get('offset', '0'), 10)
         if offset < 0 or offset > MAX_OFFSET:
@@ -131,13 +137,12 @@ def handle_review_list(app):
     # Getting SQLite to use an appropriate (partial) index for this query is
     # surprisingly annoying. :( Therefore, one should avoid looking at the
     # non-first pages of the application listing. :D
-    entries = db.query_many('SELECT uid, name, timestamp '
-                                'FROM pendingApplications '
-                                'ORDER BY timestamp ASC '
-                                'LIMIT ? OFFSET ?',
+    entries = db.query_many('SELECT * FROM allApplications '
+                                'ORDER BY timestamp ASC LIMIT ? OFFSET ?',
                             (PAGE_SIZE + 1, offset))
     has_more = (len(entries) > PAGE_SIZE)
-    entries = entries[:PAGE_SIZE]
+    entries = [dict(e, status=get_application_status(e, now))
+               for e in entries[:PAGE_SIZE]]
     return flask.render_template('content/apply-review-list.html',
         entries=entries, offset=offset, amount=PAGE_SIZE, has_more=has_more)
 
@@ -197,6 +202,17 @@ def handle_review_post(uid, app):
                           'WHERE id = ? AND status <= 1',
                       (uid,))
         return flask.redirect(flask.url_for('application_review_list'))
+
+def get_application_status(eai, now):
+    level, reveal_at = eai['userStatus'], eai['revealAt']
+    if level >= 2:
+        return 'ACCEPTED'
+    elif eai['content'] is not None and eai['comments'] is None:
+        return 'PENDING'
+    elif reveal_at is None or now >= reveal_at:
+        return 'REJECTED'
+    else:
+        return 'REJECTED_HIDDEN'
 
 def get_application_counts(db):
     def len_to_str(rows):
