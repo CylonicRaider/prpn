@@ -9,6 +9,22 @@
 {%endblock%}
 {%block content%}
       <h1>Application Review: Overview</h1>
+      <nav>
+        <span class="form-label">Filter:</span>
+        {%set cur_filter = request.args.get('filter')%}
+        <a class="btn btn-outline-secondary{%if not cur_filter%} active{%endif%} ms-2" href="{{add_query(filter=None)}}">All</a>
+        <a class="btn btn-outline-primary{%if cur_filter == 'PENDING'%} active{%endif%} ms-1" href="{{add_query(filter='PENDING')}}">Pending</a>
+        <a class="btn btn-outline-secondary{%if cur_filter == 'RESOLVED'%} active{%endif%} ms-1" href="{{add_query(filter='RESOLVED')}}">Resolved</a>
+        <a class="btn btn-outline-success{%if cur_filter == 'ACCEPTED'%} active{%endif%} ms-1" href="{{add_query(filter='ACCEPTED')}}">Accepted</a>
+        <div class="btn-group ms-1">
+          <a class="btn btn-outline-warning{%if cur_filter == 'REJECTED'%} active{%endif%}" href="{{add_query(filter='REJECTED')}}">Rejected</a>
+          <button class="btn btn-outline-warning dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"></button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item{%if cur_filter == 'REJECTED_HIDDEN'%} active{%endif%}" href="{{add_query(filter='REJECTED_HIDDEN')}}">Hidden</a></li>
+            <li><a class="dropdown-item{%if cur_filter == 'REJECTED_PUBLIC'%} active{%endif%}" href="{{add_query(filter='REJECTED_PUBLIC')}}">Public</a></li>
+          </ul>
+        </div>
+      </nav>
       {%if entries%}
       <table class="table table-hover align-baseline">
         <thead>
@@ -25,13 +41,12 @@
             <td>{{entry.name}}</td>
             <td>
               <span class="badge-group">
-                {%-for keyword in entry.status.split('_')-%}
-                {%-set badge_cls = {'PENDING': 'bg-primary',
-                                    'ACCEPTED': 'bg-success',
-                                    'REJECTED': 'bg-warning text-dark',
-                                    'HIDDEN': 'bg-secondary'}.get(keyword, '')-%}
+                {%for keyword in entry.status.split('_')%}
+                {%set badge_cls = {'PENDING': 'bg-primary',
+                                   'ACCEPTED': 'bg-success',
+                                   'REJECTED': 'bg-warning text-dark'}.get(keyword, 'bg-secondary')%}
                 <span class="badge rounded-pill {{badge_cls}}">{{keyword}}</span>
-                {%-endfor-%}
+                {%endfor%}
               </span>
             </td>
             <td>{{render_timestamp(entry.timestamp)}}</td>

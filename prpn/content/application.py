@@ -133,13 +133,27 @@ def handle_review_list(app):
             raise ValueError('Pagination offset out of range')
     except ValueError:
         return flask.abort(400)
+    criterion = flask.request.args.get('filter', 'all')
+    if criterion == 'PENDING':
+        filter_sql = ('WHERE content IS NOT NULL AND comments IS NULL')
+    elif criterion == 'RESOLVED':
+        filter_sql = ('WHERE content IS NULL OR comments IS NOT NULL')
+    elif criterion == 'ACCEPTED':
+        filter_sql = ('WHERE userStatus >= 2')
+    elif criterion == 'REJECTED':
+        filter_sql = ('WHERE content IS NULL AND comments IS NOT NULL')
+    elif criterion == 'REJECTED_HIDDEN':
+        filter_sql = ('WHERE content IS NULL AND comments IS NOT NULL '
+                          'AND :now < revealAt')
+    elif criterion == 'REJECTED_PUBLIC':
+        filter_sql = ('WHERE content IS NULL AND comments IS NOT NULL '
+                          'AND (revealAt IS NULL OR :now >= revealAt)')
+    else:
+        filter_sql = ''
     db = app.prpn.get_database()
-    # Getting SQLite to use an appropriate (partial) index for this query is
-    # surprisingly annoying. :( Therefore, one should avoid looking at the
-    # non-first pages of the application listing. :D
-    entries = db.query_many('SELECT * FROM allApplications '
-                                'ORDER BY timestamp ASC LIMIT ? OFFSET ?',
-                            (PAGE_SIZE + 1, offset))
+    entries = db.query_many('SELECT * FROM allApplications ' + filter_sql +
+            ' ORDER BY timestamp ASC LIMIT :limit OFFSET :offset',
+        {'limit': PAGE_SIZE + 1, 'offset': offset, 'now': now})
     has_more = (len(entries) > PAGE_SIZE)
     entries = [dict(e, status=get_application_status(e, now))
                for e in entries[:PAGE_SIZE]]
@@ -210,7 +224,7 @@ def get_application_status(eai, now):
     elif eai['content'] is not None and eai['comments'] is None:
         return 'PENDING'
     elif reveal_at is None or now >= reveal_at:
-        return 'REJECTED'
+        return 'REJECTED_PUBLIC'
     else:
         return 'REJECTED_HIDDEN'
 
