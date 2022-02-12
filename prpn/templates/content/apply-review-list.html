@@ -44,7 +44,8 @@
                 {%for keyword in entry.status.split('_')%}
                 {%set badge_cls = {'PENDING': 'bg-primary',
                                    'ACCEPTED': 'bg-success',
-                                   'REJECTED': 'bg-warning text-dark'}.get(keyword, 'bg-secondary')%}
+                                   'REJECTED': 'bg-warning text-dark',
+                                   'PUBLIC': 'bg-info text-dark'}.get(keyword, 'bg-secondary')%}
                 <span class="badge rounded-pill {{badge_cls}}">{{keyword}}</span>
                 {%endfor%}
               </span>
