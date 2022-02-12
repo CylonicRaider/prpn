@@ -6,7 +6,7 @@ import os
 import click
 import flask
 
-from . import auth, db, forms, schema
+from . import auth, db, schema, tmplutil
 from .content import application
 
 app = flask.Flask('prpn')
@@ -23,8 +23,8 @@ except FileNotFoundError:
     app.logger.warn('Secret key file not found!')
 
 app.jinja_options = {'trim_blocks': True, 'lstrip_blocks': True}
-app.jinja_env.globals['render_timestamp'] = forms.render_timestamp
-app.jinja_env.globals['render_form'] = forms.render_form
+app.jinja_env.globals['render_timestamp'] = tmplutil.render_timestamp
+app.jinja_env.globals['render_form'] = tmplutil.render_form
 
 _database = db.LockedDatabase(
     os.environ.get('DATABASE', os.path.join(app.instance_path, 'db.sqlite')),

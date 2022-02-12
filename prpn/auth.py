@@ -9,7 +9,7 @@ import click
 from flask import flash, g, render_template, request, session
 from markupsafe import Markup
 
-from . import forms
+from . import tmplutil
 
 GENERIC_LOGOUT_FORM = (
     (None, 'label', 'Are you sure you want to log out?'),
@@ -194,7 +194,7 @@ class AuthManager:
                     [('provider', 'hidden', None, run_provider.name)] +
                         list(result[2]),
                     *result[3:])
-        return forms.execute_form_or_redirect(result, 'form.html',
+        return tmplutil.execute_form_or_redirect(result, 'form.html',
                                               heading=heading)
 
     def _handle_redundant_request(self, heading, text):
@@ -238,7 +238,7 @@ class AuthManager:
                 result = provider.prepare_form('logout')
             else:
                 result = (200, '', GENERIC_LOGOUT_FORM)
-        return forms.execute_form_or_redirect(result, 'form.html',
+        return tmplutil.execute_form_or_redirect(result, 'form.html',
                                               heading='Log out')
 
     def register_at(self, app):

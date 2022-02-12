@@ -4,8 +4,8 @@ import time
 import flask
 from markupsafe import Markup, escape
 
-DEFAULT_METHOD = 'post'
-DEFAULT_ENCTYPE = 'application/x-www-form-urlencoded'
+DEFAULT_FORM_METHOD = 'post'
+DEFAULT_FORM_ENCTYPE = 'application/x-www-form-urlencoded'
 
 def render_timestamp(ts):
     parts = time.gmtime(ts)
@@ -14,15 +14,16 @@ def render_timestamp(ts):
         time.strftime('%Y-%m-%d %H:%M:%S UTC', parts)
     ))
 
-def render_form(title, action, fields, method=None, enctype=Ellipsis):
+def render_form(title, action, fields, method=Ellipsis, enctype=Ellipsis):
     def maybe_attr(name, value):
         return Markup(' %s="%s"' % (name, value)) if value is not None else ''
 
-    if method is None: method = DEFAULT_METHOD
-    if enctype is Ellipsis: enctype = DEFAULT_ENCTYPE
+    if method is Ellipsis: method = DEFAULT_FORM_METHOD
+    if enctype is Ellipsis: enctype = DEFAULT_FORM_ENCTYPE
 
-    result = [Markup('<form action="%s" method="%s"%s>') %
-                  (action, method, maybe_attr('enctype', enctype))]
+    result = [Markup('<form action="%s"%s%s>') %
+                  (action, maybe_attr('method', method),
+                   maybe_attr('enctype', enctype))]
 
     if title is not None:
         result.append(Markup('  <h2>%s</h2>') % (title,) if title else '')
@@ -96,8 +97,8 @@ def execute_form_or_redirect(params, template_name, **template_params):
             return flask.render_template(template_name, form_content=text,
                                          **template_params)
         action, fields = params[1:3]
-        method = params[3] if len(params) > 3 else None
-        enctype = params[4] if len(params) > 4 else None
+        method = params[3] if len(params) > 3 else Ellipsis
+        enctype = params[4] if len(params) > 4 else Ellipsis
         form_content = render_form(None, action, fields, method, enctype)
         return flask.render_template(template_name, form_content=form_content,
                                      **template_params)
