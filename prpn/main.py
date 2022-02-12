@@ -23,8 +23,13 @@ except FileNotFoundError:
     app.logger.warn('Secret key file not found!')
 
 app.jinja_options = {'trim_blocks': True, 'lstrip_blocks': True}
-app.jinja_env.globals['render_timestamp'] = tmplutil.render_timestamp
-app.jinja_env.globals['render_form'] = tmplutil.render_form
+app.jinja_env.globals.update(
+    min=min,
+    max=max,
+    add_query=tmplutil.add_query,
+    render_timestamp=tmplutil.render_timestamp,
+    render_form=tmplutil.render_form
+)
 
 _database = db.LockedDatabase(
     os.environ.get('DATABASE', os.path.join(app.instance_path, 'db.sqlite')),

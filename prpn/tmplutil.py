@@ -1,11 +1,17 @@
 
 import time
+import urllib.parse
 
 import flask
 from markupsafe import Markup, escape
 
 DEFAULT_FORM_METHOD = 'post'
 DEFAULT_FORM_ENCTYPE = 'application/x-www-form-urlencoded'
+
+def add_query(**values):
+    new_args = [(k, v) for k, v in dict(flask.request.args, **values).items()
+                       if v is not None]
+    return '?' + urllib.parse.urlencode(new_args)
 
 def render_timestamp(ts):
     parts = time.gmtime(ts)
