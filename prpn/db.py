@@ -24,11 +24,15 @@ class Database:
         self.conn.__exit__(*exc_info)
 
     @contextlib.contextmanager
-    def _transaction(self):
+    def transaction(self, exclusive=False):
         if self.conn.in_transaction:
+            if exclusive:
+                raise RuntimeError('Already inside a transaction')
             yield
             return
         with self.conn:
+            if exclusive:
+                self.curs.execute('BEGIN EXCLUSIVE')
             yield
 
     def init(self):
@@ -43,17 +47,17 @@ class Database:
         return self.curs.fetchall()
 
     def insert(self, query, params=()):
-        with self._transaction():
+        with self.transaction():
             self.curs.execute(query, params)
             return self.curs.lastrowid
 
     def update(self, query, params=()):
-        with self._transaction():
+        with self.transaction():
             self.curs.execute(query, params)
             return self.curs.rowcount
 
     def update_many(self, query, params):
-        with self._transaction():
+        with self.transaction():
             self.curs.executemany(query, params)
             return self.curs.rowcount
 
