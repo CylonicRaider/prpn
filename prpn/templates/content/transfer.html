@@ -1,0 +1,34 @@
+{%extends "base.html"%}
+{%set subtitle = "Printing Point Transfer"%}
+{%block nav%}
+{{nav_breadcrumb("", "Transfer", True)}}
+{%endblock%}
+{%block content%}
+      <h1>Printing Point Transfer</h1>
+      <form action="" method="post" class="row align-items-baseline">
+        <label class="form-label col-lg-3 text-lg-end opacity-75">
+          Current balance (PP):
+        </label>
+        <div class="col-lg-9 opacity-75">
+          <span class="form-control d-inline-block">{%if cur_balance != None%}{{cur_balance}}{%else%}<i>N/A</i>{%endif%}</span>
+        </div>
+        <label for="amount" class="form-label col-lg-3 mt-3 mt-lg-1 text-lg-end">
+          Amount (PP):
+        </label>
+        <div class="col-lg-9 mt-lg-3">
+          <input class="form-control d-inline-block" type="number" id="amount" name="amount" min="0" max="{{cur_balance or 0}}" required="required"/>
+        </div>
+        <label for="recipient" class="form-label col-lg-3 mt-3 mt-lg-1 text-lg-end">
+          Recipient:
+        </label>
+        <div class="col-lg-9 mt-lg-3">
+          <input class="form-control d-inline-block" type="text" id="recipient" name="recipient" required="required"/>
+        </div>
+        <div class="col-lg-9 mt-3 order-lg-2">
+          <input type="submit" class="btn btn-primary" value="Transfer printing points"/>
+        </div>
+        <div class="col-lg-3 mt-3 order-lg-1">
+          <a href="{{url_for('index')}}" class="btn btn-secondary">Back to main page</a>
+        </div>
+      </form>
+{%endblock%}

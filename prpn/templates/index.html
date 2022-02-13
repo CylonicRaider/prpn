@@ -23,6 +23,9 @@
           <div class="card border-secondary">
             <div class="card-header border-secondary">Actions</div>
             <div class="list-group list-group-flush">
+              {%if has_application%}
+              <a href="{{url_for('application')}}" class="list-group-item list-group-item-action">Finish application process</a>
+              {%endif%}
               {%if user.user_status >= 3%}
               <a href="{{url_for('application_review_list')}}" class="list-group-item list-group-item-action">
                 Review applications
@@ -32,11 +35,8 @@
                 {%endif%}
                 {%endfor%}
               </a>
-              {%elif has_application%}
-              <a href="{{url_for('application')}}" class="list-group-item list-group-item-action">Finish application process</a>
-              {%else%}
-              <i class="list-group-item">None</i>
               {%endif%}
+              <a href="{{url_for('transfer')}}" class="list-group-item list-group-item-action">Transfer printing points</a>
             </div>
           </div>
         </div>
