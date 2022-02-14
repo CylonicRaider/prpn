@@ -18,11 +18,21 @@
         <div class="col-lg-9 mt-lg-3">
           <input class="form-control d-inline-block" type="number" id="amount" name="amount" min="0" max="{{cur_balance or 0}}" required="required"/>
         </div>
-        <label for="recipient" class="form-label col-lg-3 mt-3 mt-lg-1 text-lg-end">
+        <label class="form-label col-lg-3 mt-3 mt-lg-1 text-lg-end">
           Recipient:
         </label>
         <div class="col-lg-9 mt-lg-3">
-          <input class="form-control d-inline-block" type="text" id="recipient" name="recipient" required="required"/>
+          <div class="d-flex align-items-baseline">
+            <div class="form-check me-2">
+              <input class="form-check-input" type="radio" name="recipient-type" id="recipient-type-user" value="user" required="required"/>
+              <label class="form-check-label" for="recipient-type-user">User:</label>
+            </div>
+            <input class="form-control" type="text" id="recipient" name="recipient"/>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="recipient-type" id="recipient-type-acs" value="acs" required="required"/>
+            <label class="form-check-label" for="recipient-type-acs">Donate to Automated Campus Security</label>
+          </div>
         </div>
         <div class="col-lg-9 mt-3 order-lg-2">
           <input type="submit" class="btn btn-primary" value="Transfer printing points"/>
