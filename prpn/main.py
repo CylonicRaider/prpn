@@ -7,7 +7,7 @@ import click
 import flask
 
 from . import auth, db, schema, tmplutil
-from .content import application, transfer
+from .content import application, transfer, complaint
 
 app = flask.Flask('prpn')
 app.instance_path = os.environ.get('DATA_DIR',
@@ -101,5 +101,6 @@ def error_404(exc):
 _auth_manager.register_at(app)
 application.register_at(app)
 transfer.register_at(app)
+complaint.register_at(app)
 
 if __name__ == '__main__': app.run()
