@@ -44,6 +44,7 @@ _auth_manager = auth.AuthManager(_database, _auth_providers)
 app.jinja_env.globals['get_user_info'] = _auth_manager.get_user_info
 app.prpn.get_user_info = _auth_manager.get_user_info
 app.prpn.reload_user_info = _auth_manager.reload_user_info
+app.prpn.requires_auth = auth.requires_auth
 
 @app.cli.command('init')
 def init_files():

@@ -1,12 +1,13 @@
 
 import os
 import base64
+import functools
 import importlib
 import sqlite3
 import urllib.parse
 
 import click
-from flask import flash, g, render_template, request, session
+from flask import abort, flash, g, render_template, request, session
 from markupsafe import Markup
 
 from . import tmplutil
@@ -71,6 +72,17 @@ def get_user_info():
         result = {'logged_in': False}
     g._USER_INFO = result
     return result
+
+def requires_auth(level):
+    def callback(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            user_info = get_user_info()
+            if not user_info['logged_in'] or user_info['user_status'] < level:
+                return abort(404)
+            return func(*args, **kwargs)
+        return wrapper
+    return callback
 
 def sanitize_next_url(text):
     if not text: return request.root_path + '/'

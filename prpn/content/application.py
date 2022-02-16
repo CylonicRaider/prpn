@@ -262,9 +262,9 @@ def get_application_counts(db):
 
 def register_at(app):
     @app.route('/apply', methods=('GET', 'POST'))
+    @app.prpn.requires_auth(0)
     def application():
         user_info = app.prpn.get_user_info()
-        if not user_info['logged_in']: return flask.abort(404)
         db = app.prpn.get_database()
         app_info = db.query('SELECT * FROM applications WHERE user = ?',
                             (user_info['user_id'],))
@@ -280,17 +280,13 @@ def register_at(app):
         return handle_get(user_info, app_info)
 
     @app.route('/apply/review')
+    @app.prpn.requires_auth(3)
     def application_review_list():
-        user_info = app.prpn.get_user_info()
-        if not user_info['logged_in'] or user_info['user_status'] < 3:
-            return flask.abort(404)
         return handle_review_list(app)
 
     @app.route('/apply/review/<int:uid>', methods=('GET', 'POST'))
+    @app.prpn.requires_auth(3)
     def application_review(uid):
-        user_info = app.prpn.get_user_info()
-        if not user_info['logged_in'] or user_info['user_status'] < 3:
-            return flask.abort(404)
         if flask.request.method == 'POST':
             result = handle_review_post(uid, app)
             if result is not None:

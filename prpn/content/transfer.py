@@ -68,10 +68,9 @@ def handle_post(user_info, db):
 
 def register_at(app):
     @app.route('/transfer', methods=('GET', 'POST'))
+    @app.prpn.requires_auth(2)
     def transfer():
         user_info = app.prpn.get_user_info()
-        if not user_info['logged_in'] or user_info['user_status'] < 2:
-            return flask.abort(404)
         db = app.prpn.get_database()
         if flask.request.method == 'POST':
             result = handle_post(user_info, db)
