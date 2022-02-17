@@ -13,24 +13,26 @@ class Database:
         self.conn = sqlite3.connect(path, **kwargs)
         self.conn.row_factory = sqlite3.Row
         self.curs = self.conn.cursor()
+        self._transactions = 0
         self.init()
         if init is not None: init(self)
 
     def __enter__(self):
-        self.conn.__enter__()
+        if self._transactions == 0:
+            self.conn.__enter__()
+        self._transactions += 1
         return self.curs
 
     def __exit__(self, *exc_info):
-        self.conn.__exit__(*exc_info)
+        self._transactions -= 1
+        if self._transactions == 0:
+            self.conn.__exit__(*exc_info)
 
     @contextlib.contextmanager
     def transaction(self, exclusive=False):
-        if self.conn.in_transaction:
-            if exclusive:
-                raise RuntimeError('Already inside a transaction')
-            yield
-            return
-        with self.conn:
+        if self.conn.in_transaction and exclusive:
+            raise RuntimeError('Already inside a transaction')
+        with self:
             if exclusive:
                 self.curs.execute('BEGIN EXCLUSIVE')
             yield
