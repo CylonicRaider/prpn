@@ -14,6 +14,7 @@ class Database:
         self.conn.row_factory = sqlite3.Row
         self.curs = self.conn.cursor()
         self._transactions = 0
+        self._is_exclusive = None
         self.init()
         if init is not None: init(self)
 
@@ -26,16 +27,18 @@ class Database:
     def __exit__(self, *exc_info):
         self._transactions -= 1
         if self._transactions == 0:
+            self._is_exclusive = None
             self.conn.__exit__(*exc_info)
 
     @contextlib.contextmanager
     def transaction(self, exclusive=False):
-        if self.conn.in_transaction and exclusive:
+        if exclusive and self._transactions and not self._is_exclusive:
             raise RuntimeError('Already inside a transaction')
         with self:
             if exclusive:
                 self.curs.execute('BEGIN EXCLUSIVE')
-            yield
+            self._is_exclusive = exclusive
+            yield self
 
     def init(self):
         self.curs.execute('PRAGMA foreign_keys = ON')
