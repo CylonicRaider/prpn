@@ -2,7 +2,8 @@
 from .content import application
 
 def init_schema(db):
-    with db as curs:
+    with db:
+        curs = db.curs
         curs.execute('CREATE TABLE IF NOT EXISTS allUsers ('
                          'id INTEGER PRIMARY KEY, '
                          'name TEXT NOT NULL UNIQUE, '

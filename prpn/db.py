@@ -22,7 +22,7 @@ class Database:
         if self._transactions == 0:
             self.conn.__enter__()
         self._transactions += 1
-        return self.curs
+        return self
 
     def __exit__(self, *exc_info):
         self._transactions -= 1
