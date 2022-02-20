@@ -1,4 +1,5 @@
 
+from . import scheduler
 from .content import application
 
 def init_schema(db):
@@ -16,4 +17,5 @@ def init_schema(db):
                      'SELECT id AS id, name AS name, points AS points '
                          'FROM allUsers '
                          'WHERE status >= 2')
+        scheduler.init_schema(curs)
         application.init_schema(curs)
