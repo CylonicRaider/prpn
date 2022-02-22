@@ -15,8 +15,7 @@ app.instance_path = os.environ.get('DATA_DIR',
 app.prpn = flask.ctx._AppCtxGlobals()
 
 try:
-    KEY_FILE = os.environ.get('KEY_FILE', os.path.join(app.instance_path,
-                                                       'cookie-key.bin'))
+    KEY_FILE = os.path.join(app.instance_path, 'cookie-key.bin')
     with open(KEY_FILE, 'rb') as fp:
         app.secret_key = fp.read()
 except FileNotFoundError:
@@ -31,10 +30,8 @@ app.jinja_env.globals.update(
     render_form=tmplutil.render_form
 )
 
-_database = db.LockedDatabase(
-    os.environ.get('DATABASE', os.path.join(app.instance_path, 'db.sqlite')),
-    schema.init_schema
-)
+_database = db.LockedDatabase(os.path.join(app.instance_path, 'db.sqlite'),
+                              schema.init_schema)
 app.prpn.get_database = _database.register_to(app, flask.g)
 
 _auth_providers = auth.providers_from_name(os.environ.get('AUTH_PROVIDER'))
