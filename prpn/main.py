@@ -14,12 +14,22 @@ app.instance_path = os.environ.get('DATA_DIR',
     os.path.normpath(os.path.join(app.root_path, '..', 'data')))
 app.prpn = flask.ctx._AppCtxGlobals()
 
-try:
-    KEY_FILE = os.path.join(app.instance_path, 'cookie-key.bin')
-    with open(KEY_FILE, 'rb') as fp:
-        app.secret_key = fp.read()
-except FileNotFoundError:
-    app.logger.warn('Secret key file not found!')
+_init_tasks = []
+def run_init_tasks():
+    tasks, _init_tasks[:] = _init_tasks[:], []
+    for task in tasks:
+        task()
+app.prpn.run_init_tasks = run_init_tasks
+app.prpn.init_task = _init_tasks.append
+
+KEY_FILE = os.path.join(app.instance_path, 'cookie-key.bin')
+@app.prpn.init_task
+def load_key_file():
+    try:
+        with open(KEY_FILE, 'rb') as fp:
+            app.secret_key = fp.read()
+    except FileNotFoundError:
+        app.logger.warn('Secret key file not found!')
 
 app.jinja_options = {'trim_blocks': True, 'lstrip_blocks': True}
 app.jinja_env.globals.update(
@@ -101,4 +111,16 @@ application.register_at(app)
 transfer.register_at(app)
 complaint.register_at(app)
 
-if __name__ == '__main__': app.run()
+if __name__ == '__main__':
+    run_init_tasks()
+    app.run()
+elif (os.environ.get('FLASK_RUN_FROM_CLI') == 'true' and
+        os.environ.get('FORCE_INIT') != 'true'):
+    # HACK: Flask does not provide a clear indication of whether the server
+    #       is going to be run, so we guess "yes" whenever the current command
+    #       is some sort of "run".
+    _ctx = click.get_current_context()
+    if _ctx and _ctx.info_name == 'run':
+        run_init_tasks()
+else:
+    run_init_tasks()
