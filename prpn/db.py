@@ -94,6 +94,12 @@ class LockedDatabase:
         db, self.db = self.db, None
         if db is not None: db.close()
 
+    @contextlib.contextmanager
+    def transaction(self, *args, **kwargs):
+        with self as db:
+            with db.transaction(*args, **kwargs):
+                yield db
+
     def __enter__(self):
         return self.acquire()
 

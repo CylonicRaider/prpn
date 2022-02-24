@@ -21,8 +21,8 @@ def init_schema(curs):
                      'ON scheduled(nextRun)')
 
 class Scheduler:
-    def __init__(self, db, logger):
-        self.db = db
+    def __init__(self, ldb, logger):
+        self.ldb = ldb
         self.logger = logger
         self.commands = {}
         self._cond = threading.Condition()
@@ -53,17 +53,16 @@ class Scheduler:
 
     def schedule(self, cmd, params, timestamp=None, serial=False):
         if timestamp is None: timestamp = time.time()
-        with self.db.transaction(True):
+        with self.ldb.transaction(True) as db:
             if serial:
-                queued = self.db.query('SELECT 1 FROM scheduled '
-                                           'WHERE type = ? LIMIT 1',
-                                       (cmd,))
+                queued = db.query('SELECT 1 FROM scheduled WHERE type = ? '
+                                      'LIMIT 1',
+                                  (cmd,))
                 if queued: return
-            self.db.insert('INSERT INTO scheduled(type, params, nextRun, '
-                                                 'gcAt) '
-                               'VALUES (?, ?, ?, ?)',
-                           (cmd, json.dumps(params), timestamp,
-                            timestamp + UNKNOWN_EXPIRE))
+            db.insert('INSERT INTO scheduled(type, params, nextRun, gcAt) '
+                          'VALUES (?, ?, ?, ?)',
+                      (cmd, json.dumps(params), timestamp,
+                       timestamp + UNKNOWN_EXPIRE))
         with self._cond:
             self._cond.notify_all()
 
@@ -87,9 +86,8 @@ class Scheduler:
             return (False, None)
         return (True, next_run)
 
-    def _next_task(self, now):
-        row = self.db.query('SELECT * FROM scheduled ORDER BY nextRun '
-                            'LIMIT 1')
+    def _next_task(self, db, now):
+        row = db.query('SELECT * FROM scheduled ORDER BY nextRun LIMIT 1')
         if row is None:
             return (None, now + IDLE_PAUSE)
         elif row['nextRun'] > now:
@@ -107,7 +105,7 @@ class Scheduler:
                 now = time.time()
                 if now < wait_until:
                     self._cond.wait(wait_until - now)
-            with self.db.transaction(True):
+            with self.ldb.transaction(True) as db:
                 row, wait_until = self._next_task()
                 if row is None:
                     continue
@@ -115,16 +113,14 @@ class Scheduler:
                 ok, next_run = self.run_scheduled(row['type'], params,
                                                   row['nextRun'], row['gcAt'])
                 if next_run is None:
-                    self.db.update('DELETE FROM scheduled WHERE id = ?',
+                    db.update('DELETE FROM scheduled WHERE id = ?',
                                    (row['id'],))
                 elif ok:
-                    self.db.update('UPDATE scheduled SET nextRun = ?, '
-                                                        'gcAt = ? '
-                                       'WHERE id = ?',
-                                   (next_run, next_run + UNKNOWN_EXPIRE,
-                                    row['id']))
+                    db.update('UPDATE scheduled SET nextRun = ?, gcAt = ? '
+                                  'WHERE id = ?',
+                              (next_run, next_run + UNKNOWN_EXPIRE,
+                               row['id']))
                 else:
-                    self.db.update('UPDATE scheduled SET nextRun = ? '
-                                       'WHERE id = ?',
-                                   (next_run, row['id']))
-                next_row, wait_until = self._next_task()
+                    db.update('UPDATE scheduled SET nextRun = ? WHERE id = ?',
+                              (next_run, row['id']))
+                next_row, wait_until = self._next_task(db, now)
