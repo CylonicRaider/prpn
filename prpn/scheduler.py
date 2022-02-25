@@ -1,5 +1,6 @@
 
 import time
+import collections
 import json
 import threading
 
@@ -25,6 +26,7 @@ class Scheduler:
         self.ldb = ldb
         self.logger = logger
         self.commands = {}
+        self._deferred = collections.deque()
         self._cond = threading.Condition()
         self._busy = False
         self._thread = None
@@ -66,6 +68,13 @@ class Scheduler:
         with self._cond:
             self._cond.notify_all()
 
+    def schedule_later(self, cmd, params, timestamp=None, serial=False):
+        if timestamp is None: timestamp = time.time()
+        with self._cond:
+            self._deferred.append(lambda: self.schedule(cmd, params,
+                                                        timestamp, serial))
+            self._cond.notify_all()
+
     def run_scheduled(self, cmd, params, timestamp, expires):
         try:
             callback = self.commands[cmd]
@@ -96,15 +105,22 @@ class Scheduler:
             return (row, now)
 
     def _run(self):
-        wait_until = time.time()
+        def_task, wait_until = None, time.time()
         while 1:
+            if def_task:
+                def_task()
+                def_task = None
             with self._cond:
                 if not self._busy:
                     self._thread = None
                     break
+                if self._deferred:
+                    def_task = self._deferred.popleft()
+                    continue
                 now = time.time()
                 if now < wait_until:
                     self._cond.wait(wait_until - now)
+                    continue
             with self.ldb.transaction(True) as db:
                 row, wait_until = self._next_task()
                 if row is None:
