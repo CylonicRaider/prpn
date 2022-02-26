@@ -1,6 +1,7 @@
 
 import time
 import collections
+import functools
 import json
 import threading
 
@@ -74,6 +75,16 @@ class Scheduler:
             self._deferred.append(lambda: self.schedule(cmd, params,
                                                         timestamp, serial))
             self._cond.notify_all()
+
+    def register_regular(self, cmd, callback, time_callback):
+        @functools.wraps(callback)
+        def wrapper(cmd, params, timestamp):
+            callback(timestamp)
+            return time_callback(timestamp)
+
+        with self._cond:
+            self.register(cmd, wrapper)
+            self.schedule_later(cmd, None, time_callback(time.time()), True)
 
     def run_scheduled(self, cmd, params, timestamp, expires):
         try:
