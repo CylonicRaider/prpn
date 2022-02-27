@@ -22,6 +22,12 @@ def init_schema(curs):
     curs.execute('CREATE INDEX IF NOT EXISTS scheduled_nextRun '
                      'ON scheduled(nextRun)')
 
+def regular_schedule(period, offset=0, fuzz=1):
+    def callback(timestamp):
+        return ((timestamp + fuzz) // period + 1) * period + offset
+
+    return callback
+
 class Scheduler:
     def __init__(self, ldb, logger):
         self.ldb = ldb
