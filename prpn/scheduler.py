@@ -88,6 +88,11 @@ class Scheduler:
             callback(timestamp)
             return time_callback(timestamp)
 
+        if isinstance(time_callback, (int, float)):
+            time_callback = regular_schedule(time_callback)
+        elif isinstance(time_callback, (tuple, list)):
+            time_callback = regular_schedule(*time_callback)
+
         with self._cond:
             self.register(cmd, wrapper)
             self.schedule_later(cmd, None, time_callback(time.time()), True)
