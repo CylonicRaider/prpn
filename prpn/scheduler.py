@@ -144,7 +144,7 @@ class Scheduler:
                     self._cond.wait(wait_until - now)
                     continue
             with self.ldb.transaction(True) as db:
-                row, wait_until = self._next_task()
+                row, wait_until = self._next_task(db, now)
                 if row is None:
                     continue
                 params = json.loads(row['params'])
