@@ -162,3 +162,17 @@ class Scheduler:
                     db.update('UPDATE scheduled SET nextRun = ? WHERE id = ?',
                               (next_run, row['id']))
                 next_row, wait_until = self._next_task(db, now)
+
+    def add_callback(self, name):
+        def callback(func):
+            self.register(name, func)
+            return func
+
+        return callback
+
+    def add_regular(self, name, schedule):
+        def callback(func):
+            self.register_regular(name, func, schedule)
+            return func
+
+        return callback
