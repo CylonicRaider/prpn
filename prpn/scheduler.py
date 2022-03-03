@@ -57,8 +57,15 @@ class Scheduler:
         if thr is not None:
             thr.join()
 
-    def register(self, cmd, callback):
+    def register_ex(self, cmd, callback):
         self.commands[cmd] = callback
+
+    def register(self, cmd, callback):
+        @functools.wraps(callback)
+        def wrapper(cmd, params, timestamp):
+            return callback(params, timestamp)
+
+        self.register_ex(cmd, wrapper)
 
     def schedule(self, cmd, params, timestamp=None, serial=False):
         if timestamp is None: timestamp = time.time()
@@ -94,7 +101,7 @@ class Scheduler:
             time_callback = regular_schedule(*time_callback)
 
         with self._cond:
-            self.register(cmd, wrapper)
+            self.register_ex(cmd, wrapper)
             self.schedule_later(cmd, None, time_callback(time.time()), True)
 
     def run_scheduled(self, cmd, params, timestamp, expires):
@@ -162,6 +169,13 @@ class Scheduler:
                     db.update('UPDATE scheduled SET nextRun = ? WHERE id = ?',
                               (next_run, row['id']))
                 next_row, wait_until = self._next_task(db, now)
+
+    def add_callback_ex(self, name):
+        def callback(func):
+            self.register_ex(name, func)
+            return func
+
+        return callback
 
     def add_callback(self, name):
         def callback(func):
