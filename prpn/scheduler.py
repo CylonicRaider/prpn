@@ -67,7 +67,7 @@ class Scheduler:
 
         self.register_ex(cmd, wrapper)
 
-    def schedule(self, cmd, params, timestamp=None, serial=False):
+    def schedule(self, cmd, params=None, timestamp=None, serial=False):
         if timestamp is None: timestamp = time.time()
         with self.ldb.transaction(True) as db:
             if serial:
@@ -82,7 +82,7 @@ class Scheduler:
         with self._cond:
             self._cond.notify_all()
 
-    def schedule_later(self, cmd, params, timestamp=None, serial=False):
+    def schedule_later(self, cmd, params=None, timestamp=None, serial=False):
         if timestamp is None: timestamp = time.time()
         with self._cond:
             self._deferred.append(lambda: self.schedule(cmd, params,
