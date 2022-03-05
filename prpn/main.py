@@ -6,7 +6,7 @@ import os
 import click
 import flask
 
-from . import auth, db, schema, tmplutil
+from . import auth, db, scheduler, schema, tmplutil
 from .content import application, transfer, complaint
 
 app = flask.Flask('prpn')
@@ -43,6 +43,12 @@ app.jinja_env.globals.update(
 _database = db.LockedDatabase(os.path.join(app.instance_path, 'db.sqlite'),
                               schema.init_schema)
 app.prpn.get_database = _database.register_to(app, flask.g)
+
+_scheduler = scheduler.Scheduler(_database, app.logger)
+app.prpn.schedule_cb_ex = _scheduler.add_callback_ex
+app.prpn.schedule_cb = _scheduler.add_callback
+app.prpn.schedule_regular = _scheduler.add_regular
+app.prpn.schedule = _scheduler.schedule_later
 
 _auth_providers = auth.providers_from_name(os.environ.get('AUTH_PROVIDER'))
 for _provider in _auth_providers: _provider.register_at(app)
@@ -107,6 +113,7 @@ def error_404(exc):
     return (flask.render_template('404.html'), 404)
 
 _auth_manager.register_at(app)
+_scheduler.register_at(app)
 application.register_at(app)
 transfer.register_at(app)
 complaint.register_at(app)

@@ -190,3 +190,6 @@ class Scheduler:
             return func
 
         return callback
+
+    def register_at(self, app):
+        app.prpn.init_task(self.start)
