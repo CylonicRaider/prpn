@@ -124,10 +124,11 @@ if __name__ == '__main__':
 elif (os.environ.get('FLASK_RUN_FROM_CLI') == 'true' and
         os.environ.get('FORCE_INIT') != 'true'):
     # HACK: Flask does not provide a clear indication of whether the server
-    #       is going to be run, so we guess "yes" whenever the current command
-    #       is some sort of "run".
-    _ctx = click.get_current_context()
-    if _ctx and _ctx.info_name == 'run':
+    #       is going to be run. Experimentally, it looks like there is no
+    #       active click context when running the server.
+    _ctx = click.get_current_context(True)
+    if not _ctx:
+        app.logger.info('Initializing runtime services...')
         run_init_tasks()
 else:
     run_init_tasks()
