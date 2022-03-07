@@ -2,7 +2,7 @@
     <script src="{{url_for('static', filename=serverFilename)}}" defer="defer"></script>
 {%-endmacro%}
 {%macro nav_breadcrumb(href, text, active=False)%}
-          <span class="navbar-text">&#8250;</span>
+          <span class="navbar-text d-none d-lg-block">&#8250;</span>
           <div class="navbar-nav">
             <a href="{{href}}" class="nav-link{%if active%} active{%endif%}">{{text}}</a>
           </div>
