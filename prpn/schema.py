@@ -1,6 +1,6 @@
 
 from . import scheduler
-from .content import application
+from .content import application, lottery
 
 def init_schema(db):
     with db:
@@ -19,3 +19,4 @@ def init_schema(db):
                          'WHERE status >= 2')
         scheduler.init_schema(curs)
         application.init_schema(curs)
+        lottery.init_schema(curs)

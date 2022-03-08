@@ -7,7 +7,7 @@ import click
 import flask
 
 from . import auth, db, scheduler, schema, tmplutil
-from .content import application, transfer, complaint
+from .content import application, complaint, lottery, transfer
 
 app = flask.Flask('prpn')
 app.instance_path = os.environ.get('DATA_DIR',
@@ -115,8 +115,9 @@ def error_404(exc):
 _auth_manager.register_at(app)
 _scheduler.register_at(app)
 application.register_at(app)
-transfer.register_at(app)
 complaint.register_at(app)
+lottery.register_at(app)
+transfer.register_at(app)
 
 if __name__ == '__main__':
     run_init_tasks()
