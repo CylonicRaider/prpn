@@ -1,7 +1,10 @@
 
 import sqlite3
+import random
 
 import flask
+
+RANDOM = random.SystemRandom()
 
 def init_schema(curs):
     curs.execute('CREATE TABLE IF NOT EXISTS lottery ('
@@ -68,3 +71,21 @@ def register_at(app):
                                                      'WHERE user = ?',
                                                  (user_info['user_id'],))
         return handle_get(user_info, lot_data)
+
+    # Like every good lottery, the Printing Point Lottery announces its
+    # results in the (early) evening.
+    @app.prpn.schedule_regular('lottery-run', (86400, 64800))
+    def lottery_run(timestamp):
+        with app.get_database().transaction(True) as db:
+            user_count = db.query('SELECT COUNT(*) FROM lottery')[0]
+            if user_count == 0: return
+            chosen_index = RANDOM.randrange(user_count)
+            chosen_uid = db.query('SELECT user FROM lottery ORDER BY user '
+                                      'LIMIT 1 OFFSET ?',
+                                  (chosen_index,))[0]
+            db.update('UPDATE allUsers SET points = points + 1 WHERE id = ?',
+                      (chosen_uid,))
+            db.update('UPDATE lottery SET awarded = awarded + 1, '
+                                         'totalAwarded = totalAwarded + 1 '
+                          'WHERE user = ?',
+                      (chosen_uid,))
