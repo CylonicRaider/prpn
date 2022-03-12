@@ -35,7 +35,7 @@ class Database:
         if exclusive and self._transactions and not self._is_exclusive:
             raise RuntimeError('Already inside a transaction')
         with self:
-            if exclusive:
+            if exclusive and not self._is_exclusive:
                 self.curs.execute('BEGIN EXCLUSIVE')
             self._is_exclusive = exclusive
             yield self

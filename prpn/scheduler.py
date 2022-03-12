@@ -29,9 +29,10 @@ def regular_schedule(period, offset=0, fuzz=1):
     return callback
 
 class Scheduler:
-    def __init__(self, ldb, logger):
+    def __init__(self, ldb, logger, app=None):
         self.ldb = ldb
         self.logger = logger
+        self.app = app
         self.commands = {}
         self._deferred = collections.deque()
         self._cond = threading.Condition()
@@ -104,6 +105,13 @@ class Scheduler:
             self.register_ex(cmd, wrapper)
             self.schedule_later(cmd, None, time_callback(time.time()), True)
 
+    def _in_context(self, func, *args, **kwds):
+        if self.app is not None:
+            with self.app.app_context():
+                return func(*args, **kwds)
+        else:
+            return func(*args, **kwds)
+
     def run_scheduled(self, cmd, params, timestamp, expires):
         try:
             callback = self.commands[cmd]
@@ -155,8 +163,8 @@ class Scheduler:
                 if row is None:
                     continue
                 params = json.loads(row['params'])
-                ok, next_run = self.run_scheduled(row['type'], params,
-                                                  row['nextRun'], row['gcAt'])
+                ok, next_run = self._in_context(self.run_scheduled,
+                    row['type'], params, row['nextRun'], row['gcAt'])
                 if next_run is None:
                     db.update('DELETE FROM scheduled WHERE id = ?',
                                    (row['id'],))

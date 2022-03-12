@@ -44,7 +44,7 @@ _database = db.LockedDatabase(os.path.join(app.instance_path, 'db.sqlite'),
                               schema.init_schema)
 app.prpn.get_database = _database.register_to(app, flask.g)
 
-_scheduler = scheduler.Scheduler(_database, app.logger)
+_scheduler = scheduler.Scheduler(_database, app.logger, app)
 app.prpn.schedule_cb_ex = _scheduler.add_callback_ex
 app.prpn.schedule_cb = _scheduler.add_callback
 app.prpn.schedule_regular = _scheduler.add_regular
