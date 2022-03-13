@@ -76,7 +76,7 @@ def register_at(app):
     # results in the (early) evening.
     @app.prpn.schedule_regular('lottery-run', (86400, 64800))
     def lottery_run(timestamp):
-        with app.get_database().transaction(True) as db:
+        with app.prpn.get_database().transaction(True) as db:
             user_count = db.query('SELECT COUNT(*) FROM lottery')[0]
             if user_count == 0: return
             chosen_index = RANDOM.randrange(user_count)
