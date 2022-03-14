@@ -14,6 +14,10 @@ app.instance_path = os.environ.get('DATA_DIR',
     os.path.normpath(os.path.join(app.root_path, '..', 'data')))
 app.prpn = flask.ctx._AppCtxGlobals()
 
+if (app.env != 'development' and
+        app.config.get('SEND_FILE_MAX_AGE_DEFAULT') is None):
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 3600
+
 _init_tasks = []
 def run_init_tasks():
     tasks, _init_tasks[:] = _init_tasks[:], []
