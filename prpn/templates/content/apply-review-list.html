@@ -63,12 +63,13 @@
       {%else%}
       <p class="mt-2"><i>No applications</i></p>
       {%endif%}
-      <nav>
-        <ul class="pagination justify-content-center">
+      <nav class="d-flex flex-wrap">
+        <ul class="pagination justify-content-center mx-auto mb-0">
           <li class="page-item{%if offset == 0%} disabled{%endif%}"><a class="page-link" href="{{add_query(offset=None)}}">&#171;</a></li>
           <li class="page-item{%if offset == 0%} disabled{%endif%}"><a class="page-link" href="{{add_query(offset=max(offset - amount, 0))}}">&#8249;</a></li>
           <li class="page-item active"><a class="page-link" href="">{{(offset // amount) + 1}}</a></li>
           <li class="page-item{%if not has_more%} disabled{%endif%}"><a class="page-link" href="{{add_query(offset=offset + amount)}}">&#8250;</a></li>
         </ul>
+        <a class="btn btn-outline-secondary" href="{{url_for('index')}}">Back to main page</a>
       </nav>
 {%endblock%}
