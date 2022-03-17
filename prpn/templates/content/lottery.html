@@ -8,14 +8,14 @@
       <p>You are <b>{%if not enrolled%}not {%endif%}enrolled</b> into the Printing Point Lottery.</p>
       {%if enrolled%}
       <p>You won <b>{{total_awarded}}</b> printing points (<b>{{awarded}}</b> since the last counter reset).</p>
-      <form action="" method="post" class="d-flex flex-wrap">
+      <form action="" method="post" class="d-flex flex-wrap gap-2">
         <button class="btn btn-secondary" type="submit" name="action" value="reset-counter">Reset counter</button>
         <button class="btn btn-danger me-auto" type="submit" name="action" value="leave">Leave the Lottery</button>
-        <a class="btn btn-outline-secondary" href="{{url_for('/')}}">Back to main page</a>
+        <a class="btn btn-outline-secondary" href="{{url_for('index')}}">Back to main page</a>
       </form>
       {%else%}
       <p>You may enroll into the Printing Point Lottery for a one-time fee of <strong>one printing point</strong>.</p>
-      <form action="" method="post" class="d-flex flex-wrap">
+      <form action="" method="post" class="d-flex flex-wrap gap-2">
         <button class="btn btn-primary me-auto" type="submit" name="action" value="join">Join the Lottery</button>
         <a class="btn btn-outline-secondary" href="{{url_for('index')}}">Back to main page</a>
       </form>

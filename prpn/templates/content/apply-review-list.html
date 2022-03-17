@@ -63,7 +63,7 @@
       {%else%}
       <p class="mt-2"><i>No applications</i></p>
       {%endif%}
-      <nav class="d-flex flex-wrap">
+      <nav class="d-flex flex-wrap gap-2">
         <ul class="pagination justify-content-center mx-auto mb-0">
           <li class="page-item{%if offset == 0%} disabled{%endif%}"><a class="page-link" href="{{add_query(offset=None)}}">&#171;</a></li>
           <li class="page-item{%if offset == 0%} disabled{%endif%}"><a class="page-link" href="{{add_query(offset=max(offset - amount, 0))}}">&#8249;</a></li>
