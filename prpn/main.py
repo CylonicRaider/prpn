@@ -7,7 +7,7 @@ import click
 import flask
 
 from . import auth, db, scheduler, schema, tmplutil
-from .content import application, complaint, lottery, transfer
+from .content import application, complaint, index, lottery, transfer
 
 app = flask.Flask('prpn')
 app.instance_path = os.environ.get('DATA_DIR',
@@ -89,25 +89,6 @@ def add_points(name, points):
             raise ValueError('Unrecognized user {!r}'.format(name))
     print('OK')
 
-@app.route('/')
-def index():
-    user_info = app.prpn.get_user_info()
-    points, has_app, app_counts = None, None, None
-    if user_info['logged_in']:
-        if user_info['user_status'] < 2:
-            return flask.redirect(flask.url_for('application'))
-        db = app.prpn.get_database()
-        row = db.query('SELECT points FROM users WHERE id = ?',
-                       (user_info['user_id'],))
-        if row is not None:
-            points = row['points']
-        has_app = db.query('SELECT 1 FROM applications WHERE user = ?',
-                           (user_info['user_id'],))
-        if user_info['user_status'] >= 3:
-            app_counts = application.get_application_counts(db)
-    return flask.render_template('index.html', points=points,
-        has_application=has_app, app_counts=app_counts)
-
 @app.route('/favicon.ico')
 def favicon():
     return flask.send_from_directory(app.static_folder, 'img/favicon.ico')
@@ -120,6 +101,7 @@ _auth_manager.register_at(app)
 _scheduler.register_at(app)
 application.register_at(app)
 complaint.register_at(app)
+index.register_at(app)
 lottery.register_at(app)
 transfer.register_at(app)
 
