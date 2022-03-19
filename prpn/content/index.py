@@ -21,4 +21,4 @@ def register_at(app):
             params.update(get_index_info(user_info, db))
             params.update(application.get_index_info(user_info, db))
             params.update(lottery.get_index_info(user_info, db))
-        return flask.render_template('index.html', **params)
+        return flask.render_template('content/index.html', **params)
