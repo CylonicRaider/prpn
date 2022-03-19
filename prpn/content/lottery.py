@@ -58,6 +58,12 @@ def handle_post(app, user_info):
             flask.flash('You are not enrolled into the '
                         'Printing Point Lottery', 'info')
 
+def get_index_info(user_info, db):
+    row = db.query('SELECT awarded FROM lottery WHERE user = ?',
+                   (user_info['user_id'],))
+    awarded = None if row is None else row['awarded']
+    return {'lottery_awarded': awarded}
+
 def register_at(app):
     @app.route('/lottery', methods=('GET', 'POST'))
     @app.prpn.requires_auth(0)

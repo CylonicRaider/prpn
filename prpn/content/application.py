@@ -260,6 +260,14 @@ def get_application_counts(db):
             'rejected_hidden': rejected_hidden,
             'rejected_public': rejected_public}
 
+def get_index_info(user_info, db):
+    app_row = db.query('SELECT 1 FROM applications WHERE user = ?',
+                       (user_info['user_id'],))
+    result = {'has_application': bool(app_row)}
+    if user_info['user_status'] >= 3:
+        result['app_counts'] = get_application_counts(db)
+    return result
+
 def register_at(app):
     @app.route('/apply', methods=('GET', 'POST'))
     @app.prpn.requires_auth(0)

@@ -26,7 +26,7 @@
               {%if has_application%}
               <a href="{{url_for('application')}}" class="list-group-item list-group-item-action">Finish application process</a>
               {%endif%}
-              {%if user.user_status >= 3%}
+              {%if user.user_status >= 3 and app_counts%}
               <a href="{{url_for('application_review_list')}}" class="list-group-item list-group-item-action">
                 Review applications
                 {%for key, cls in (('pending', 'primary'), ('accepted', 'success'), ('rejected_hidden', 'secondary'), ('rejected_public', 'warning'))%}
@@ -36,9 +36,18 @@
                 {%endfor%}
               </a>
               {%endif%}
-              <a href="{{url_for('transfer')}}" class="list-group-item list-group-item-action">Transfer printing points</a>
-              <a href="{{url_for('acs_complaint')}}" class="list-group-item list-group-item-action">Submit complaint to Automated Campus Security</a>
-              <a href="{{url_for('lottery')}}" class="list-group-item list-group-item-action">View Printing Point Lottery status</a>
+              <a href="{{url_for('transfer')}}" class="list-group-item list-group-item-action">
+                Transfer printing points
+              </a>
+              <a href="{{url_for('acs_complaint')}}" class="list-group-item list-group-item-action">
+                Submit complaint to Automated Campus Security
+              </a>
+              <a href="{{url_for('lottery')}}" class="list-group-item list-group-item-action">
+                View Printing Point Lottery status
+                {%if lottery_awarded%}
+                <span class="badge rounded-pill bg-success">{{lottery_awarded}}</span>
+                {%endif%}
+              </a>
             </div>
           </div>
         </div>
