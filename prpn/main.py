@@ -7,7 +7,7 @@ import click
 import flask
 
 from . import auth, db, scheduler, schema, tmplutil
-from .content import application, complaint, index, lottery, transfer
+from .content import application, complaint, index, lottery, transfer, user
 
 app = flask.Flask('prpn')
 app.instance_path = os.environ.get('DATA_DIR',
@@ -104,6 +104,7 @@ complaint.register_at(app)
 index.register_at(app)
 lottery.register_at(app)
 transfer.register_at(app)
+user.register_at(app)
 
 if __name__ == '__main__':
     run_init_tasks()

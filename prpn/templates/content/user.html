@@ -1,0 +1,31 @@
+{%extends "base.html"%}
+{%set subtitle = "User Profile"%}
+{%block nav%}
+{%if get_user_info().user_status >= 3%}
+{{nav_breadcrumb(url_for("user_list"), "Users")}}
+{%endif%}
+{%if get_user_info().user_name == profile_name%}
+{{nav_breadcrumb("", "Profile", True)}}
+{%elif get_user_info().user_status < 3%}
+{{nav_breadcrumb("", "User Details", True)}}
+{%else%}
+{{nav_breadcrumb("", "Details", True)}}
+{%endif%}
+{%endblock%}
+{%block content%}
+      <h1>User Profile: <span class="user-name">{{display_name}}</span></h1>
+      {%if not profile_data.visible%}
+      {%if get_user_info().user_status >= 3%}
+      {%if profile_data.visibility >= 0%}
+      <p>This User Profile is private.</p>
+      <a href="{{add_query(override='true')}}" class="btn btn-warning">View anyway</a>
+      {%else%}
+      <p>This User Profile does not exist.</p>
+      {%endif%}
+      {%else%}
+      <p>This User Profile does not exist or is private.</p>
+      {%endif%}
+      {%else%}
+      <p><i>Displaying user profiles is Not Yet Implemented.</i></p>
+      {%endif%}
+{%endblock%}

@@ -4,8 +4,9 @@ import random
 
 import flask
 
+from .. import tmplutil
+
 PAGE_SIZE = 10
-MAX_OFFSET = 2 ** 63 - 1
 
 RANDOM = random.SystemRandom()
 
@@ -127,12 +128,7 @@ def handle_post(user_info, app_info, app):
 
 def handle_review_list(app):
     now = time.time()
-    try:
-        offset = int(flask.request.args.get('offset', '0'), 10)
-        if offset < 0 or offset > MAX_OFFSET:
-            raise ValueError('Pagination offset out of range')
-    except ValueError:
-        return flask.abort(400)
+    offset = tmplutil.get_request_int64p('offset')
     criterion = flask.request.args.get('filter', 'all')
     if criterion == 'PENDING':
         filter_sql = ('WHERE content IS NOT NULL AND comments IS NULL')

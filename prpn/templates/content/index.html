@@ -10,12 +10,15 @@
             <div class="card-body">
               <dl class="mb-0 row">
                 <dt class="col-md-4 mb-0 text-md-end">User name:</dt>
-                <dd class="col-md-8">{{user.user_name}}</dd>
+                <dd class="col-md-8"><span class="user-name">{{user.user_name}}</span></dd>
                 <dt class="col-md-4 mb-0 text-md-end">Status:</dt>
                 <dd class="col-md-8">{{user.user_type}}</dd>
                 <dt class="col-md-4 mb-0 text-md-end">Printing points:</dt>
                 <dd class="col-md-8 mb-0">{%if points == None%}<i>N/A</i>{%else%}{{points}}{%endif%}</dd>
               </dl>
+            </div>
+            <div class="card-footer border-primary">
+              <a href="{{url_for('user', name=user.user_name)}}" class="btn btn-primary">View profile</a>
             </div>
           </div>
         </div>
@@ -24,7 +27,9 @@
             <div class="card-header border-secondary">Actions</div>
             <div class="list-group list-group-flush">
               {%if has_application%}
-              <a href="{{url_for('application')}}" class="list-group-item list-group-item-action">Finish application process</a>
+              <a href="{{url_for('application')}}" class="list-group-item list-group-item-action">
+                Finish application process
+              </a>
               {%endif%}
               {%if user.user_status >= 3 and app_counts%}
               <a href="{{url_for('application_review_list')}}" class="list-group-item list-group-item-action">
@@ -36,6 +41,9 @@
                 {%endfor%}
               </a>
               {%endif%}
+              <a href="{{url_for('user_list')}}" class="list-group-item list-group-item-action">
+                View user profiles
+              </a>
               <a href="{{url_for('transfer')}}" class="list-group-item list-group-item-action">
                 Transfer printing points
               </a>

@@ -8,6 +8,18 @@ from markupsafe import Markup, escape
 DEFAULT_FORM_METHOD = 'post'
 DEFAULT_FORM_ENCTYPE = 'application/x-www-form-urlencoded'
 
+MAX_INT64 = 2 ** 63 - 1
+
+def get_request_int64p(name, default=0):
+    try:
+        result = int(flask.request.args.get(name, str(default)), 10)
+        if result < 0 or result > MAX_INT64:
+            raise ValueError('Integer out of range')
+    except ValueError:
+        flask.abort(400)
+        return None
+    return result
+
 def add_query(**values):
     new_args = [(k, v) for k, v in dict(flask.request.args, **values).items()
                        if v is not None]

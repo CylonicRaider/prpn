@@ -1,6 +1,6 @@
 
 from . import scheduler
-from .content import application, lottery
+from .content import application, lottery, user
 
 def init_schema(db):
     with db:
@@ -9,7 +9,7 @@ def init_schema(db):
                          'id INTEGER PRIMARY KEY, '
                          'name TEXT NOT NULL UNIQUE, '
                          # 0 = non-user; 1 = potential user entity; 2 = user;
-                         # 3 = privileged user.
+                         # 3 = enhanced user.
                          'status INTEGER NOT NULL DEFAULT 0, '
                          'points INTEGER NOT NULL DEFAULT 0'
                      ')')
@@ -20,3 +20,4 @@ def init_schema(db):
         scheduler.init_schema(curs)
         application.init_schema(curs)
         lottery.init_schema(curs)
+        user.init_schema(curs)

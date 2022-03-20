@@ -1,0 +1,10 @@
+{%extends "base.html"%}
+{%set subtitle = "Users"%}
+{%block nav%}
+{{nav_breadcrumb("", "Users", True)}}
+{{nav_breadcrumb(url_for("user", name=get_user_info().user_name), "Profile")}}
+{%endblock%}
+{%block content%}
+      <h1>User Listing</h1>
+      <p><i>Listing user profiles is Not Yet Implemented.</i></p>
+{%endblock%}
