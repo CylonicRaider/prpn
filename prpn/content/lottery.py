@@ -66,7 +66,7 @@ def get_index_info(user_info, db):
 
 def register_at(app):
     @app.route('/lottery', methods=('GET', 'POST'))
-    @app.prpn.requires_auth(0)
+    @app.prpn.requires_auth(2)
     def lottery():
         user_info = app.prpn.get_user_info()
         if flask.request.method == 'POST':
