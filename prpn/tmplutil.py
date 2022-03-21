@@ -20,10 +20,12 @@ def get_request_int64p(name, default=0):
         return None
     return result
 
-def add_query(**values):
+def add_query_ex(values):
     new_args = [(k, v) for k, v in dict(flask.request.args, **values).items()
                        if v is not None]
     return '?' + urllib.parse.urlencode(new_args)
+def add_query(**values):
+    return add_query_ex(values)
 
 def render_timestamp(ts):
     parts = time.gmtime(ts)
@@ -31,6 +33,36 @@ def render_timestamp(ts):
         time.strftime('%Y-%m-%dT%H:%M:%SZ', parts),
         time.strftime('%Y-%m-%d %H:%M:%S UTC', parts)
     ))
+
+def render_pagination(offset, page_size, has_more, offset_var='offset'):
+    cp, po = divmod(offset, page_size)
+    pages = []
+    if cp >= 2: pages.append((0, '1'))
+    if cp >= 3: pages.append((page_size, '2'))
+    if cp >= 4: pages.append((None, '...'))
+    if cp >= 1: pages.append(((cp - 1) * page_size, str(cp)))
+    pages.append((cp * page_size, str(cp + 1)))
+    if po != 0: pages.append((offset,
+                              '%d.%d' % (cp + 1, po * 10 // page_size)))
+    if has_more: pages.append(((cp + 1) * page_size, str(cp + 2)))
+
+    result = [
+        Markup('<ul class="pagination justify-content-center mb-0 mx-auto">')
+    ]
+    for o, t in pages:
+        if o is None:
+            result.append(Markup('<li class="page-item disabled">'
+                                     '<span class="page-link">%s</span>'
+                                 '</li>' % (t,)))
+        else:
+            result.append(Markup('<li class="page-item%s">'
+                                   '<a class="page-link" href="%s">%s</a>'
+                                 '</li>') %
+                              ((' active' if o == offset else ''),
+                               add_query_ex({offset_var: o}),
+                               t))
+    result.append(Markup('</ul>'))
+    return Markup('').join(result)
 
 def render_form(title, action, fields, method=Ellipsis, enctype=Ellipsis):
     def maybe_attr(name, value):
