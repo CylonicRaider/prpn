@@ -13,12 +13,12 @@
 {%endif%}
 {%endblock%}
 {%block content%}
-      <h1>User Profile: <span class="user-name">{{display_name}}</span></h1>
+      <h1>User Profile: <span class="user-name">{{profile_data.displayName}}</span></h1>
       {%if not profile_data.visible%}
       {%if get_user_info().user_status >= 3%}
       {%if profile_data.visibility >= 0%}
       <p>This User Profile is private.</p>
-      <a href="{{add_query(override='true')}}" class="btn btn-warning">View anyway</a>
+      <a href="{{add_query(force='yes')}}" class="btn btn-warning">View anyway</a>
       {%else%}
       <p>This User Profile does not exist.</p>
       {%endif%}
@@ -26,6 +26,43 @@
       <p>This User Profile does not exist or is private.</p>
       {%endif%}
       {%else%}
-      <p><i>Displaying user profiles is Not Yet Implemented.</i></p>
+      <div class="card border-primary mb-3">
+        <div class="card-header border-primary text-primary bg-primary bg-opacity-10 fw-bold">Basics:</div>
+        <div class="card-body">
+          <dl class="row mb-0">
+            <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">User name:</dt>
+            <dd class="col-sm-8 col-md-9 col-lg-10">
+              <span class="user-name">{{profile_data.name}}</span>
+              {%if profile_data.displayName != profile_data.name%}
+              (display as: <span class="user-name">{{profile_data.displayName}}</span>)
+              {%endif%}
+            </dd>
+            <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Status:</dt>
+            <dd class="col-sm-8 col-md-9 col-lg-10">
+              {{profile_data.statusName}}
+            </dd>
+            <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Printing points:</dt>
+            <dd class="col-sm-8 col-md-9 col-lg-10">
+              {%if profile_data.points == None%}<i>N/A</i>{%else%}{{profile_data.points}}{%endif%}
+            </dd>
+            <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Profile visibility:</dt>
+            <dd class="col-sm-8 col-md-9 col-lg-10 mb-0">
+              {{profile_data.visibilityName}}
+            </dd>
+          </dl>
+        </div>
+      </div>
+      <dl class="card border-secondary mb-3">
+        <dt class="card-header border-secondary">Description:</dt>
+        <dd class="card-body mb-0">{%if profile_data.description == None%}<i>None provided</i>{%else%}{{profile_data.description}}{%endif%}</dd>
+      </dl>
+      {%set can_edit = (get_user_info().user_name == profile_name)%}
+      <nav class="d-flex flex-wrap align-items-baseline{%if not can_edit%} justify-content-end{%endif%} gap-2">
+        {%if can_edit%}
+        <span class="form-label">Actions:</span>
+        <a class="btn btn-primary me-auto" href="{{add_query(edit='yes')}}">Edit</a>
+        {%endif%}
+        <a class="btn btn-outline-secondary" href="{{url_for('index')}}">Back to main page</a>
+      </nav>
       {%endif%}
 {%endblock%}

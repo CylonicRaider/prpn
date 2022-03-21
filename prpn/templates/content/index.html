@@ -6,7 +6,7 @@
       <div class="row">
         <div class="col-lg-6 mb-3 mb-lg-0">
           <div class="card border-primary">
-            <div class="card-header border-primary text-primary">User information</div>
+            <div class="card-header border-primary bg-primary bg-opacity-10 text-primary fw-bold">User information</div>
             <div class="card-body">
               <dl class="mb-0 row">
                 <dt class="col-md-4 mb-0 text-md-end">User name:</dt>
@@ -24,7 +24,7 @@
         </div>
         <div class="col-lg-6 mb-3 mb-lg-0">
           <div class="card border-secondary">
-            <div class="card-header border-secondary">Actions</div>
+            <div class="card-header border-secondary fw-bold">Actions</div>
             <div class="list-group list-group-flush">
               {%if has_application%}
               <a href="{{url_for('application')}}" class="list-group-item list-group-item-action">

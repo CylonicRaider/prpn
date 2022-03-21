@@ -2,6 +2,7 @@
 import flask
 
 from .. import tmplutil
+from ..auth import STATUS_TO_NAME
 
 PAGE_SIZE = 10
 
@@ -43,7 +44,7 @@ def handle_user_get(name, acc_info, db):
     if visibility < 2 and not (acc_info['user_id'] == profile_data['id'] or
                                acc_info['user_status'] >= 3 and
                                    visibility >= 0 and
-                                   flask.request.args.get('override')):
+                                   flask.request.args.get('force')):
         profile_data = {
             'visible': False,
             'visibility': visibility
@@ -52,11 +53,13 @@ def handle_user_get(name, acc_info, db):
         profile_data.update(
             visible=True,
             visibility=visibility,
-            visibility_name=VISIBILITY_TO_NAME[visibility]
+            visibilityName=VISIBILITY_TO_NAME[visibility],
+            statusName=STATUS_TO_NAME[profile_data['status']]
         )
-    display_name = profile_data.get('displayName') or name
-    return flask.render_template('content/user.html', profile_name=name,
-                                 display_name=display_name,
+    if not profile_data.get('displayName'):
+        profile_data['displayName'] = name
+    return flask.render_template('content/user.html',
+                                 profile_name=name,
                                  profile_data=profile_data)
 
 def register_at(app):

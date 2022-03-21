@@ -16,6 +16,7 @@
 
 .user-name {
   unicode-bidi: embed;
+  font-style: italic;
 }
 
 .badge-group {
