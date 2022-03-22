@@ -26,43 +26,79 @@
       <p>This User Profile does not exist or is private.</p>
       {%endif%}
       {%else%}
-      <div class="card border-primary mb-3">
-        <div class="card-header border-primary text-primary bg-primary bg-opacity-10 fw-bold">Basics:</div>
-        <div class="card-body">
-          <dl class="row mb-0">
-            <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">User name:</dt>
-            <dd class="col-sm-8 col-md-9 col-lg-10">
-              <span class="user-name">{{profile_data.name}}</span>
-              {%if profile_data.displayName != profile_data.name%}
-              (display as: <span class="user-name">{{profile_data.displayName}}</span>)
+      {%set is_editing = may_edit and request.args.get('edit')%}
+      {%if is_editing%}
+      <form action="" method="post">
+        <input type="hidden" name="user" value="{{profile_name}}"/>
+      {%else%}
+      <div class="user-profile">
+      {%endif%}
+        <div class="card border-primary mb-3">
+          <div class="card-header border-primary text-primary bg-primary bg-opacity-10 fw-bold">Basics:</div>
+          <div class="card-body">
+            <dl class="row mb-0 align-items-baseline">
+              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">User name:</dt>
+              <dd class="col-sm-8 col-md-9 col-lg-10">
+                <span class="user-name">{{profile_data.name}}</span>
+                {%if profile_data.displayName != profile_data.name and not is_editing%}
+                (display as: <span class="user-name">{{profile_data.displayName}}</span>)
+                {%endif%}
+              </dd>
+              {%if is_editing%}
+              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Display name:</dt>
+              <dd class="col-sm-8 col-md-9 col-lg-10">
+                <input type="text" name="display-name" value="{{profile_data.displayName}}" class="form-control d-inline-block"/>
+              </dd>
               {%endif%}
-            </dd>
-            <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Status:</dt>
-            <dd class="col-sm-8 col-md-9 col-lg-10">
-              {{profile_data.statusName}}
-            </dd>
-            <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Printing points:</dt>
-            <dd class="col-sm-8 col-md-9 col-lg-10">
-              {%if profile_data.points == None%}<i>N/A</i>{%else%}{{profile_data.points}}{%endif%}
-            </dd>
-            <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Profile visibility:</dt>
-            <dd class="col-sm-8 col-md-9 col-lg-10 mb-0">
-              {{profile_data.visibilityName}}
-            </dd>
-          </dl>
+              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Status:</dt>
+              <dd class="col-sm-8 col-md-9 col-lg-10">
+                {{profile_data.statusName}}
+              </dd>
+              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Printing points:</dt>
+              <dd class="col-sm-8 col-md-9 col-lg-10">
+                {%if profile_data.points == None%}<i>N/A</i>{%else%}{{profile_data.points}}{%endif%}
+              </dd>
+              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Profile visibility:</dt>
+              <dd class="col-sm-8 col-md-9 col-lg-10 mb-0">
+                {%if is_editing%}
+                {%for (id, name, label, details) in all_visibilities%}
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="visibility" id="visibility-{{name}}" value="{{name}}"
+                  {%-if profile_data.visibility == id%} checked="checked"{%endif-%}/>
+                  <label class="form-check-label" for="visibility-{{name}}">{{label}} <small class="fst-italic">({{details}})</small></label>
+                </div>
+                {%endfor%}
+                {%else%}
+                {{profile_data.visibilityName}}
+                {%endif%}
+              </dd>
+            </dl>
+          </div>
         </div>
-      </div>
-      <dl class="card border-secondary mb-3">
-        <dt class="card-header border-secondary">Description:</dt>
-        <dd class="card-body mb-0">{%if profile_data.description == None%}<i>None provided</i>{%else%}{{profile_data.description}}{%endif%}</dd>
-      </dl>
-      {%set can_edit = (get_user_info().user_name == profile_name)%}
-      <nav class="d-flex flex-wrap align-items-baseline{%if not can_edit%} justify-content-end{%endif%} gap-2">
-        {%if can_edit%}
-        <span class="form-label">Actions:</span>
-        <a class="btn btn-primary me-auto" href="{{add_query(edit='yes')}}">Edit</a>
-        {%endif%}
-        <a class="btn btn-outline-secondary" href="{{url_for('index')}}">Back to main page</a>
-      </nav>
+        <dl class="card border-secondary mb-3">
+          <dt class="card-header border-secondary">Description:</dt>
+          <dd class="card-body mb-0">
+            {%if is_editing%}
+            <textarea class="form-control" name="description" rows="5">{{profile_data.description or ""}}</textarea>
+            {%elif profile_data.description == None%}
+            <i>None provided</i>
+            {%else%}
+            {{profile_data.description}}
+            {%endif%}
+          </dd>
+        </dl>
+        <nav class="d-flex flex-wrap align-items-baseline{%if not may_edit%} justify-content-end{%endif%} gap-2">
+          {%if may_edit%}
+          <span class="form-label">Actions:</span>
+          {%if is_editing%}
+          <button type="submit" class="btn btn-primary">Save changes</button>
+          <a class="btn btn-secondary me-auto" href="{{add_query(edit=None)}}">Cancel editing</a>
+          {%else%}
+          <a class="btn btn-primary me-auto" href="{{add_query(edit='yes')}}">Edit</a>
+          {%endif%}
+          {%endif%}
+          <a class="btn btn-outline-secondary" href="{{url_for('index')}}">Back to main page</a>
+        </nav>
+      {%if not is_editing%}</div>{%else%}</form>{%endif%}
       {%endif%}
 {%endblock%}
