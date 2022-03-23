@@ -79,11 +79,11 @@
           <dt class="card-header border-secondary">Description:</dt>
           <dd class="card-body mb-0">
             {%if is_editing%}
-            <textarea class="form-control" name="description" rows="5">{{profile_data.description or ""}}</textarea>
+            <textarea class="form-control font-monospace" name="description" rows="5">{{profile_data.description or ""}}</textarea>
             {%elif profile_data.description == None%}
             <i>None provided</i>
             {%else%}
-            {{profile_data.description}}
+            <span class="font-monospace preserve-whitespace">{{profile_data.description}}</span>
             {%endif%}
           </dd>
         </dl>

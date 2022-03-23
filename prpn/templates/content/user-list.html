@@ -6,5 +6,38 @@
 {%endblock%}
 {%block content%}
       <h1>User Listing</h1>
-      <p><i>Listing user profiles is Not Yet Implemented.</i></p>
+      {%if entries%}
+      <table class="table table-hover align-baseline">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Status</th>
+            <th>Points</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+        {%for entry in entries%}
+          <tr>
+            <td>{{entry.name}}</td>
+            <td class="py-0">
+              {%set badge_cls = {0: 'bg-danger',
+                                 1: 'bg-warning text-dark',
+                                 2: 'bg-success',
+                                 3: 'bg-primary'}.get(entry.status, 'bg-secondary')%}
+              <span class="badge badge-large rounded-pill {{badge_cls}}">{{entry.statusName | upper}}</span>
+            </td>
+            <td>{{entry.points}}</td>
+            <td class="py-0"><a class="btn btn-outline-primary btn-sm btn-tight" href="{{url_for('user', name=entry.name)}}">Details</a></td>
+          </tr>
+        {%endfor%}
+        </tbody>
+      </table>
+      {%else%}
+      <p class="mt-2"><i>No users</i></p>
+      {%endif%}
+      <nav class="d-flex flex-wrap gap-2">
+        {{render_pagination(offset, amount, has_more)}}
+        <a class="btn btn-outline-secondary" href="{{url_for('index')}}">Back to main page</a>
+      </nav>
 {%endblock%}

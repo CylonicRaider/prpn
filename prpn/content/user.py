@@ -38,7 +38,8 @@ def handle_user_list(db):
                                 'ORDER BY name ASC LIMIT ? OFFSET ?',
                             (PAGE_SIZE + 1, offset))
     has_more = (len(entries) > PAGE_SIZE)
-    entries = entries[:PAGE_SIZE]
+    entries = [dict(e, statusName=STATUS_TO_NAME[e['status']])
+               for e in entries[:PAGE_SIZE]]
     return flask.render_template('content/user-list.html', entries=entries,
         offset=offset, amount=PAGE_SIZE, has_more=has_more)
 
@@ -70,8 +71,10 @@ def handle_user_get(name, acc_info, db):
         )
     if not profile_data.get('displayName'):
         profile_data['displayName'] = name
-    may_edit = (acc_info['user_id'] == profile_data['id'] or
-                acc_info['user_status'] >= 3)
+    may_edit = (profile_data['visible'] and (
+        acc_info['user_id'] == profile_data['id'] or
+        acc_info['user_status'] >= 3
+    ))
     return flask.render_template('content/user.html', profile_name=name,
                                  profile_data=profile_data, may_edit=may_edit,
                                  all_visibilities=VISIBILITY_DESCS)
@@ -131,7 +134,7 @@ def register_at(app):
     @app.prpn.requires_auth(2)
     def user_list():
         # For non-Enhanced Users, this redirects to one's own profile page.
-        # Eventually, this could displays a Friend listing instead.
+        # Eventually, this could display a Friend listing instead.
         user_info = app.prpn.get_user_info()
         if user_info['user_status'] < 3:
             return flask.redirect(flask.url_for('user',
