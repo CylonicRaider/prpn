@@ -28,7 +28,9 @@
               <span class="badge badge-large rounded-pill {{badge_cls}}">{{entry.statusName | upper}}</span>
             </td>
             <td>{{entry.points}}</td>
-            <td class="py-0"><a class="btn btn-outline-primary btn-sm btn-tight" href="{{url_for('user', name=entry.name)}}">Details</a></td>
+            <td class="py-0">
+              <a class="btn btn-outline-primary btn-sm btn-tight" href="{{url_for('user', name=entry.name)}}">Details</a>
+            </td>
           </tr>
         {%endfor%}
         </tbody>
