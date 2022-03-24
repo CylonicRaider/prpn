@@ -32,10 +32,27 @@ def init_schema(curs):
                  ')')
 
 def handle_user_list(db):
+    criterion = flask.request.args.get('filter', 'ALL')
+    if criterion == 'USER':
+        filter_sql = 'WHERE status >= 2'
+    elif criterion == 'USER_REGULAR':
+        filter_sql = 'WHERE status = 2'
+    elif criterion == 'USER_ENHANCED':
+        filter_sql = 'WHERE status = 3'
+    elif criterion == 'NONUSER':
+        filter_sql = 'WHERE status <= 1'
+    elif criterion == 'NONUSER_PENDING':
+        filter_sql = 'WHERE status = 1'
+    elif criterion == 'NONUSER_FINAL':
+        filter_sql = 'WHERE status = 0'
+    else:
+        filter_sql = ''
     offset = tmplutil.get_request_int64p('offset')
-    entries = db.query_many('SELECT name, status, points FROM allUsers '
-                                'WHERE status >= 2 '
-                                'ORDER BY name ASC LIMIT ? OFFSET ?',
+    entries = db.query_many('SELECT id, name, status, points, '
+                                   'EXISTS(SELECT * FROM pendingApplications '
+                                          'WHERE uid = id) AS hasApplication '
+                                'FROM allUsers ' + filter_sql +
+                                ' ORDER BY name ASC LIMIT ? OFFSET ?',
                             (PAGE_SIZE + 1, offset))
     has_more = (len(entries) > PAGE_SIZE)
     entries = [dict(e,

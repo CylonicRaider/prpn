@@ -24,7 +24,7 @@ GENERIC_ERRORS = {
 
 STATUS_TO_NAME = {0: 'Non-User', 1: 'Potential User Entity', 2: 'User',
                   3: 'Enhanced User'}
-STATUS_TO_SHORT_NAME = {0: 'Non-User', 1: 'Pot. User Ent.', 2: 'User',
+STATUS_TO_SHORT_NAME = {0: 'Non-User', 1: 'P. U. E.', 2: 'User',
                         3: 'Enh. User'}
 
 class AuthProvider:

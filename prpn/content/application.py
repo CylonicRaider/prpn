@@ -129,7 +129,7 @@ def handle_post(user_info, app_info, app):
 def handle_review_list(app):
     now = time.time()
     offset = tmplutil.get_request_int64p('offset')
-    criterion = flask.request.args.get('filter', 'all')
+    criterion = flask.request.args.get('filter', 'ALL')
     if criterion == 'PENDING':
         filter_sql = ('WHERE content IS NOT NULL AND comments IS NULL')
     elif criterion == 'RESOLVED':

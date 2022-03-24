@@ -6,10 +6,33 @@
 {%endblock%}
 {%block content%}
       <h1>User Listing</h1>
+      <nav class="d-flex flex-wrap align-items-baseline gap-2">
+        <span class="form-label me-1">View:</span>
+        {%set cur_filter = request.args.get('filter')%}
+        <a class="btn btn-outline-info{%if not cur_filter%} active{%endif%}" href="{{add_query(filter=None)}}">All</a>
+        <div class="btn-group">
+          <a class="btn btn-outline-success{%if cur_filter == 'USER'%} active{%endif%}" href="{{add_query(filter='USER')}}">Users</a>
+          <button class="btn btn-outline-success dropdown-toggle dropdown-toggle-split{%if cur_filter in ('USER_REGULAR', 'USER_ENHANCED')%} active{%endif%}" data-bs-toggle="dropdown"></button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item{%if cur_filter == 'USER_REGULAR'%} active{%endif%}" href="{{add_query(filter='USER_REGULAR')}}">Regular only</a></li>
+            <li><a class="dropdown-item{%if cur_filter == 'USER_ENHANCED'%} active{%endif%}" href="{{add_query(filter='USER_ENHANCED')}}">Enhanced only</a></li>
+          </ul>
+        </div>
+        <div class="btn-group me-auto">
+          <a class="btn btn-outline-warning{%if cur_filter == 'NONUSER'%} active{%endif%}" href="{{add_query(filter='NONUSER')}}">Non-Users</a>
+          <button class="btn btn-outline-warning dropdown-toggle dropdown-toggle-split{%if cur_filter in ('NONUSER_PENDING', 'NONUSER_FINAL')%} active{%endif%}" data-bs-toggle="dropdown"></button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item{%if cur_filter == 'NONUSER_PENDING'%} active{%endif%}" href="{{add_query(filter='NONUSER_PENDING')}}">P.U.E.s only</a></li>
+            <li><a class="dropdown-item{%if cur_filter == 'NONUSER_FINAL'%} active{%endif%}" href="{{add_query(filter='NONUSER_FINAL')}}">Final Non-Users only</a></li>
+          </ul>
+        </div>
+        <a class="btn btn-outline-secondary" href="{{url_for('application_review_list')}}">Review applications</a>
+      </nav>
       {%if entries%}
       <table class="table table-hover align-baseline">
         <thead>
           <tr>
+            <th>ID</th>
             <th>User</th>
             <th>Status</th>
             <th>Points</th>
@@ -19,6 +42,7 @@
         <tbody>
         {%for entry in entries%}
           <tr>
+            <td>{{entry.id}}</td>
             <td>{{entry.name}}</td>
             <td class="py-0">
               {%set badge_cls = {0: 'bg-danger',
@@ -29,7 +53,12 @@
             </td>
             <td>{{entry.points}}</td>
             <td class="py-0">
+              {%if entry.status >= 2%}
               <a class="btn btn-outline-primary btn-sm btn-tight" href="{{url_for('user', name=entry.name)}}">Details</a>
+              {%endif%}
+              {%if entry.hasApplication%}
+              <a class="btn btn-outline-primary btn-sm btn-tight" href="{{url_for('application_review', uid=entry.id)}}">Review application</a>
+              {%endif%}
             </td>
           </tr>
         {%endfor%}
