@@ -25,7 +25,7 @@
                                  1: 'bg-warning text-dark',
                                  2: 'bg-success',
                                  3: 'bg-primary'}.get(entry.status, 'bg-secondary')%}
-              <span class="badge badge-large rounded-pill {{badge_cls}}">{{entry.statusName | upper}}</span>
+              <span class="badge badge-large rounded-pill {{badge_cls}}" title="{{entry.statusName}}">{{entry.shortStatusName | upper}}</span>
             </td>
             <td>{{entry.points}}</td>
             <td class="py-0">

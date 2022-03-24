@@ -2,7 +2,7 @@
 import flask
 
 from .. import tmplutil
-from ..auth import STATUS_TO_NAME
+from ..auth import STATUS_TO_NAME, STATUS_TO_SHORT_NAME
 
 PAGE_SIZE = 10
 
@@ -38,7 +38,9 @@ def handle_user_list(db):
                                 'ORDER BY name ASC LIMIT ? OFFSET ?',
                             (PAGE_SIZE + 1, offset))
     has_more = (len(entries) > PAGE_SIZE)
-    entries = [dict(e, statusName=STATUS_TO_NAME[e['status']])
+    entries = [dict(e,
+                    statusName=STATUS_TO_NAME[e['status']],
+                    shortStatusName=STATUS_TO_SHORT_NAME[e['status']])
                for e in entries[:PAGE_SIZE]]
     return flask.render_template('content/user-list.html', entries=entries,
         offset=offset, amount=PAGE_SIZE, has_more=has_more)
@@ -67,7 +69,8 @@ def handle_user_get(name, acc_info, db):
             visible=True,
             visibility=visibility,
             visibilityName=VISIBILITY_TO_NAME[visibility],
-            statusName=STATUS_TO_NAME[profile_data['status']]
+            statusName=STATUS_TO_NAME[profile_data['status']],
+            shortStatusName=STATUS_TO_SHORT_NAME[profile_data['status']]
         )
     if not profile_data.get('displayName'):
         profile_data['displayName'] = name
