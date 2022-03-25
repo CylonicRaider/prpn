@@ -1,8 +1,7 @@
 {%extends "base.html"%}
 {%block content%}
       <h1 class="text-center">Printing Point Management Administration</h1>
-      {%with user = get_user_info()%}
-      {%if user.logged_in%}
+      {%if user_info.logged_in%}
       <div class="row">
         <div class="col-lg-6 mb-3 mb-lg-0">
           <div class="card border-primary">
@@ -10,15 +9,15 @@
             <div class="card-body">
               <dl class="mb-0 row">
                 <dt class="col-md-4 mb-0 text-md-end">User name:</dt>
-                <dd class="col-md-8"><span class="user-name">{{user.user_name}}</span></dd>
+                <dd class="col-md-8"><span class="user-name">{{user_info.user_name}}</span></dd>
                 <dt class="col-md-4 mb-0 text-md-end">Status:</dt>
-                <dd class="col-md-8">{{user.user_type}}</dd>
+                <dd class="col-md-8">{{user_info.user_type}}</dd>
                 <dt class="col-md-4 mb-0 text-md-end">Printing points:</dt>
                 <dd class="col-md-8 mb-0">{%if points == None%}<i>N/A</i>{%else%}{{points}}{%endif%}</dd>
               </dl>
             </div>
             <div class="card-footer border-primary">
-              <a href="{{url_for('user', name=user.user_name)}}" class="btn btn-primary">View profile</a>
+              <a href="{{url_for('user', name=user_info.user_name)}}" class="btn btn-primary">View profile</a>
             </div>
           </div>
         </div>
@@ -31,7 +30,7 @@
                 Finish application process
               </a>
               {%endif%}
-              {%if user.user_status >= 3 and app_counts%}
+              {%if user_info.user_status >= 3 and app_counts%}
               <a href="{{url_for('application_review_list')}}" class="list-group-item list-group-item-action">
                 Review applications
                 {%for key, cls in (('pending', 'primary'), ('accepted', 'success'), ('rejected_hidden', 'secondary'), ('rejected_public', 'warning'))%}
@@ -72,5 +71,4 @@
         <div class="col-lg-2"></div>
       </form>
       {%endif%}
-      {%endwith%}
 {%endblock%}

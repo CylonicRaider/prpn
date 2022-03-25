@@ -3,7 +3,7 @@
 {%set subtitle = "Users"%}
 {%block nav%}
 {{nav_breadcrumb("", "Users", True)}}
-{{nav_breadcrumb(url_for("user", name=get_user_info().user_name), "Profile")}}
+{{nav_breadcrumb(url_for("user", name=user_info.user_name), "Profile")}}
 {%endblock%}
 {%block content%}
       <h1>User Listing</h1>
@@ -47,7 +47,7 @@
             <td>{{entry.name}}</td>
             <td class="py-0">
               {{badges.user_status(entry.status, short=True)}}
-              {%if entry.id == get_user_info().user_id%}
+              {%if entry.id == user_info.user_id%}
               <span class="badge rounded-pill bg-info text-dark">YOU</span>
               {%endif%}
             </td>

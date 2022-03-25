@@ -7,6 +7,7 @@
             <a href="{{href}}" class="nav-link{%if active%} active{%endif%}">{{text}}</a>
           </div>
 {%-endmacro%}
+{%set user_info = get_user_info()%}
 <!DOCTYPE html>
 <html>
   <head>
@@ -30,10 +31,9 @@
         </button>
         <div class="collapse navbar-collapse" id="navbar-content">
           {%block nav%}{%endblock%}
-          {%with user = get_user_info()%}
-          {%if user.logged_in%}
+          {%if user_info.logged_in%}
           <form action="{{url_for('logout')}}" method="post" class="d-flex ms-auto align-items-baseline">
-            <span>{{user.user_type}}: <b>{{user.user_name}}</b></span>
+            <span>{{user_info.user_type}}: <b>{{user_info.user_name}}</b></span>
             <button type="submit" class="btn btn-outline-primary ms-1">Log out</button>
           </form>
           {%else%}
@@ -43,7 +43,6 @@
             <button type="submit" name="register" value="yes" class="btn btn-outline-primary ms-1">Sign up</button>
           </form>
           {%endif%}
-          {%endwith%}
         </div>
       </div>
     </nav>
