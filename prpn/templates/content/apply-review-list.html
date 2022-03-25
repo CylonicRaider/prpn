@@ -54,7 +54,12 @@
             <td>{{render_timestamp(entry.timestamp)}}</td>
             <td class="py-0">
               {%if entry.status == 'PENDING'%}
-              <a href="{{url_for('application_review', uid=entry.uid)}}" class="btn btn-outline-primary btn-sm btn-tight">Review</a>
+              <a href="{{url_for('application_review', uid=entry.uid)}}" class="btn btn-outline-primary btn-sm btn-tight">Review...</a>
+              {%else%}
+              <a href="{{url_for('application_review', uid=entry.uid)}}" class="btn btn-outline-secondary btn-sm btn-tight">Details...</a>
+              {%endif%}
+              {%if entry.userStatus >= 2%}
+              <a href="{{url_for('user', name=entry.name)}}" class="btn btn-outline-secondary btn-sm btn-tight">Profile...</a>
               {%endif%}
             </td>
           </tr>

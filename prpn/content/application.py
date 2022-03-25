@@ -157,11 +157,12 @@ def handle_review_list(app):
         entries=entries, offset=offset, amount=PAGE_SIZE, has_more=has_more)
 
 def handle_review_get(uid, app):
-    entry = app.prpn.get_database().query('SELECT * FROM pendingApplications '
+    now = time.time()
+    entry = app.prpn.get_database().query('SELECT * FROM allApplications '
                                               'WHERE uid = ?',
                                           (uid,))
-    if entry is None:
-        return flask.abort(404)
+    if entry is not None:
+        entry = dict(entry, status=get_application_status(entry, now))
     return flask.render_template('content/apply-review.html', entry=entry,
         mandatory_items=MANDATORY_ITEMS, prohibited_items=PROHIBITED_ITEMS)
 

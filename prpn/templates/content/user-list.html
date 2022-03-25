@@ -49,15 +49,18 @@
                                  1: 'bg-warning text-dark',
                                  2: 'bg-success',
                                  3: 'bg-primary'}.get(entry.status, 'bg-secondary')%}
-              <span class="badge badge-large rounded-pill {{badge_cls}}" title="{{entry.statusName}}">{{entry.shortStatusName | upper}}</span>
+              <span class="badge rounded-pill {{badge_cls}}" title="{{entry.statusName}}">{{entry.shortStatusName | upper}}</span>
+              {%if entry.id == get_user_info().user_id%}
+              <span class="badge rounded-pill bg-info text-dark">YOU</span>
+              {%endif%}
             </td>
             <td>{{entry.points}}</td>
             <td class="py-0">
               {%if entry.status >= 2%}
-              <a class="btn btn-outline-primary btn-sm btn-tight" href="{{url_for('user', name=entry.name)}}">Details</a>
+              <a class="btn btn-outline-primary btn-sm btn-tight" href="{{url_for('user', name=entry.name)}}">Details...</a>
               {%endif%}
               {%if entry.hasApplication%}
-              <a class="btn btn-outline-primary btn-sm btn-tight" href="{{url_for('application_review', uid=entry.id)}}">Review application</a>
+              <a class="btn btn-outline-secondary btn-sm btn-tight" href="{{url_for('application_review', uid=entry.id)}}">Application...</a>
               {%endif%}
             </td>
           </tr>

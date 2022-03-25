@@ -49,7 +49,7 @@ def handle_user_list(db):
         filter_sql = ''
     offset = tmplutil.get_request_int64p('offset')
     entries = db.query_many('SELECT id, name, status, points, '
-                                   'EXISTS(SELECT * FROM pendingApplications '
+                                   'EXISTS(SELECT * FROM allApplications '
                                           'WHERE uid = id) AS hasApplication '
                                 'FROM allUsers ' + filter_sql +
                                 ' ORDER BY name ASC LIMIT ? OFFSET ?',
