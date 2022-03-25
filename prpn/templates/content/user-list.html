@@ -44,7 +44,7 @@
         {%for entry in entries%}
           <tr>
             <td>{{entry.id}}</td>
-            <td>{{entry.name}}</td>
+            <td><span class="user-name">{{entry.name}}</span></td>
             <td class="py-0">
               {{badges.user_status(entry.status, short=True)}}
               {%if entry.id == user_info.user_id%}

@@ -1,4 +1,5 @@
 {%extends "base.html"%}
+{%import "lib/badges.html" as badges%}
 {%block content%}
       <h1 class="text-center">Printing Point Management Administration</h1>
       {%if user_info.logged_in%}
@@ -11,7 +12,7 @@
                 <dt class="col-md-4 mb-0 text-md-end">User name:</dt>
                 <dd class="col-md-8"><span class="user-name">{{user_info.user_name}}</span></dd>
                 <dt class="col-md-4 mb-0 text-md-end">Status:</dt>
-                <dd class="col-md-8">{{user_info.user_type}}</dd>
+                <dd class="col-md-8">{{badges.user_status(user_info.user_status)}}</dd>
                 <dt class="col-md-4 mb-0 text-md-end">Printing points:</dt>
                 <dd class="col-md-8 mb-0">{%if points == None%}<i>N/A</i>{%else%}{{points}}{%endif%}</dd>
               </dl>

@@ -40,7 +40,7 @@
         <tbody>
           {%for entry in entries%}
           <tr>
-            <td>{{entry.name}}</td>
+            <td><span class="user-name">{{entry.name}}</span></td>
             <td>{{badges.application_status(entry.status)}}</td>
             <td>{{render_timestamp(entry.timestamp)}}</td>
             <td class="py-0">
