@@ -2,7 +2,6 @@
 import flask
 
 from .. import tmplutil
-from ..auth import STATUS_TO_NAME, STATUS_TO_SHORT_NAME
 
 PAGE_SIZE = 10
 
@@ -10,8 +9,6 @@ VISIBILITY_DESCS = (
     (2, 'public', 'Public', 'everyone can see your profile'),
     (0, 'private', 'Private', 'only you can see your profile')
 )
-
-VISIBILITY_TO_NAME = {0: 'Private', 1: 'Friends only', 2: 'Public'}
 
 SUBMIT_DESCS = (
     ('display-name', 'displayName', 64, 'Display name'),
@@ -55,10 +52,7 @@ def handle_user_list(db):
                                 ' ORDER BY name ASC LIMIT ? OFFSET ?',
                             (PAGE_SIZE + 1, offset))
     has_more = (len(entries) > PAGE_SIZE)
-    entries = [dict(e,
-                    statusName=STATUS_TO_NAME[e['status']],
-                    shortStatusName=STATUS_TO_SHORT_NAME[e['status']])
-               for e in entries[:PAGE_SIZE]]
+    entries = entries[:PAGE_SIZE]
     return flask.render_template('content/user-list.html', entries=entries,
         offset=offset, amount=PAGE_SIZE, has_more=has_more)
 
@@ -84,10 +78,7 @@ def handle_user_get(name, acc_info, db):
     else:
         profile_data.update(
             visible=True,
-            visibility=visibility,
-            visibilityName=VISIBILITY_TO_NAME[visibility],
-            statusName=STATUS_TO_NAME[profile_data['status']],
-            shortStatusName=STATUS_TO_SHORT_NAME[profile_data['status']]
+            visibility=visibility
         )
     if not profile_data.get('displayName'):
         profile_data['displayName'] = name

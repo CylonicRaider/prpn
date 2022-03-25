@@ -1,0 +1,34 @@
+{%set USER_STATUS_NAMES = _USER_STATUS_TO_NAME%}
+{%set USER_STATUS_SHORT_NAMES = {0: 'Non-User', 1: 'P. U. E.', 2: 'User', 3: 'Enh. User', None: 'U.-L. E.'}%}
+{%set USER_STATUS_CLASSES = {0: 'bg-danger', 1: 'bg-warning text-dark', 2: 'bg-success', 3: 'bg-primary', None: 'bg-secondary'}%}
+
+{%set APP_STATUS_CLASSES = {'PENDING': 'bg-primary', 'ACCEPTED': 'bg-success', 'REJECTED': 'bg-warning text-dark', 'PUBLIC': 'bg-info text-dark', None: 'bg-secondary'}%}
+
+{%set PROFILE_VISIBILITY_NAMES = {0: 'Private', 1: 'Friends Only', 2: 'Public', None: 'Unknown'}%}
+{%set PROFILE_VISIBILITY_CLASSES = {0: 'bg-danger', 1: 'bg-warning text-dark', 2: 'bg-success', None: 'bg-secondary'}%}
+
+{%macro get_or_default(mapping, key)%}{{key if mapping == None else mapping.get(key, mapping[None])}}{%endmacro%}
+
+{%macro badge(value, class_mapping, text_mapping=None, title_mapping=None, title=False)-%}
+  <span class="badge rounded-pill {{get_or_default(class_mapping, value)}}"{%if title%} title="{{get_or_default(title_mapping, value)}}"{%endif%}>{{get_or_default(text_mapping, value) | upper}}</span>
+{%-endmacro%}
+
+{%macro user_status(status, short=False)%}
+  {%-if short-%}
+  {{badge(status, USER_STATUS_CLASSES, USER_STATUS_SHORT_NAMES, USER_STATUS_NAMES, True)}}
+  {%-else-%}
+  {{badge(status, USER_STATUS_CLASSES, USER_STATUS_NAMES)}}
+  {%-endif-%}
+{%endmacro%}
+
+{%macro application_status(status)-%}
+  <span class="badge-group">
+    {%-for keyword in status.split('_')-%}
+    {{badge(keyword, APP_STATUS_CLASSES)}}
+    {%-endfor-%}
+  </span>
+{%-endmacro%}
+
+{%macro profile_visibility(status)-%}
+  {{badge(status, PROFILE_VISIBILITY_CLASSES, PROFILE_VISIBILITY_NAMES)}}
+{%-endmacro%}

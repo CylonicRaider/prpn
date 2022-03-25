@@ -23,9 +23,7 @@ GENERIC_ERRORS = {
 }
 
 STATUS_TO_NAME = {0: 'Non-User', 1: 'Potential User Entity', 2: 'User',
-                  3: 'Enhanced User'}
-STATUS_TO_SHORT_NAME = {0: 'Non-User', 1: 'P. U. E.', 2: 'User',
-                        3: 'Enh. User'}
+                  3: 'Enhanced User', None: 'User-Like Entity'}
 
 class AuthProvider:
     def __init__(self, name, display_name):

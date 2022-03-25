@@ -42,7 +42,8 @@ app.jinja_env.globals.update(
     add_query=tmplutil.add_query,
     render_timestamp=tmplutil.render_timestamp,
     render_pagination=tmplutil.render_pagination,
-    render_form=tmplutil.render_form
+    render_form=tmplutil.render_form,
+    _USER_STATUS_TO_NAME=auth.STATUS_TO_NAME
 )
 
 _database = db.LockedDatabase(os.path.join(app.instance_path, 'db.sqlite'),

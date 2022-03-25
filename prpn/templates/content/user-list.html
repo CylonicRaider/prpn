@@ -1,4 +1,5 @@
 {%extends "base.html"%}
+{%import "lib/badges.html" as badges%}
 {%set subtitle = "Users"%}
 {%block nav%}
 {{nav_breadcrumb("", "Users", True)}}
@@ -45,11 +46,7 @@
             <td>{{entry.id}}</td>
             <td>{{entry.name}}</td>
             <td class="py-0">
-              {%set badge_cls = {0: 'bg-danger',
-                                 1: 'bg-warning text-dark',
-                                 2: 'bg-success',
-                                 3: 'bg-primary'}.get(entry.status, 'bg-secondary')%}
-              <span class="badge rounded-pill {{badge_cls}}" title="{{entry.statusName}}">{{entry.shortStatusName | upper}}</span>
+              {{badges.user_status(entry.status, short=True)}}
               {%if entry.id == get_user_info().user_id%}
               <span class="badge rounded-pill bg-info text-dark">YOU</span>
               {%endif%}

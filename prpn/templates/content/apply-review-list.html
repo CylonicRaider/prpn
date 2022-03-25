@@ -1,4 +1,5 @@
 {%extends "base.html"%}
+{%import "lib/badges.html" as badges%}
 {%set subtitle = "Overview \u2014 Application Review"%}
 {%block extrahead%}
 {{load_script('js/localize-time.js')}}
@@ -40,17 +41,7 @@
           {%for entry in entries%}
           <tr>
             <td>{{entry.name}}</td>
-            <td>
-              <span class="badge-group">
-                {%for keyword in entry.status.split('_')%}
-                {%set badge_cls = {'PENDING': 'bg-primary',
-                                   'ACCEPTED': 'bg-success',
-                                   'REJECTED': 'bg-warning text-dark',
-                                   'PUBLIC': 'bg-info text-dark'}.get(keyword, 'bg-secondary')%}
-                <span class="badge rounded-pill {{badge_cls}}">{{keyword}}</span>
-                {%endfor%}
-              </span>
-            </td>
+            <td>{{badges.application_status(entry.status)}}</td>
             <td>{{render_timestamp(entry.timestamp)}}</td>
             <td class="py-0">
               {%if entry.status == 'PENDING'%}
