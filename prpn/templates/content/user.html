@@ -22,9 +22,11 @@
       <a href="{{add_query(force='yes')}}" class="btn btn-warning">View anyway</a>
       {%else%}
       <p>This User Profile does not exist.</p>
+      <a href="{{url_for('user_list')}}" class="btn btn-primary">Back to overview</a>
       {%endif%}
       {%else%}
       <p>This User Profile does not exist or is private.</p>
+      <a href="{{url_for('index')}}" class="btn btn-primary">Back to main page</a>
       {%endif%}
       {%else%}
       {%set is_editing = may_edit and request.args.get('edit')%}
