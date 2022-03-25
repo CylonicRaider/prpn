@@ -24,7 +24,7 @@
 }
 
 .badge-group {
-  display: flex;
+  display: inline-flex;
 }
 .badge-group > .badge:not(:first-child) {
   border-top-left-radius: 0 !important;
@@ -39,6 +39,7 @@
 
 .btn-tight {
   padding: 0.125rem 0.25rem;
+  margin: -0.125rem 0;
 }
 
 dl.inverted > dt {

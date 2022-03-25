@@ -60,6 +60,13 @@
               <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Status:</dt>
               <dd class="col-sm-8 col-md-9 col-lg-10">
                 {{badges.user_status(profile_data.status)}}
+                {%if profile_data.hasApplication%}
+                {%if user_info.user_status >= 3%}
+                <a class="btn btn-outline-secondary btn-sm btn-tight" href="{{url_for('application_review', uid=profile_data.id)}}">View application</a>
+                {%elif user_info.user_id == profile_data.id%}
+                <a class="btn btn-outline-primary btn-sm btn-tight" href="{{url_for('application')}}">Finish application process</a>
+                {%endif%}
+                {%endif%}
               </dd>
               <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Profile visibility:</dt>
               <dd class="col-sm-8 col-md-9 col-lg-10">

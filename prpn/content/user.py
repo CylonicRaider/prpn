@@ -59,7 +59,9 @@ def handle_user_list(db):
         offset=offset, amount=PAGE_SIZE, has_more=has_more)
 
 def handle_user_get(name, acc_info, db):
-    profile_row = db.query('SELECT * FROM allUsers '
+    profile_row = db.query('SELECT *, EXISTS(SELECT * FROM allApplications '
+                                   'WHERE uid = id) AS hasApplication '
+                               'FROM allUsers '
                                'LEFT JOIN userProfiles ON id = user '
                                'WHERE status >= 2 AND name = ?',
                            (name,))
