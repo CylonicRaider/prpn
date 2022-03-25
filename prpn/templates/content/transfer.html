@@ -16,18 +16,19 @@
           Amount (PP):
         </label>
         <div class="col-lg-9 mt-lg-3">
-          <input class="form-control d-inline-block" type="number" id="amount" name="amount" min="0" max="{{cur_balance or 0}}" required="required"/>
+          <input class="form-control d-inline-block" type="number" id="amount" name="amount" min="0" max="{{cur_balance or 0}}" required="required" autofocus="autofocus"/>
         </div>
         <label class="form-label col-lg-3 mt-3 mt-lg-1 text-lg-end">
           Recipient:
         </label>
+        {%set recipient = request.args.get('recipient')%}
         <div class="col-lg-9 mt-lg-3">
           <div class="d-flex align-items-baseline">
             <div class="form-check me-2">
-              <input class="form-check-input" type="radio" name="recipient-type" id="recipient-type-user" value="user" required="required"/>
+              <input class="form-check-input" type="radio" name="recipient-type" id="recipient-type-user" value="user" required="required"{%if recipient%} checked="checked"{%endif%}/>
               <label class="form-check-label" for="recipient-type-user">User:</label>
             </div>
-            <input class="form-control" type="text" id="recipient" name="recipient"/>
+            <input class="form-control" type="text" id="recipient" name="recipient"{%if recipient%} value="{{recipient}}"{%endif%}/>
           </div>
           <div class="form-check">
             <input class="form-check-input" type="radio" name="recipient-type" id="recipient-type-acs" value="acs" required="required"/>
