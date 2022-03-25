@@ -45,10 +45,12 @@ def handle_user_list(db):
     else:
         filter_sql = ''
     offset = tmplutil.get_request_int64p('offset')
-    entries = db.query_many('SELECT id, name, status, points, '
+    entries = db.query_many('SELECT id, name, status, points, visibility, '
                                    'EXISTS(SELECT * FROM allApplications '
                                           'WHERE uid = id) AS hasApplication '
-                                'FROM allUsers ' + filter_sql +
+                                'FROM allUsers '
+                                'LEFT JOIN userProfiles ON user = id ' +
+                                filter_sql +
                                 ' ORDER BY name ASC LIMIT ? OFFSET ?',
                             (PAGE_SIZE + 1, offset))
     has_more = (len(entries) > PAGE_SIZE)

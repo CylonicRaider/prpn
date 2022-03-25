@@ -47,6 +47,9 @@
             <td><span class="user-name">{{entry.name}}</span></td>
             <td class="py-0">
               {{badges.user_status(entry.status, short=True)}}
+              {%if entry.visibility != None%}
+              {{badges.profile_visibility(entry.visibility)}}
+              {%endif%}
               {%if entry.id == user_info.user_id%}
               <span class="badge rounded-pill bg-info text-dark">YOU</span>
               {%endif%}
