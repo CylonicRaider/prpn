@@ -31,6 +31,7 @@
       <table class="table table-hover align-baseline">
         <thead>
           <tr>
+            <th>ID</th>
             <th>User</th>
             <th>Status</th>
             <th>Submitted</th>
@@ -40,6 +41,7 @@
         <tbody>
           {%for entry in entries%}
           <tr>
+            <td>{{entry.uid}}</td>
             <td><span class="user-name">{{entry.name}}</span></td>
             <td>{{badges.application_status(entry.status)}}</td>
             <td>{{render_timestamp(entry.timestamp)}}</td>
