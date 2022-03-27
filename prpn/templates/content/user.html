@@ -114,7 +114,7 @@
           <a class="btn btn-primary{%if not may_transfer%} me-auto{%endif%}" href="{{add_query(edit='yes')}}">Edit</a>
           {%endif%}
           {%if may_transfer%}
-          <a class="btn btn-outline-primary me-auto" href="{{url_for('transfer', recipient=profile_data.name)}}">Send printing points</a>
+          <a class="btn btn-outline-primary me-auto" href="{{url_for('transfer', recipient=profile_data.name)}}">Transfer printing points</a>
           {%endif%}
           {%endif%}
           {%if user_info.user_status >= 3%}
