@@ -7,7 +7,8 @@ import click
 import flask
 
 from . import auth, db, scheduler, schema, tmplutil
-from .content import application, complaint, index, lottery, transfer, user
+from .content import application, badges, complaint, index
+from .content import lottery, transfer, user
 
 app = flask.Flask('prpn')
 app.instance_path = os.environ.get('DATA_DIR',
@@ -43,7 +44,8 @@ app.jinja_env.globals.update(
     render_timestamp=tmplutil.render_timestamp,
     render_pagination=tmplutil.render_pagination,
     render_form=tmplutil.render_form,
-    _USER_STATUS_TO_NAME=auth.STATUS_TO_NAME
+    _USER_STATUS_TO_NAME=auth.STATUS_TO_NAME,
+    _BADGE_DEFS=badges.BADGE_DEFS
 )
 
 _database = db.LockedDatabase(os.path.join(app.instance_path, 'db.sqlite'),
@@ -102,6 +104,7 @@ def error_404(exc):
 _auth_manager.register_at(app)
 _scheduler.register_at(app)
 application.register_at(app)
+badges.register_at(app)
 complaint.register_at(app)
 index.register_at(app)
 lottery.register_at(app)
