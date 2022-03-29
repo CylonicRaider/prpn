@@ -2,6 +2,7 @@
 import flask
 
 from .. import tmplutil
+from . import badges
 
 PAGE_SIZE = 10
 
@@ -71,10 +72,11 @@ def handle_user_get(name, acc_info, db):
         profile_data = dict(profile_row)
         profile_data.pop('user', None)
     visibility = profile_data['visibility'] or 0
-    if visibility < 2 and not (acc_info['user_id'] == profile_data['id'] or
-                               acc_info['user_status'] >= 3 and
-                                   visibility >= 0 and
-                                   flask.request.args.get('force')):
+    if (visibility < 2 and not (acc_info['user_id'] == profile_data['id'] or
+                                acc_info['user_status'] >= 3 and
+                                    visibility >= 0 and
+                                    flask.request.args.get('force')) or
+            profile_row is None):
         profile_data = {
             'visible': False,
             'visibility': visibility
@@ -82,7 +84,8 @@ def handle_user_get(name, acc_info, db):
     else:
         profile_data.update(
             visible=True,
-            visibility=visibility
+            visibility=visibility,
+            badges=badges.get_user_badges(db, profile_data['id'])
         )
     if not profile_data.get('displayName'):
         profile_data['displayName'] = name

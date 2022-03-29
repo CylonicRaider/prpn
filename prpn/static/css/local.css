@@ -52,3 +52,10 @@ dl.inverted > dd {
 .form-tight-numbers input[type=number] {
   width: 5em;
 }
+
+.user-badge {
+  background: var(--bs-secondary);
+}
+.user-badge-magic {
+  background: var(--bs-primary);
+}

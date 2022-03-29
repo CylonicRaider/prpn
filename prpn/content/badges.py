@@ -2,7 +2,7 @@
 import math
 
 # ID: (Label, Sort hint, Buy-yourself cost)
-BADGE_DEFS = {'noob': ('Noob', 0, None)}
+BADGE_DEFS = {'noob': ('Noob', 0, None), 'magic': ('Magic', 0, None)}
 
 def init_schema(curs):
     curs.execute('CREATE TABLE IF NOT EXISTS badges ('

@@ -84,6 +84,23 @@
                 {{badges.profile_visibility(profile_data.visibility)}}
                 {%endif%}
               </dd>
+              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Badges:</dt>
+              <dd class="col-sm-8 col-md-9 col-lg-10">
+                {%if not profile_data.badges%}
+                <i>None</i>
+                {%else%}
+                {%for entry in profile_data.badges%}
+                {%if entry[2] == 1%}
+                <span class="badge rounded-pill user-badge user-badge-{{entry[0]}}">{{entry[1] | upper}}</span>
+                {%else%}
+                <span class="badge-group">
+                  <span class="badge rounded-pill user-badge user-badge-{{entry[0]}}">{{entry[1] | upper}}</span>
+                  <span class="badge rounded-pill bg-secondary">&times;{{entry[2]}}</span>
+                </span>
+                {%endif%}
+                {%endfor%}
+                {%endif%}
+              </dd>
               <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Printing points:</dt>
               <dd class="col-sm-8 col-md-9 col-lg-10 mb-0">
                 {%+if profile_data.points == None%}<i>N/A</i>{%else%}{{profile_data.points}}{%endif+%}
