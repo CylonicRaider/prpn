@@ -12,18 +12,21 @@ def init_schema(curs):
                      'PRIMARY KEY (user, badge)'
                  ')')
 
-def get_label(bid):
+def get_trait(bid, key, default):
     try:
-        return BADGE_DEFS[bid][0]
+        return BADGE_DEFS[bid][key]
     except KeyError:
-        return bid
+        return default
+def get_label(bid):
+    return get_trait(bid, 0, bid)
+def get_sort_key(bid):
+    return (get_trait(bid, 1, math.inf), bid)
 
 def get_user_badges(db, uid):
     rows = db.query_many('SELECT * FROM badges WHERE user = ? AND amount > 0',
                          (uid,))
     result = [(r['badge'], get_label(r['badge']), r['amount']) for r in rows]
-    result.sort(key=lambda entry: (BADGE_DEFS.get(entry[0], math.inf),
-                                   entry[0]))
+    result.sort(key=lambda entry: get_sort_key(entry[0]))
     return result
 
 def register_at(app):
