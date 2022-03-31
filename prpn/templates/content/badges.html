@@ -22,7 +22,7 @@
           </tr>
         </thead>
         <tbody>
-          {%for record in badges.free if record.owned > 0 or record.available > 0%}
+          {%for record in badges.free if record.owned > 0 or record.available > 0 or user_info.user_status >= 3%}
           <tr>
             <td><span class="badge rounded-pill user-badge user-badge-{{record.id}}{%if record.owned == 0%} opacity-50{%endif%}">{{record.label | upper}}</span></td>
             <td>{{record.owned}}</td>
@@ -56,7 +56,7 @@
           </tr>
         </thead>
         <tbody>
-          {%for record in badges.normal if record.owned > 0 or record.price <= 10 * cur_balance%}
+          {%for record in badges.normal if record.owned > 0 or record.price <= 10 * cur_balance or user_info.user_status >= 3%}
           <tr>
             <td><span class="badge rounded-pill user-badge user-badge-{{record.id}}{%if record.owned == 0%} opacity-50{%endif%}">{{record.label | upper}}</span></td>
             <td>{{record.owned}}</td>
