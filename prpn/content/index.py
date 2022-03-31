@@ -1,7 +1,7 @@
 
 import flask
 
-from . import application, lottery
+from . import application, badges, lottery
 
 def get_index_info(user_info, db):
     points_row = db.query('SELECT points FROM users WHERE id = ?',
@@ -20,5 +20,6 @@ def register_at(app):
             db = app.prpn.get_database()
             params.update(get_index_info(user_info, db))
             params.update(application.get_index_info(user_info, db))
+            params.update(badges.get_index_info(user_info, db))
             params.update(lottery.get_index_info(user_info, db))
         return flask.render_template('content/index.html', **params)

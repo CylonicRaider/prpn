@@ -108,6 +108,17 @@ def handle_post(user_info, db):
         flask.flash('Acquisition succeeded', 'success')
         return flask.redirect(flask.url_for('badge_store'), 303)
 
+def get_index_info(user_info, db):
+    owned_badges = dict(db.query_many(
+        'SELECT badge, amount FROM badges WHERE user = ? AND amount > 0',
+        (user_info['user_id'],)
+    ))
+    available = 0
+    for bid, desc in BADGE_DEFS.items():
+        if desc[2] != 0: continue
+        available += max(desc[3] - owned_badges.get(bid, 0), 0)
+    return {'badges_available': available}
+
 def register_at(app):
     @app.route('/store/badges', methods=('GET', 'POST'))
     @app.prpn.requires_auth(2)
