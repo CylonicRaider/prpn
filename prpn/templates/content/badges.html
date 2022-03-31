@@ -11,7 +11,17 @@
       </div>
       {%if badges.free%}
       <h2 class="mt-3">Free badges</h2>
-      <p class="mb-0">You may claim the following free badges:</p>
+      {%if total_available.free > 0%}
+      <p class="mb-0">
+        You may claim
+        <b>{%if total_available.free == INFINITY%}many{%elif total_available.free == 1%}a{%else%}{{total_available.free}}{%endif%}</b>
+        free badge{%if total_available.free != 1%}s{%endif%}!
+      </p>
+      {%else%}
+      <p class="mb-0">
+        You have no new free badges to claim.
+      </p>
+      {%endif%}
       <table class="table table-hover align-baseline">
         <thead>
           <tr>

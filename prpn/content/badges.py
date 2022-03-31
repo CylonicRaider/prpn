@@ -55,8 +55,11 @@ def handle_get(user_info, db):
             badge_groups[group].append(record)
         except KeyError:
             badge_groups[group] = [record]
+    total_available = {group: sum(r['available'] for r in records)
+                       for group, records in badge_groups.items()}
     return flask.render_template('content/badges.html',
-        cur_balance=cur_balance, badges=badge_groups)
+        cur_balance=cur_balance, badges=badge_groups,
+        total_available=total_available)
 
 def handle_post(user_info, db):
     action = flask.request.form.get('action')
