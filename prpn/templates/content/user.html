@@ -64,9 +64,9 @@
                 {{badges.user_status(profile_data.status)}}
                 {%if profile_data.hasApplication%}
                 {%if user_info.user_status >= 3%}
-                <a class="btn btn-outline-secondary btn-sm btn-tight" href="{{url_for('application_review', uid=profile_data.id)}}">View application</a>
+                <a class="btn btn-outline-secondary btn-sm btn-tight ms-1" href="{{url_for('application_review', uid=profile_data.id)}}">View application</a>
                 {%elif user_info.user_id == profile_data.id%}
-                <a class="btn btn-outline-primary btn-sm btn-tight" href="{{url_for('application')}}">Finish application process</a>
+                <a class="btn btn-outline-primary btn-sm btn-tight ms-1" href="{{url_for('application')}}">Finish application process</a>
                 {%endif%}
                 {%endif%}
               </dd>
@@ -100,11 +100,16 @@
                 {%endif%}
                 {%endfor%}
                 {%endif%}
-                <a class="btn btn-outline-primary btn-sm btn-tight" href="{{url_for('badge_store')}}">Store</a>
+                {%if user_info.user_id == profile_data.id%}
+                <a class="btn btn-outline-primary btn-sm btn-tight ms-1" href="{{url_for('badge_store')}}">Store</a>
+                {%endif%}
               </dd>
               <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Printing points:</dt>
               <dd class="col-sm-8 col-md-9 col-lg-10 mb-0">
                 {%+if profile_data.points == None%}<i>N/A</i>{%else%}{{profile_data.points}}{%endif+%}
+                {%if user_info.user_id != profile_data.id%}
+                <a class="btn btn-outline-primary btn-sm btn-tight ms-1" href="{{url_for('transfer', recipient=profile_data.name)}}">Transfer</a>
+                {%endif%}
               </dd>
             </dl>
           </div>
@@ -123,17 +128,13 @@
         </dl>
         <nav class="d-flex flex-wrap align-items-baseline gap-2">
           <span class="form-label">Actions:</span>
-          {%set may_transfer = (user_info.user_id != profile_data.id)%}
           {%if is_editing%}
           <button type="submit" class="btn btn-primary">Save changes</button>
           <a class="btn btn-secondary me-auto" href="{{add_query(edit=None)}}">Cancel editing</a>
+          {%elif may_edit%}
+          <a class="btn btn-primary me-auto" href="{{add_query(edit='yes')}}">Edit</a>
           {%else%}
-          {%if may_edit%}
-          <a class="btn btn-primary{%if not may_transfer%} me-auto{%endif%}" href="{{add_query(edit='yes')}}">Edit</a>
-          {%endif%}
-          {%if may_transfer%}
-          <a class="btn btn-outline-primary me-auto" href="{{url_for('transfer', recipient=profile_data.name)}}">Transfer printing points</a>
-          {%endif%}
+          <span class="me-auto"></span>
           {%endif%}
           {%if user_info.user_status >= 3%}
           <a class="btn btn-outline-secondary" href="{{url_for('user_list')}}">Back to overview</a>
