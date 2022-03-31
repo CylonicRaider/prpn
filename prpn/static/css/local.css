@@ -56,6 +56,11 @@ dl.inverted > dd {
 .user-badge {
   background: var(--bs-secondary);
 }
-.user-badge-magic {
-  background: var(--bs-primary);
-}
+.user-badge-magic { background: var(--bs-primary);              }
+.user-badge-noob  { background: var(--bs-success);              }
+.user-badge-t1    { background: #a06020;                        }
+.user-badge-t2    { background: #c0c0c0; color: var(--bs-dark); }
+.user-badge-t3    { background: #ffc000; color: var(--bs-dark); }
+.user-badge-t4    { background: #c0c0ff; color: var(--bs-dark); }
+.user-badge-t5    { background: #a0ffff; color: var(--bs-dark); }
+.user-badge-t6    { background: #800080;                        }

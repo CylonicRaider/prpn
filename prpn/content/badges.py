@@ -4,7 +4,16 @@ import math
 import flask
 
 # ID: (Label, Sort hint, Buy-yourself cost, Buy-yourself limit)
-BADGE_DEFS = {'noob': ('Noob', 0, None, 1), 'magic': ('Magic', 0, None, None)}
+BADGE_DEFS = {
+    'noob': ('Noob', 0, 0, 1),
+    'magic': ('Magic', 100, None, None),
+    't1': ('Bronze', 1, 10, None),
+    't2': ('Silver', 1, 100, None),
+    't3': ('Gold', 1, 1000, None),
+    't4': ('Platinum', 1, 10000, None),
+    't5': ('Diamond', 1, 100000, None),
+    't6': ('Unobtainium', 1, 1000000, None),
+}
 
 def init_schema(curs):
     curs.execute('CREATE TABLE IF NOT EXISTS badges ('
