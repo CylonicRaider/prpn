@@ -35,8 +35,8 @@
           {%for record in badges.free if record.owned > 0 or record.available > 0 or user_info.user_status >= 3%}
           <tr>
             <td><span class="badge rounded-pill user-badge user-badge-{{record.id}}{%if record.owned == 0%} opacity-50{%endif%}">{{record.label | upper}}</span></td>
-            <td>{{record.owned}}</td>
-            <td>{%if record.available == INFINITY%}&infin;{%else%}{{record.available}}{%endif%}</td>
+            <td{%if record.owned == 0%} class="opacity-50"{%endif%}>{{record.owned}}</td>
+            <td{%if record.available == 0%} class="opacity-50"{%endif%}>{%if record.available == INFINITY%}&infin;{%else%}{{record.available}}{%endif%}</td>
             <td>
               <form action="" method="post">
                 <input type="hidden" name="action" value="buy"/>
@@ -69,7 +69,7 @@
           {%for record in badges.normal if record.owned > 0 or record.price <= 10 * cur_balance or user_info.user_status >= 3%}
           <tr>
             <td><span class="badge rounded-pill user-badge user-badge-{{record.id}}{%if record.owned == 0%} opacity-50{%endif%}">{{record.label | upper}}</span></td>
-            <td>{{record.owned}}</td>
+            <td{%if record.owned == 0%} class="opacity-50"{%endif%}>{{record.owned}}</td>
             <td>{{record.price}} PP</td>
             <td>
               <form action="" method="post">
