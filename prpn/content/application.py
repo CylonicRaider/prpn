@@ -11,10 +11,8 @@ PAGE_SIZE = 10
 RANDOM = random.SystemRandom()
 
 MANDATORY_ITEMS = (
-    ('cover', 'Cover letter', 'a cover letter'),
-    ('id', 'ID', 'an ID or an enrollment certificate'),
-    ('acrr', 'ACRR', 'an Approved Citizen Ranking record'),
-    ('motivation', 'Motivation letter', 'a motivation letter')
+    ('id', 'ID', 'an ID'),
+    ('motivation', 'Motivation statement', 'a motivation statement')
 )
 PROHIBITED_ITEMS = (
     # These ones I did think of ahead-of-time.
