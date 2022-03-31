@@ -77,4 +77,8 @@
         </tbody>
       </table>
       {%endif%}
+      <div class="d-flex justify-content-end gap-2">
+        <a class="btn btn-outline-secondary" href="{{url_for('user', name=user_info.user_name)}}">Back to profile</a>
+        <a class="btn btn-outline-secondary" href="{{url_for('index')}}">Back to main page</a>
+      </div>
 {%endblock%}
