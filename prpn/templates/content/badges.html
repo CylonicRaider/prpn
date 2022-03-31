@@ -14,7 +14,7 @@
       {%if total_available.free > 0%}
       <p class="mb-0">
         You may claim
-        <b>{%if total_available.free == INFINITY%}many{%elif total_available.free == 1%}a{%else%}{{total_available.free}}{%endif%}</b>
+        <b>{%if total_available.free == INFINITY%}many{%elif total_available.free == 1%}one{%else%}{{total_available.free}}{%endif%}</b>
         free badge{%if total_available.free != 1%}s{%endif%}!
       </p>
       {%else%}
