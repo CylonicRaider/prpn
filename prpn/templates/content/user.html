@@ -90,12 +90,12 @@
                 <i>None</i>
                 {%else%}
                 {%for entry in profile_data.badges%}
-                {%if entry[2] == 1%}
-                <span class="badge rounded-pill user-badge user-badge-{{entry[0]}}">{{entry[1] | upper}}</span>
+                {%if entry.amount == 1%}
+                <span class="badge rounded-pill user-badge user-badge-{{entry.id}}">{{entry.label | upper}}</span>
                 {%else%}
                 <span class="badge-group">
-                  <span class="badge rounded-pill user-badge user-badge-{{entry[0]}}">{{entry[1] | upper}}</span>
-                  <span class="badge rounded-pill bg-secondary">&times;{{entry[2]}}</span>
+                  <span class="badge rounded-pill user-badge user-badge-{{entry.id}}">{{entry.label | upper}}</span>
+                  <span class="badge rounded-pill bg-secondary">&times;{{entry.amount}}</span>
                 </span>
                 {%endif%}
                 {%endfor%}

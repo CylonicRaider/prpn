@@ -38,6 +38,7 @@ def load_key_file():
 
 app.jinja_options = {'trim_blocks': True, 'lstrip_blocks': True}
 app.jinja_env.globals.update(
+    INFINITY=float('inf'),
     min=min,
     max=max,
     add_query=tmplutil.add_query,
