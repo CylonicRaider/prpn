@@ -282,6 +282,11 @@ def register_at(app):
                 return result
         return handle_get(user_info, app_info)
 
+    @app.route('/apply/sample')
+    @app.prpn.requires_auth(0)
+    def application_sample():
+        return flask.render_template('content/apply-sample.html')
+
     @app.route('/apply/review')
     @app.prpn.requires_auth(3)
     def application_review_list():

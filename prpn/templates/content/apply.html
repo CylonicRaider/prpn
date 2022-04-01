@@ -16,11 +16,12 @@
       {%if may_write%}
       <form action="" method="post">
         <p class="mb-1">Provide the following information in your application:</p>
-        <ul>
+        <ul class="mb-1">
           <li>Student ID or staff ID</li>
           <li>Brief statement of your motivation to participate in the Mandatory Printing Point Tracking Program</li>
           <li>Miscellaneous remarks (optional)</li>
         </ul>
+        <p>A <a href="{{url_for('application_sample')}}">sample application</a> is available.</p>
         <div class="mb-3">
           <label for="text" class="form-label">Your application:</label>
           <textarea class="form-control font-monospace" id="text" name="text" rows="10" required="required"></textarea>

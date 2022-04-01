@@ -1,0 +1,25 @@
+{%extends "base.html"%}
+{%set subtitle = "Sample \u2014 Application for Usership"%}
+{%block nav%}
+{{nav_breadcrumb(url_for("application"), "Application")}}
+{{nav_breadcrumb("", "Sample", True)}}
+{%endblock%}
+{%block content%}
+      <h1>Application for Usership: Sample</h1>
+      <p>The following sample is provided as an aid to Mandatory Printing Point Tracking Program applicants.</p>
+      <div class="card mb-3">
+        <div class="card-body">
+<span class="font-monospace preserve-whitespace">To whom it may concern,
+
+I am hereby applying to participate in the Mandatory Printing Point Tracking Program. I have provided the necessary details below.
+
+Yours truly,
+John Doe
+
+Student ID: 42
+
+Motivation statement: I desire to comply with the requirements of the Mandatory Printing Point Tracking Program, and furthermore to acquire and expend printing points for their various uses.</span>
+        </div>
+      </div>
+      <a class="btn btn-primary" href="{{url_for('application')}}">Back to application</a>
+{%endblock%}
