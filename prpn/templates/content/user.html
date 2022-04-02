@@ -137,7 +137,7 @@
           <span class="me-auto"></span>
           {%endif%}
           {%if user_info.user_status >= 3%}
-          <a class="btn btn-outline-secondary" href="{{url_for('user_list')}}">Back to overview</a>
+          <a class="btn btn-outline-secondary" href="{{url_for('user_list', filter='USER')}}">Back to Users</a>
           {%else%}
           <a class="btn btn-outline-secondary" href="{{url_for('index')}}">Back to main page</a>
           {%endif%}
