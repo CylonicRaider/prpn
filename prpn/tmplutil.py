@@ -20,10 +20,16 @@ def get_request_int64p(name, default=0):
         return None
     return result
 
-def add_query_ex(values):
+def add_query_ex(values, include_path=True):
     new_args = [(k, v) for k, v in dict(flask.request.args, **values).items()
                        if v is not None]
-    return '?' + urllib.parse.urlencode(new_args)
+    new_query = '?' + urllib.parse.urlencode(new_args)
+    if not include_path:
+        return new_query
+    elif new_args:
+        return flask.request.root_path + flask.request.path + new_query
+    else:
+        return flask.request.root_path + flask.request.path
 def add_query(**values):
     return add_query_ex(values)
 
