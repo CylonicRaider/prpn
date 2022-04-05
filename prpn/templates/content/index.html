@@ -33,7 +33,7 @@
               {%endif%}
               {%if user_info.user_status >= 3%}
               {%if app_counts%}
-              <a href="{{url_for('application_review_list', filter='PENDING')}}" class="list-group-item list-group-item-action">
+              <a href="{{url_for('application_review_list')}}" class="list-group-item list-group-item-action">
                 Review applications
                 {%for key, cls in (('pending', 'primary'), ('accepted', 'success'), ('rejected_hidden', 'secondary'), ('rejected_public', 'warning'))%}
                 {%if app_counts[key]%}
@@ -42,7 +42,7 @@
                 {%endfor%}
               </a>
               {%endif%}
-              <a href="{{url_for('user_list', filter='USER')}}" class="list-group-item list-group-item-action">
+              <a href="{{url_for('user_list')}}" class="list-group-item list-group-item-action">
                 View user profiles
               </a>
               {%endif%}

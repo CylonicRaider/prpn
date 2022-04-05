@@ -127,7 +127,7 @@ def handle_post(user_info, app_info, app):
 def handle_review_list(app):
     now = time.time()
     offset = tmplutil.get_request_int64p('offset')
-    criterion = flask.request.args.get('filter', 'ALL')
+    criterion = flask.request.args.get('filter') or 'PENDING'
     if criterion == 'PENDING':
         filter_sql = ('WHERE content IS NOT NULL AND comments IS NULL')
     elif criterion == 'RESOLVED':
@@ -142,7 +142,7 @@ def handle_review_list(app):
     elif criterion == 'REJECTED_PUBLIC':
         filter_sql = ('WHERE content IS NULL AND comments IS NOT NULL '
                           'AND (revealAt IS NULL OR :now >= revealAt)')
-    else:
+    else: # Preferred spelling: ALL
         filter_sql = ''
     db = app.prpn.get_database()
     entries = db.query_many('SELECT * FROM allApplications ' + filter_sql +

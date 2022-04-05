@@ -30,7 +30,7 @@ def init_schema(curs):
                  ')')
 
 def handle_user_list(db):
-    criterion = flask.request.args.get('filter', 'ALL')
+    criterion = flask.request.args.get('filter') or 'USER'
     if criterion == 'USER':
         filter_sql = 'WHERE status >= 2'
     elif criterion == 'USER_REGULAR':
@@ -43,7 +43,7 @@ def handle_user_list(db):
         filter_sql = 'WHERE status = 1'
     elif criterion == 'NONUSER_FINAL':
         filter_sql = 'WHERE status = 0'
-    else:
+    else: # Preferred spelling: ALL
         filter_sql = ''
     offset = tmplutil.get_request_int64p('offset')
     entries = db.query_many('SELECT id, name, status, points, visibility, '

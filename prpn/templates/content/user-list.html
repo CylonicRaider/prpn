@@ -9,8 +9,8 @@
       <h1>User Listing</h1>
       <nav class="d-flex flex-wrap align-items-baseline gap-2">
         <span class="form-label me-1">View:</span>
-        {%set cur_filter = request.args.get('filter')%}
-        <a class="btn btn-outline-info{%if not cur_filter%} active{%endif%}" href="{{add_query(filter=None)}}">All</a>
+        {%set cur_filter = request.args.get('filter') or 'USER'%}
+        <a class="btn btn-outline-info{%if cur_filter == 'ALL'%} active{%endif%}" href="{{add_query(filter='ALL')}}">All</a>
         <div class="btn-group">
           <a class="btn btn-outline-success{%if cur_filter == 'USER'%} active{%endif%}" href="{{add_query(filter='USER')}}">Users</a>
           <button class="btn btn-outline-success dropdown-toggle dropdown-toggle-split{%if cur_filter in ('USER_REGULAR', 'USER_ENHANCED')%} active{%endif%}" data-bs-toggle="dropdown"></button>
@@ -27,7 +27,7 @@
             <li><a class="dropdown-item{%if cur_filter == 'NONUSER_FINAL'%} active{%endif%}" href="{{add_query(filter='NONUSER_FINAL')}}">Final Non-Users only</a></li>
           </ul>
         </div>
-        <a class="btn btn-outline-secondary" href="{{url_for('application_review_list', filter='PENDING')}}">Review applications</a>
+        <a class="btn btn-outline-secondary" href="{{url_for('application_review_list')}}">Review applications</a>
       </nav>
       {%if entries%}
       <table class="table table-hover align-baseline">
