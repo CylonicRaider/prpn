@@ -86,12 +86,13 @@ def register_at(app):
             user_count = db.query('SELECT COUNT(*) FROM lottery')[0]
             if user_count == 0: return
             chosen_index = RANDOM.randrange(user_count)
+            amount = RANDOM.randint(1, user_count)
             chosen_uid = db.query('SELECT user FROM lottery ORDER BY user '
                                       'LIMIT 1 OFFSET ?',
                                   (chosen_index,))[0]
-            db.update('UPDATE allUsers SET points = points + 1 WHERE id = ?',
-                      (chosen_uid,))
-            db.update('UPDATE lottery SET awarded = awarded + 1, '
-                                         'totalAwarded = totalAwarded + 1 '
+            db.update('UPDATE allUsers SET points = points + ? WHERE id = ?',
+                      (amount, chosen_uid))
+            db.update('UPDATE lottery SET awarded = awarded + ?, '
+                                         'totalAwarded = totalAwarded + ? '
                           'WHERE user = ?',
-                      (chosen_uid,))
+                      (amount, amount, chosen_uid))
