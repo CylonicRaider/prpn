@@ -86,7 +86,7 @@ def register_at(app):
             user_count = db.query('SELECT COUNT(*) FROM lottery')[0]
             if user_count == 0: return
             chosen_index = RANDOM.randrange(user_count)
-            amount = RANDOM.randint(1, user_count)
+            amount = RANDOM.randint(1, user_count + 1)
             chosen_uid = db.query('SELECT user FROM lottery ORDER BY user '
                                       'LIMIT 1 OFFSET ?',
                                   (chosen_index,))[0]
