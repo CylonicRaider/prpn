@@ -1,6 +1,7 @@
 
 import math
 
+import click
 import flask
 
 # ID: (Label, Sort hint, Buy-yourself cost, Buy-yourself limit)
@@ -40,6 +41,16 @@ def get_user_badges(db, uid):
                'amount': r['amount']} for r in rows]
     result.sort(key=lambda entry: get_sort_key(entry['id']))
     return result
+
+def add_user_badges(db, uid, badge, amount):
+    with db.transaction(True):
+        ok = db.update('UPDATE badges SET amount = amount + ? '
+                           'WHERE user = ? AND badge = ?',
+                       (amount, uid, badge))
+        if not ok:
+            db.insert('INSERT INTO badges(user, badge, amount) '
+                          'VALUES (?, ?, ?)',
+                      (uid, badge, amount))
 
 def handle_get(user_info, db):
     points_row = db.query('SELECT points FROM users WHERE id = ?',
@@ -98,13 +109,7 @@ def handle_post(user_info, db):
         if not deducted:
             flask.flash('Insufficient funds', 'error')
             return flask.redirect(flask.url_for('badge_store'), 303)
-        ok = db.update('UPDATE badges SET amount = amount + 1 '
-                           'WHERE user = ? AND badge = ?',
-                       (user_info['user_id'], bid))
-        if not ok:
-            db.insert('INSERT INTO badges(user, badge, amount) '
-                          'VALUES (?, ?, 1)',
-                      (user_info['user_id'], bid))
+        add_user_badges(db, user_info['user_id'], bid, 1)
         flask.flash('Acquisition succeeded', 'success')
         return flask.redirect(flask.url_for('badge_store'), 303)
 
@@ -120,6 +125,20 @@ def get_index_info(user_info, db):
     return {'badges_available': available}
 
 def register_at(app):
+    @app.cli.command('add-badges',
+                     help='Add (positive or negative) amounts of the given '
+                          'badge to the given user')
+    @click.argument('name')
+    @click.argument('badge')
+    @click.argument('amount', type=int)
+    def set_user_level(name, badge, amount):
+        with app.prpn.get_database().transaction(True) as db:
+            uid_row = db.query('SELECT id FROM users WHERE name = ?', (name,))
+            if not uid_row:
+                raise ValueError('Unrecognized user {!r}'.format(name))
+            add_user_badges(db, uid_row['id'], badge, amount)
+            print('OK')
+
     @app.route('/store/badges', methods=('GET', 'POST'))
     @app.prpn.requires_auth(2)
     def badge_store():
