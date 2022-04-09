@@ -7,6 +7,7 @@ import flask
 # ID: (Label, Sort hint, Buy-yourself cost, Buy-yourself limit)
 BADGE_DEFS = {
     'noob': ('Noob', 0, 0, 1),
+    'badge': ('Badge', 99, None, None),
     'magic': ('Magic', 100, None, None),
     't1': ('Bronze', 1, 10, None),
     't2': ('Silver', 1, 100, None),
