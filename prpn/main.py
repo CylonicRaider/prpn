@@ -68,7 +68,8 @@ app.prpn.get_user_info = _auth_manager.get_user_info
 app.prpn.reload_user_info = _auth_manager.reload_user_info
 app.prpn.requires_auth = auth.requires_auth
 
-@app.cli.command('init')
+@app.cli.command('init',
+                 help='Initialize the data directory')
 def init_files():
     os.makedirs(os.path.normpath(os.path.join(KEY_FILE, '..')), exist_ok=True)
     os.makedirs(os.path.normpath(os.path.join(_database.path, '..')),
