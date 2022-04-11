@@ -77,8 +77,6 @@ def handle_get(user_info, app_info):
     is_revealed = (app_info['revealAt'] is None or
                    now >= app_info['revealAt'])
     comments = app_info['comments'] if is_revealed else None
-    may_write = (user_info['user_status'] == 1 and
-                 app_info['content'] is None and is_revealed)
     if user_info['user_status'] >= 2:
         if app_info['timestamp'] is None:
             status, status_class = 'FINISHED', None
@@ -90,6 +88,8 @@ def handle_get(user_info, app_info):
         status, status_class = 'PENDING', 'info'
     else:
         status, status_class = None, None
+    may_write = (user_info['user_status'] == 1 and
+                 status in (None, 'REJECTED'))
     return flask.render_template('content/apply.html', status=status,
         status_class=status_class, may_write=may_write, comments=comments)
 
@@ -103,6 +103,8 @@ def handle_post(user_info, app_info, app):
         db.update('DELETE FROM applications WHERE user = ?',
                   (user_info['user_id'],))
         return flask.redirect(flask.url_for('index'))
+    elif action != 'apply':
+        return flask.abort(400)
     text = flask.request.form.get('text', '')
     if not text:
         flask.flash('Submitting an application is mandatory', 'error')
@@ -171,9 +173,10 @@ def handle_review_post(uid, app):
     if action == 'accept':
         with db:
             db.update('UPDATE applications SET content = NULL, '
-                                              'comments = NULL '
+                                              'comments = NULL, '
+                                              'revealAt = ? '
                           'WHERE user = ?',
-                      (uid,))
+                      (time.time(), uid))
             db.update('UPDATE allUsers SET status = 2, points = points + 1 '
                           'WHERE id = ? AND status <= 1',
                       (uid,))
@@ -188,12 +191,11 @@ def handle_review_post(uid, app):
                 raise ValueError('Negative reveal delay')
         except ValueError:
             return flask.abort(400)
+        reveal_at = time.time()
         if reveal_delay:
             if form.get('delay-randomize'):
                 reveal_delay *= RANDOM.random()
-            reveal_at = time.time() + reveal_delay
-        else:
-            reveal_at = None
+            reveal_at += reveal_delay
         comments = format_rejection_comments(form)
         db.update('UPDATE applications SET content = NULL, comments = ?, '
                                           'revealAt = ? '
