@@ -28,9 +28,9 @@ whose value is formatted as `<module>:<attribute>`. PRPN imports the
 `<module>`, takes the `<attribute>` of it, and assumes that it is a suitable
 provider instance.
 
-A testing-only implementation is provided in the `test/auth_test.py` file, and
-can be specified via `AUTH_PROVIDER=test.auth_test:PROVIDER`. It does not
-implement any authentication, and is hence **not suitable for production
+A testing-only implementation is provided in the `testing/auth_test.py` file,
+and can be specified via `AUTH_PROVIDER=testing.auth_test:PROVIDER`. It does
+not implement any authentication, and is hence **not suitable for production
 use**.
 
 ## Administrator account
