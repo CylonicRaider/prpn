@@ -14,7 +14,7 @@ class Database:
         self.conn.row_factory = sqlite3.Row
         self.curs = self.conn.cursor()
         self._transactions = 0
-        self._is_exclusive = None
+        self._is_exclusive = False
         self.init()
         if init is not None: init(self)
 
@@ -27,7 +27,7 @@ class Database:
     def __exit__(self, *exc_info):
         self._transactions -= 1
         if self._transactions == 0:
-            self._is_exclusive = None
+            self._is_exclusive = False
             self.conn.__exit__(*exc_info)
 
     @contextlib.contextmanager
@@ -37,7 +37,7 @@ class Database:
         with self:
             if exclusive and not self._is_exclusive:
                 self.curs.execute('BEGIN EXCLUSIVE')
-            self._is_exclusive = exclusive
+                self._is_exclusive = True
             yield self
 
     def init(self):
