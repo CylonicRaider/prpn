@@ -207,7 +207,7 @@ class AuthManager:
                         list(result[2]),
                     *result[3:])
         return tmplutil.execute_form_or_redirect(result, 'form.html',
-                                              heading=heading)
+                                                 heading=heading)
 
     def _handle_redundant_request(self, heading, text):
         form_content = (Markup('<p>%s</p>\n'
@@ -251,7 +251,7 @@ class AuthManager:
             else:
                 result = (200, '', GENERIC_LOGOUT_FORM)
         return tmplutil.execute_form_or_redirect(result, 'form.html',
-                                              heading='Log out')
+                                                 heading='Log out')
 
     def register_at(self, app):
         @app.cli.command('set-user-level',
