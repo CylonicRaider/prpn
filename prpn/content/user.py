@@ -52,7 +52,8 @@ def handle_user_list(db):
                                 'FROM allUsers '
                                 'LEFT JOIN userProfiles ON user = id ' +
                                 filter_sql +
-                                ' ORDER BY name ASC LIMIT ? OFFSET ?',
+                                ' ORDER BY LOWER(name) ASC, name ASC '
+                                'LIMIT ? OFFSET ?',
                             (PAGE_SIZE + 1, offset))
     has_more = (len(entries) > PAGE_SIZE)
     entries = entries[:PAGE_SIZE]
