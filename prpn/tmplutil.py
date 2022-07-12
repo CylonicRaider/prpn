@@ -42,21 +42,29 @@ def render_timestamp(ts):
 
 def render_pagination(offset, page_size, has_more, offset_var='offset'):
     cp, po = divmod(offset, page_size)
+    inc_dec = (offset > 0 or has_more)
     pages = []
-    if cp >= 2: pages.append((0, '1'))
-    if cp >= 3: pages.append((page_size, '2'))
-    if cp >= 4: pages.append((None, '...'))
-    if cp >= 1: pages.append(((cp - 1) * page_size, str(cp)))
-    pages.append((cp * page_size, str(cp + 1)))
+    if inc_dec: pages.append((max(0, (cp - 1) * page_size),
+                              '\xab Previous',
+                              (offset > 0)))
+    if cp >= 2: pages.append((0, '1', True))
+    if cp >= 3: pages.append((page_size, '2', True))
+    if cp >= 4: pages.append((None, '...', False))
+    if cp >= 1: pages.append(((cp - 1) * page_size, str(cp), True))
+    pages.append((cp * page_size, str(cp + 1), True))
     if po != 0: pages.append((offset,
-                              '%d.%d' % (cp + 1, po * 10 // page_size)))
-    if has_more: pages.append(((cp + 1) * page_size, str(cp + 2)))
+                              '%d.%d' % (cp + 1, po * 10 // page_size),
+                              True))
+    if has_more: pages.append(((cp + 1) * page_size, str(cp + 2), True))
+    if inc_dec: pages.append(((cp + 1) * page_size,
+                              'Next \xbb',
+                              has_more))
 
     result = [
         Markup('<ul class="pagination justify-content-center mb-0 mx-auto">')
     ]
-    for o, t in pages:
-        if o is None:
+    for o, t, e in pages:
+        if not e:
             result.append(Markup('<li class="page-item disabled">'
                                      '<span class="page-link">%s</span>'
                                  '</li>' % (t,)))
