@@ -44,7 +44,7 @@ def render_pagination(offset, page_size, has_more, offset_var='offset'):
     cp, po = divmod(offset, page_size)
     inc_dec = (offset > 0 or has_more)
     pages = []
-    if inc_dec: pages.append((max(0, (cp - 1) * page_size),
+    if inc_dec: pages.append((max(0, (offset - 1) // page_size * page_size),
                               '\xab Previous',
                               (offset > 0)))
     if cp >= 2: pages.append((0, '1', True))
