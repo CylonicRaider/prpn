@@ -71,7 +71,7 @@
       <p class="mt-2"><i>No users</i></p>
       {%endif%}
       <nav class="d-flex flex-wrap gap-2">
-        {{render_pagination(offset, amount, has_more)}}
+        {{render_pagination(offset, amount, len(entries) + has_more)}}
         <a class="btn btn-outline-secondary" href="{{url_for('index')}}">Back to main page</a>
       </nav>
 {%endblock%}

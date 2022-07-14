@@ -41,6 +41,7 @@ app.jinja_env.globals.update(
     INFINITY=float('inf'),
     min=min,
     max=max,
+    len=len,
     add_query=tmplutil.add_query,
     render_timestamp=tmplutil.render_timestamp,
     render_pagination=tmplutil.render_pagination,

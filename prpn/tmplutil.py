@@ -40,7 +40,8 @@ def render_timestamp(ts):
         time.strftime('%Y-%m-%d %H:%M:%S UTC', parts)
     ))
 
-def render_pagination(offset, page_size, has_more, offset_var='offset'):
+def render_pagination(offset, page_size, cur_page_size, offset_var='offset'):
+    has_more = (cur_page_size + offset % page_size > page_size)
     cp, po = divmod(offset, page_size)
     inc_dec = (offset > 0 or has_more)
     pages = []
