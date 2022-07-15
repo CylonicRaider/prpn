@@ -46,7 +46,7 @@ def render_pagination(offset, page_size, cur_page_size, offset_var='offset'):
     inc_dec = (offset > 0 or has_more)
     pages = []
     if inc_dec: pages.append((max(0, (offset - 1) // page_size * page_size),
-                              '\xab Previous',
+                              '\u2039 Previous',
                               (offset > 0)))
     if cp >= 2: pages.append((0, '1', True))
     if cp >= 3: pages.append((page_size, '2', True))
@@ -58,7 +58,7 @@ def render_pagination(offset, page_size, cur_page_size, offset_var='offset'):
                               True))
     if has_more: pages.append(((cp + 1) * page_size, str(cp + 2), True))
     if inc_dec: pages.append(((cp + 1) * page_size,
-                              'Next \xbb',
+                              'Next \u203a',
                               has_more))
 
     result = [
