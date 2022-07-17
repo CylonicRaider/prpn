@@ -28,6 +28,8 @@ def init_schema(curs):
                      'displayName TEXT, '
                      'description TEXT'
                  ')')
+    curs.execute('CREATE INDEX IF NOT EXISTS allUsers_name_lower_name ON '
+                     'allUsers(LOWER(name), name)')
 
 def handle_user_list(db):
     criterion = flask.request.args.get('filter') or 'USER'
