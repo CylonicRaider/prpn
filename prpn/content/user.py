@@ -33,7 +33,7 @@ def init_schema(curs):
 
 def handle_user_list(db):
     criterion = flask.request.args.get('filter') or 'USER'
-    order = flask.request.args.get('order') or '+name'
+    order = flask.request.args.get('order') or 'name'
     if criterion == 'USER':
         filter_sql = 'WHERE status >= 2'
     elif criterion == 'USER_REGULAR':
@@ -48,13 +48,13 @@ def handle_user_list(db):
         filter_sql = 'WHERE status = 0'
     else: # Preferred spelling: ALL
         filter_sql = ''
-    if order == '+id':
+    if order == 'id':
         order_sql = 'id ASC'
     elif order == '-id':
         order_sql = 'id DESC'
     elif order == '-name':
         order_sql = 'LOWER(name) DESC, name DESC'
-    else: # Preferred spelling: +name
+    else: # Preferred spelling: name
         order_sql = 'LOWER(name) ASC, name ASC'
     offset = tmplutil.get_request_int64p('offset')
     entries = db.query_many('SELECT id, name, status, points, visibility, '
