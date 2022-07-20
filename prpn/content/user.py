@@ -33,7 +33,7 @@ def init_schema(curs):
 
 def handle_user_list(db):
     criterion = flask.request.args.get('filter') or 'USER'
-    order = flask.request.args.get('order') or 'name'
+    sort = flask.request.args.get('sort') or 'name'
     if criterion == 'USER':
         filter_sql = 'WHERE status >= 2'
     elif criterion == 'USER_REGULAR':
@@ -48,11 +48,11 @@ def handle_user_list(db):
         filter_sql = 'WHERE status = 0'
     else: # Preferred spelling: ALL
         filter_sql = ''
-    if order == 'id':
+    if sort == 'id':
         order_sql = 'id ASC'
-    elif order == '-id':
+    elif sort == '-id':
         order_sql = 'id DESC'
-    elif order == '-name':
+    elif sort == '-name':
         order_sql = 'LOWER(name) DESC, name DESC'
     else: # Preferred spelling: name
         order_sql = 'LOWER(name) ASC, name ASC'
