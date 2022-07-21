@@ -45,6 +45,7 @@ app.jinja_env.globals.update(
     add_query=tmplutil.add_query,
     render_timestamp=tmplutil.render_timestamp,
     render_pagination=tmplutil.render_pagination,
+    render_sortctl=tmplutil.render_sortctl,
     render_form=tmplutil.render_form,
     _USER_STATUS_TO_NAME=auth.STATUS_TO_NAME,
     _BADGE_DEFS=badges.BADGE_DEFS

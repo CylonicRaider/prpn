@@ -79,6 +79,21 @@ def render_pagination(offset, page_size, cur_page_size, offset_var='offset'):
     result.append(Markup('</ul>'))
     return Markup('').join(result)
 
+def render_sortctl(keyword, query_var='sort'):
+    cur_value = flask.request.args.get(query_var)
+    result = []
+    if cur_value in (keyword, None):
+        result.append(Markup('<b>\u2193</b>'))
+    else:
+        result.append(Markup('<a href="%s">\u2193</a>') %
+                      add_query_ex({query_var: keyword}))
+    if cur_value == '-' + keyword:
+        result.append(Markup('<b>\u2191</b>'))
+    else:
+        result.append(Markup('<a href="%s">\u2191</a>') %
+                      add_query_ex({query_var: '-' + keyword}))
+    return Markup('').join(result)
+
 def render_form(title, action, fields, method=Ellipsis, enctype=Ellipsis):
     def maybe_attr(name, value):
         return Markup(' %s="%s"' % (name, value)) if value is not None else ''
