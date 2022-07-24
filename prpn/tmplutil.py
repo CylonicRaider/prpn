@@ -83,15 +83,15 @@ def render_sortctl(keyword, default=None, query_var='sort'):
     cur_value = flask.request.args.get(query_var)
     result = []
     if cur_value == keyword or cur_value is None and default == keyword:
-        result.append(Markup('<b>\u2193</b>'))
+        result.append(Markup('<b class="sort-control">\u2193</b>'))
     else:
-        result.append(Markup('<a href="%s">\u2193</a>') %
+        result.append(Markup('<a class="sort-control" href="%s">\u2193</a>') %
                       add_query_ex({query_var: keyword}))
     neg_kw = '-' + keyword
     if cur_value == neg_kw or cur_value is None and default == neg_kw:
-        result.append(Markup('<b>\u2191</b>'))
+        result.append(Markup('<b class="sort-control">\u2191</b>'))
     else:
-        result.append(Markup('<a href="%s">\u2191</a>') %
+        result.append(Markup('<a class="sort-control" href="%s">\u2191</a>') %
                       add_query_ex({query_var: neg_kw}))
     return Markup('').join(result)
 

@@ -53,6 +53,10 @@ dl.inverted > dd {
   width: 5em;
 }
 
+.sort-control {
+  text-decoration: none;
+}
+
 .user-badge {
   background: var(--bs-secondary);
 }
