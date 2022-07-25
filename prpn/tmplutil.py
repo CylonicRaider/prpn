@@ -79,9 +79,11 @@ def render_pagination(offset, page_size, cur_page_size, offset_var='offset'):
     result.append(Markup('</ul>'))
     return Markup('').join(result)
 
-def render_sortctl(keyword, default=None, query_var='sort'):
+def render_sortctl(label, keyword, default=None, query_var='sort'):
     cur_value = flask.request.args.get(query_var)
     result = []
+    if label:
+        result.extend((label, ' '))
     if cur_value == keyword or cur_value is None and default == keyword:
         result.append(Markup('<b class="sort-control">\u2193</b>'))
     else:
