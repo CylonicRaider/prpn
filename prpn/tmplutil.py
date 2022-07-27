@@ -84,10 +84,17 @@ def render_sortctl(label, keyword, default=None, query_var='sort'):
     if cur_value == keyword:
         link = add_query_ex({query_var: '-' + keyword})
         arrow = '\u2193'
+        tooltip = '(sorted normally; click to reverse)'
     else:
         link = add_query_ex({query_var: keyword})
-        arrow = '\u2191' if cur_value == '-' + keyword else '\u2195'
-    result = [Markup('<a class="sort-control" href="%s">') % link]
+        if cur_value == '-' + keyword:
+            arrow = '\u2191'
+            tooltip = '(sorted in reverse; click to sort normally)'
+        else:
+            arrow = '\u2195'
+            tooltip = '(not sorted; click to sort)'
+    result = [Markup('<a class="sort-control" href="%s" title="%s">') %
+              (link, tooltip)]
     if label:
         result.extend((label, ' '))
     result.append(arrow)
