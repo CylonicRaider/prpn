@@ -30,6 +30,8 @@ def init_schema(curs):
                  ')')
     curs.execute('CREATE INDEX IF NOT EXISTS allUsers_name_lower_name ON '
                      'allUsers(LOWER(name), name)')
+    curs.execute('CREATE INDEX IF NOT EXISTS allUsers_points ON '
+                     'allUsers(points)')
 
 def handle_user_list(db):
     criterion = flask.request.args.get('filter') or 'USER'
@@ -52,6 +54,10 @@ def handle_user_list(db):
         order_sql = 'id ASC'
     elif sort == '-id':
         order_sql = 'id DESC'
+    elif sort == 'points':
+        order_sql = 'points ASC, id ASC'
+    elif sort == '-points':
+        order_sql = 'points DESC, id DESC'
     elif sort == '-name':
         order_sql = 'LOWER(name) DESC, name DESC'
     else: # Preferred spelling: name
