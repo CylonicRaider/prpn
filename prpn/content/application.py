@@ -130,6 +130,7 @@ def handle_review_list(app):
     now = time.time()
     offset = tmplutil.get_request_int64p('offset')
     criterion = flask.request.args.get('filter') or 'PENDING'
+    sort = flask.request.args.get('sort') or 'submitted'
     if criterion == 'PENDING':
         filter_sql = ('WHERE content IS NOT NULL AND comments IS NULL')
     elif criterion == 'RESOLVED':
@@ -146,9 +147,21 @@ def handle_review_list(app):
                           'AND (revealAt IS NULL OR :now >= revealAt)')
     else: # Preferred spelling: ALL
         filter_sql = ''
+    if sort == 'id':
+        order_sql = 'uid ASC'
+    elif sort == '-id':
+        order_sql = 'uid DESC'
+    elif sort == 'name':
+        order_sql = 'LOWER(name) ASC, name ASC'
+    elif sort == '-name':
+        order_sql = 'LOWER(name) DESC, name DESC'
+    elif sort == '-submitted':
+        order_sql = 'timestamp DESC'
+    else: # Preferred spelling: submitted
+        order_sql = 'timestamp ASC'
     db = app.prpn.get_database()
     entries = db.query_many('SELECT * FROM allApplications ' + filter_sql +
-            ' ORDER BY timestamp ASC LIMIT :limit OFFSET :offset',
+            ' ORDER BY ' + order_sql + ' LIMIT :limit OFFSET :offset',
         {'limit': PAGE_SIZE + 1, 'offset': offset, 'now': now})
     has_more = (len(entries) > PAGE_SIZE)
     entries = [dict(e, status=get_application_status(e, now))
