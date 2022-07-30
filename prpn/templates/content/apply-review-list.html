@@ -31,10 +31,10 @@
       <table class="table table-hover align-baseline">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>User</th>
+            <th>{{render_sortctl('ID', 'id')}}</th>
+            <th>{{render_sortctl('User', 'name')}}</th>
             <th>Status</th>
-            <th>Submitted</th>
+            <th>{{render_sortctl('Submitted', 'submitted', 'submitted')}}</th>
             <th>Actions</th>
           </tr>
         </thead>
