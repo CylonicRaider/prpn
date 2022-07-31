@@ -42,12 +42,11 @@ def render_timestamp(ts):
 
 def render_pagination(offset, page_size, cur_page_size, offset_var='offset'):
     more_av = (cur_page_size + offset % page_size > page_size)
-    inc_dec = (offset > 0 or more_av)
     cp, po = divmod(offset, page_size)
     pages = []
-    if inc_dec: pages.append((max(0, (offset - 1) // page_size * page_size),
-                              '\u2039 Previous',
-                              (offset > 0)))
+    pages.append((max(0, (offset - 1) // page_size * page_size),
+                  '\u2039 Previous',
+                  (offset > 0)))
     if cp >= 2: pages.append((0, '1', True))
     if cp >= 3: pages.append((page_size, '2', True))
     if cp >= 4: pages.append((None, '...', False))
@@ -57,9 +56,7 @@ def render_pagination(offset, page_size, cur_page_size, offset_var='offset'):
                               '%d.%d' % (cp + 1, po * 10 // page_size),
                               True))
     if more_av: pages.append(((cp + 1) * page_size, str(cp + 2), True))
-    if inc_dec: pages.append(((cp + 1) * page_size,
-                              'Next \u203a',
-                              more_av))
+    pages.append(((cp + 1) * page_size, 'Next \u203a', more_av))
 
     result = [
         Markup('<ul class="pagination justify-content-center mb-0 mx-auto">')
