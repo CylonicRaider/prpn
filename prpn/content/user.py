@@ -8,6 +8,7 @@ PAGE_SIZE = 10
 
 VISIBILITY_DESCS = (
     (2, 'public', 'Public', 'everyone can see your profile'),
+    (1, 'friends', 'Friends Only', 'only your Friends can see your profile'),
     (0, 'private', 'Private', 'only you can see your profile')
 )
 
