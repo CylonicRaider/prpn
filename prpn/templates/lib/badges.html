@@ -4,7 +4,7 @@
 
 {%set APP_STATUS_CLASSES = {'PENDING': 'bg-primary', 'ACCEPTED': 'bg-success', 'REJECTED': 'bg-warning text-dark', 'PUBLIC': 'bg-info text-dark', None: 'bg-secondary'}%}
 
-{%set PROFILE_VISIBILITY_NAMES = {0: 'Private', 1: 'Friends Only', 2: 'Public', None: 'Unknown'}%}
+{%set PROFILE_VISIBILITY_NAMES = {0: 'Private', 1: 'Friends', 2: 'Public', None: 'Unknown'}%}
 {%set PROFILE_VISIBILITY_CLASSES = {0: 'bg-danger', 1: 'bg-warning text-dark', 2: 'bg-success', None: 'bg-secondary'}%}
 
 {%macro get_or_default(mapping, key)%}{{key if mapping == None else mapping.get(key, mapping[None])}}{%endmacro%}
