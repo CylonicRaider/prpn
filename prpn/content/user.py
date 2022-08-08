@@ -33,6 +33,22 @@ def init_schema(curs):
                      'allUsers(LOWER(name), name)')
     curs.execute('CREATE INDEX IF NOT EXISTS allUsers_points ON '
                      'allUsers(points)')
+    curs.execute('CREATE TABLE IF NOT EXISTS friendRequests ('
+                     'subject INTEGER REFERENCES allUsers ON DELETE CASCADE, '
+                     'friend INTEGER REFERENCES allUsers ON DELETE CASCADE, '
+                     # -1 = blocked; 0 = neutral (no particular relation);
+                     # 1 = Friend.
+                     'status INTEGER NOT NULL DEFAULT 0, '
+                     'PRIMARY KEY (subject, friend)'
+                 ')')
+    curs.execute('CREATE INDEX IF NOT EXISTS friendRequests_friend_subject '
+                 'ON friendRequests(friend, subject)')
+    curs.execute('CREATE VIEW IF NOT EXISTS friends AS '
+                     'SELECT a.subject AS subject, a.friend AS friend '
+                     'FROM friendRequests AS a '
+                     'JOIN friendRequests AS b ON a.subject = b.friend AND '
+                                                 'a.friend = b.subject '
+                     'WHERE a.status > 0 AND b.status > 0')
 
 def handle_user_list(db):
     criterion = flask.request.args.get('filter') or 'USER'
