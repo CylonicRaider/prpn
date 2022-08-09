@@ -94,6 +94,17 @@ def handle_user_list(db):
     return flask.render_template('content/user-list.html', entries=entries,
         offset=offset, amount=PAGE_SIZE, has_more=has_more)
 
+def handle_friend_list(user_info, db):
+    offset = tmplutil.get_request_int64p('offset')
+    entries = db.query_many('SELECT id, name FROM friends '
+                                'JOIN users ON id = friend '
+                                'WHERE subject = ?',
+                            (user_info['user_id'],))
+    has_more = (len(entries) > PAGE_SIZE)
+    entries = entries[:PAGE_SIZE]
+    return flask.render_template('content/user-list.html', friend_mode=True,
+         entries=entries, offset=offset, amount=PAGE_SIZE, has_more=has_more)
+
 def handle_user_get(name, acc_info, db):
     profile_row = db.query('SELECT *, EXISTS(SELECT * FROM allApplications '
                                    'WHERE uid = id) AS hasApplication '
@@ -189,7 +200,9 @@ def register_at(app):
         # For non-Enhanced Users, this redirects to one's own profile page.
         # Eventually, this could display a Friend listing instead.
         user_info = app.prpn.get_user_info()
-        if user_info['user_status'] < 3:
+        if flask.request.args.get('friends'):
+            return handle_friend_list(user_info, app.prpn.get_database())
+        elif user_info['user_status'] < 3:
             return flask.redirect(flask.url_for('user',
                                                 name=user_info['user_name']))
         return handle_user_list(app.prpn.get_database())

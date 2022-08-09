@@ -1,12 +1,15 @@
 {%extends "base.html"%}
 {%import "lib/badges.html" as badges%}
-{%set subtitle = "Users"%}
+{%set subtitle = ("Friends" if friend_mode else "Users")%}
 {%block nav%}
-{{nav_breadcrumb("", "Users", True)}}
+{{nav_breadcrumb("", subtitle, True)}}
+{%if not friend_mode%}
 {{nav_breadcrumb(url_for("user", name=user_info.user_name), "Profile")}}
+{%endif%}
 {%endblock%}
 {%block content%}
-      <h1>User Listing</h1>
+      <h1>{%if friend_mode%}Friend{%else%}User{%endif%} Listing</h1>
+      {%if not friend_mode%}
       <nav class="d-flex flex-wrap align-items-baseline gap-2">
         <span class="form-label me-1">View:</span>
         {%set cur_filter = request.args.get('filter') or 'USER'%}
@@ -29,22 +32,27 @@
         </div>
         <a class="btn btn-outline-secondary" href="{{url_for('application_review_list')}}">Review applications</a>
       </nav>
+      {%endif%}
       {%if entries%}
       <table class="table table-hover align-baseline">
         <thead>
           <tr>
-            <th>{{render_sortctl('ID', 'id')}}</th>
+            {%if not friend_mode%}<th>{{render_sortctl('ID', 'id')}}</th>{%endif%}
             <th>{{render_sortctl('User', 'name', 'name')}}</th>
-            <th>Status</th>
-            <th>{{render_sortctl('Points', 'points')}}</th>
+            {%if not friend_mode%}<th>Status</th>{%endif%}
+            {%if not friend_mode%}<th>{{render_sortctl('Points', 'points')}}</th>{%endif%}
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {%for entry in entries%}
           <tr>
-            <td>{{entry.id}}</td>
+            {%if not friend_mode%}<td>{{entry.id}}</td>{%endif%}
             <td><span class="user-name">{{entry.name}}</span></td>
+            {%if friend_mode%}
+            <td class="py-0">
+            </td>
+            {%else%}
             <td class="py-0">
               {{badges.user_status(entry.status, short=True)}}
               {%if entry.visibility != None%}
@@ -63,12 +71,13 @@
               <a class="btn btn-outline-secondary btn-sm btn-tight" href="{{url_for('application_review', uid=entry.id)}}">Application...</a>
               {%endif%}
             </td>
+            {%endif%}
           </tr>
           {%endfor%}
         </tbody>
       </table>
       {%else%}
-      <p class="mt-2"><i>No users</i></p>
+      <p class="mt-2"><i>No {%if friend_mode%}Friends{%else%}users{%endif%}</i></p>
       {%endif%}
       <nav class="d-flex flex-wrap gap-2">
         {{render_pagination(offset, amount, len(entries) + has_more)}}
