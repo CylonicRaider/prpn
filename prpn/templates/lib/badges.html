@@ -9,15 +9,15 @@
 
 {%macro get_or_default(mapping, key)%}{{key if mapping == None else mapping.get(key, mapping[None])}}{%endmacro%}
 
-{%macro badge(value, class_mapping, text_mapping=None, title_mapping=None, title=False)-%}
-  <span class="badge rounded-pill {{get_or_default(class_mapping, value)}}"{%if title%} title="{{get_or_default(title_mapping, value)}}"{%endif%}>{{get_or_default(text_mapping, value) | upper}}</span>
+{%macro badge(value, class_mapping, text_mapping=None, title_mapping=None, title_prefix=None)-%}
+  <span class="badge rounded-pill {{get_or_default(class_mapping, value)}}"{%if title_prefix != None%} title="{{title_prefix}}{{get_or_default(title_mapping, value)}}"{%endif%}>{{get_or_default(text_mapping, value) | upper}}</span>
 {%-endmacro%}
 
 {%macro user_status(status, short=False)%}
   {%-if short-%}
-  {{badge(status, USER_STATUS_CLASSES, USER_STATUS_SHORT_NAMES, USER_STATUS_NAMES, True)}}
+  {{badge(status, USER_STATUS_CLASSES, USER_STATUS_SHORT_NAMES, USER_STATUS_NAMES, 'User status: ')}}
   {%-else-%}
-  {{badge(status, USER_STATUS_CLASSES, USER_STATUS_NAMES)}}
+  {{badge(status, USER_STATUS_CLASSES, USER_STATUS_NAMES, USER_STATUS_NAMES, 'User status: ')}}
   {%-endif-%}
 {%endmacro%}
 
@@ -30,5 +30,5 @@
 {%-endmacro%}
 
 {%macro profile_visibility(status)-%}
-  {{badge(status, PROFILE_VISIBILITY_CLASSES, PROFILE_VISIBILITY_NAMES)}}
+  {{badge(status, PROFILE_VISIBILITY_CLASSES, PROFILE_VISIBILITY_NAMES, PROFILE_VISIBILITY_NAMES, 'Profile visibility: ')}}
 {%-endmacro%}
