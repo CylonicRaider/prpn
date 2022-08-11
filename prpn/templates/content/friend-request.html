@@ -1,0 +1,22 @@
+{%extends "base.html"%}
+{%set subtitle = "Request Friendship"%}
+{%block nav%}
+{{nav_breadcrumb(url_for("user_list", friends="yes"), "Friends")}}
+{{nav_breadcrumb("", "Request", True)}}
+{%endblock%}
+{%block content%}
+      <h1>Request Friendship</h1>
+      <form action="" method="post" class="row align-items-baseline">
+        {%set name = request.args.get('name')%}
+        <label for="other" class="form-label col-lg-3 mt-3 mt-lg-1 text-lg-end">
+          User:
+        </label>
+        <div class="col-lg-9 mt-lg-3">
+          <input class="form-control d-inline-block" id="other" name="other" required="required" {%if name%}value="{{name}}"{%else%}autofocus="autofocus"{%endif%}/>
+        </div>
+        <div class="col-lg-9 offset-lg-3 mt-3 d-flex flex-wrap gap-2">
+          <input type="submit" class="btn btn-primary me-auto" value="Request Friendship"/>
+          <a href="{{url_for('index')}}" class="btn btn-outline-secondary">Back to main page</a>
+        </div>
+      </form>
+{%endblock%}

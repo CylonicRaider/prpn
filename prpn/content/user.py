@@ -193,6 +193,9 @@ def handle_user_post(name, user_info, db):
             db.update(sql, values)
     return flask.redirect(flask.url_for('user', name=profile_name), 303)
 
+def handle_friend_request():
+    return flask.render_template('content/friend-request.html')
+
 def register_at(app):
     @app.route('/user')
     @app.prpn.requires_auth(2)
@@ -217,3 +220,8 @@ def register_at(app):
             if result is not None:
                 return result
         return handle_user_get(name, user_info, db)
+
+    @app.route('/friend/request')
+    @app.prpn.requires_auth(2)
+    def friend_request():
+        return handle_friend_request()
