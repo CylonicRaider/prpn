@@ -166,7 +166,7 @@ def handle_user_post(name, user_info, db):
                 return None
             assignments.append((colname, limit[value]))
         else:
-            raise AssertionError('')
+            raise AssertionError('Invalid user editor field description?!')
     if not assignments:
         return None
     with db.transaction(True):
