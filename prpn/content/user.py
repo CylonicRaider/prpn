@@ -33,6 +33,7 @@ def init_schema(curs):
                      'allUsers(LOWER(name), name)')
     curs.execute('CREATE INDEX IF NOT EXISTS allUsers_points ON '
                      'allUsers(points)')
+
     curs.execute('CREATE TABLE IF NOT EXISTS friendRequests ('
                      'subject INTEGER REFERENCES allUsers ON DELETE CASCADE, '
                      'friend INTEGER REFERENCES allUsers ON DELETE CASCADE, '
