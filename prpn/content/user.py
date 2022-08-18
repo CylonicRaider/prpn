@@ -197,6 +197,55 @@ def handle_user_post(name, user_info, db):
 def handle_friend_request():
     return flask.render_template('content/friend-request.html')
 
+def handle_friend_request_post(user_info, db):
+    other_name = flask.request.form.get('other')
+    if not other_name:
+        return flask.abort(400)
+
+    with db.transaction(True):
+        # Resolve the other user.
+        other_row = db.query('SELECT id FROM users WHERE name = ?',
+                             (other_name,))
+        if not other_row:
+            flask.flask('No such user', 'error')
+            return None
+        other_id = other_row['id']
+
+        # If other has blocked us, create no false hopes.
+        reverse_row = db.query('SELECT status FROM friendRequests '
+                               'WHERE subject = ? AND friend = ?',
+                               (other_id, user_info['user_id']))
+        if reverse_row and reverse_row['status'] < 0:
+            flask.flash('User {} has blocked you'.format(other_name), 'error')
+            return None
+
+        # Create our friend request.
+        updated = db.update('UPDATE friendRequests SET status = 1 '
+                            'WHERE subject = ? AND friend = ?',
+                            (user_info['user_id'], other_id))
+        if not updated:
+            db.insert('INSERT INTO friendRequests(subject, friend, status) '
+                      'VALUES (?, ?, 1)',
+                      (user_info['user_id'], other_id))
+
+        # Formulate an appropriate response.
+        rev_friend_requested = bool(reverse_row and reverse_row['status'] > 0)
+        if updated:
+            if rev_friend_requested:
+                flask.flash('User {} and you are friends!'.format(other_name),
+                            'success')
+            else:
+                flask.flash('Friend request already sent', 'info')
+        else:
+            if rev_friend_requested:
+                flask.flash('User {} and you are friends now!'
+                            .format(other_name), 'success')
+            else:
+                flask.flash('Friend request sent...', 'info')
+
+        # Done.
+        return flask.redirect(flask.url_for('friend_request'), 303)
+
 def register_at(app):
     @app.route('/user')
     @app.prpn.requires_auth(2)
@@ -222,7 +271,12 @@ def register_at(app):
                 return result
         return handle_user_get(name, user_info, db)
 
-    @app.route('/friend/request')
+    @app.route('/friend/request', methods=('GET', 'POST'))
     @app.prpn.requires_auth(2)
     def friend_request():
+        if flask.request.method == 'POST':
+            result = handle_friend_request_post(app.prpn.get_user_info(),
+                                                app.prpn.get_database())
+            if result is not None:
+                return result
         return handle_friend_request()
