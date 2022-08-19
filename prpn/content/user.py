@@ -232,13 +232,13 @@ def handle_friend_request_post(user_info, db):
         rev_friend_requested = bool(reverse_row and reverse_row['status'] > 0)
         if updated:
             if rev_friend_requested:
-                flask.flash('User {} and you are friends!'.format(other_name),
+                flask.flash('User {} and you are Friends!'.format(other_name),
                             'success')
             else:
                 flask.flash('Friend request already sent', 'info')
         else:
             if rev_friend_requested:
-                flask.flash('User {} and you are friends now!'
+                flask.flash('User {} and you are Friends now!'
                             .format(other_name), 'success')
             else:
                 flask.flash('Friend request sent...', 'info')
