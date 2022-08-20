@@ -202,6 +202,12 @@ def handle_friend_request_post(user_info, db):
     if not other_name:
         return flask.abort(400)
 
+    action = flask.request.form.get('action')
+    try:
+        new_status = {None: 1, 'friend': 1, 'neutral': 0, 'block': -1}[action]
+    except KeyError:
+        return flask.abort(400)
+
     with db.transaction(True):
         # Resolve the other user.
         other_row = db.query('SELECT id FROM users WHERE name = ?',
@@ -215,33 +221,45 @@ def handle_friend_request_post(user_info, db):
         reverse_row = db.query('SELECT status FROM friendRequests '
                                'WHERE subject = ? AND friend = ?',
                                (other_id, user_info['user_id']))
-        if reverse_row and reverse_row['status'] < 0:
+        if reverse_row and reverse_row['status'] < 0 and new_status > 0:
             flask.flash('User {} has blocked you'.format(other_name), 'error')
             return None
 
         # Create our friend request.
-        updated = db.update('UPDATE friendRequests SET status = 1 '
+        updated = db.update('UPDATE friendRequests SET status = ? '
                             'WHERE subject = ? AND friend = ?',
-                            (user_info['user_id'], other_id))
+                            (new_status, user_info['user_id'], other_id))
         if not updated:
             db.insert('INSERT INTO friendRequests(subject, friend, status) '
-                      'VALUES (?, ?, 1)',
-                      (user_info['user_id'], other_id))
+                      'VALUES (?, ?, ?)',
+                      (user_info['user_id'], other_id, new_status))
 
         # Formulate an appropriate response.
-        rev_friend_requested = bool(reverse_row and reverse_row['status'] > 0)
-        if updated:
-            if rev_friend_requested:
-                flask.flash('User {} and you are Friends!'.format(other_name),
-                            'success')
+        msg, cat = None, None
+        if new_status > 0:
+            if reverse_row and reverse_row['status'] > 0:
+                if updated:
+                    msg = 'User {} and you are Friends!'.format(other_name)
+                else:
+                    msg = ('User {} and you are Friends now!'
+                           .format(other_name))
+                cat = 'success'
             else:
-                flask.flash('Friend request already sent', 'info')
-        else:
-            if rev_friend_requested:
-                flask.flash('User {} and you are Friends now!'
-                            .format(other_name), 'success')
+                if updated:
+                    msg = 'Friend request already sent'
+                else:
+                    msg = 'Friend request sent...'
+                cat = 'info'
+        elif new_status == 0:
+            msg = 'Social relationship withdrawn'
+            cat = 'info'
+        elif new_status < 0:
+            if reverse_row and reverse_row['status'] < 0:
+                msg = 'User {} mutually blocked'.format(other_name)
             else:
-                flask.flash('Friend request sent...', 'info')
+                msg = 'User {} blocked'.format(other_name)
+            cat = 'info'
+        flask.flash(msg, cat)
 
         # Done.
         return flask.redirect(flask.url_for('friend_request'), 303)
