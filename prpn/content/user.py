@@ -225,14 +225,20 @@ def handle_friend_request_post(user_info, db):
             flask.flash('User {} has blocked you'.format(other_name), 'error')
             return None
 
-        # Create our friend request.
-        updated = db.update('UPDATE friendRequests SET status = ? '
-                            'WHERE subject = ? AND friend = ?',
-                            (new_status, user_info['user_id'], other_id))
-        if not updated:
-            db.insert('INSERT INTO friendRequests(subject, friend, status) '
-                      'VALUES (?, ?, ?)',
-                      (user_info['user_id'], other_id, new_status))
+        # Perform the status change.
+        if new_status == 0:
+            updated = db.update('DELETE FROM friendRequests '
+                                'WHERE subject = ? AND friend = ?',
+                                (user_info['user_id'], other_id))
+        else:
+            updated = db.update('UPDATE friendRequests SET status = ? '
+                                'WHERE subject = ? AND friend = ?',
+                                (new_status, user_info['user_id'], other_id))
+            if not updated:
+                db.insert('INSERT INTO friendRequests(subject, friend, '
+                                                     'status) '
+                          'VALUES (?, ?, ?)',
+                          (user_info['user_id'], other_id, new_status))
 
         # Formulate an appropriate response.
         msg, cat = None, None
