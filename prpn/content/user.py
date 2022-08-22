@@ -217,6 +217,11 @@ def handle_friend_request_post(user_info, db):
             return None
         other_id = other_row['id']
 
+        # Retrieve the pre-update status (for more expressive flashing).
+        old_row = db.query('SELECT status FROM friendRequests '
+                           'WHERE subject = ? AND friend = ?',
+                           (user_info['user_id'], other_id))
+
         # If other has blocked us, create no false hopes.
         reverse_row = db.query('SELECT status FROM friendRequests '
                                'WHERE subject = ? AND friend = ?',
@@ -257,13 +262,26 @@ def handle_friend_request_post(user_info, db):
                     msg = 'Friend request sent...'
                 cat = 'info'
         elif new_status == 0:
-            msg = 'Social relationship withdrawn'
+            if old_row and old_row['status'] > 0:
+                msg = 'Friendship withdrawn'
+            elif old_row and old_row['status'] > 0:
+                msg = 'Block withdrawn'
+            else:
+                msg = ('Social relationship to User {} remains neutral'
+                       .format(other_name))
             cat = 'info'
         elif new_status < 0:
             if reverse_row and reverse_row['status'] < 0:
-                msg = 'User {} mutually blocked'.format(other_name)
+                if old_row and old_row['status'] < 0:
+                    msg = ('User {} already mutually blocked'
+                           .format(other_name))
+                else:
+                    msg = 'User {} mutually blocked'.format(other_name)
             else:
-                msg = 'User {} blocked'.format(other_name)
+                if old_row and old_row['status'] < 0:
+                    msg = 'User {} already blocked'.format(other_name)
+                else:
+                    msg = 'User {} blocked'.format(other_name)
             cat = 'info'
         flask.flash(msg, cat)
 
