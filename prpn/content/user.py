@@ -232,9 +232,9 @@ def handle_friend_request_post(user_info, db):
 
         # Perform the status change.
         if new_status == 0:
-            updated = db.update('DELETE FROM friendRequests '
-                                'WHERE subject = ? AND friend = ?',
-                                (user_info['user_id'], other_id))
+            db.update('DELETE FROM friendRequests '
+                      'WHERE subject = ? AND friend = ?',
+                      (user_info['user_id'], other_id))
         else:
             updated = db.update('UPDATE friendRequests SET status = ? '
                                 'WHERE subject = ? AND friend = ?',
@@ -249,14 +249,14 @@ def handle_friend_request_post(user_info, db):
         msg, cat = None, None
         if new_status > 0:
             if reverse_row and reverse_row['status'] > 0:
-                if updated:
+                if old_row and old_row['status'] > 0:
                     msg = 'User {} and you are Friends!'.format(other_name)
                 else:
                     msg = ('User {} and you are Friends now!'
                            .format(other_name))
                 cat = 'success'
             else:
-                if updated:
+                if old_row and old_row['status'] > 0:
                     msg = 'Friend request already sent'
                 else:
                     msg = 'Friend request sent...'
