@@ -221,6 +221,7 @@ def handle_friend_request_post(user_info, db):
         old_row = db.query('SELECT status FROM friendRequests '
                            'WHERE subject = ? AND friend = ?',
                            (user_info['user_id'], other_id))
+        old_status = old_row['status'] if old_row else 0
 
         # If other has blocked us, create no false hopes.
         reverse_row = db.query('SELECT status FROM friendRequests '
@@ -229,6 +230,7 @@ def handle_friend_request_post(user_info, db):
         if reverse_row and reverse_row['status'] < 0 and new_status > 0:
             flask.flash('User {} has blocked you'.format(other_name), 'error')
             return None
+        reverse_status = reverse_row['status'] if reverse_row else 0
 
         # Perform the status change.
         if new_status == 0:
@@ -246,44 +248,34 @@ def handle_friend_request_post(user_info, db):
                           (user_info['user_id'], other_id, new_status))
 
         # Formulate an appropriate response.
-        msg, cat = None, None
+        msg, cat = None, 'info'
         if new_status > 0:
-            if reverse_row and reverse_row['status'] > 0:
-                if old_row and old_row['status'] > 0:
-                    msg = 'User {} and you are Friends!'.format(other_name)
+            if reverse_status > 0:
+                if old_status > 0:
+                    msg = 'User {} and you are Friends!'
                 else:
-                    msg = ('User {} and you are Friends now!'
-                           .format(other_name))
+                    msg = 'User {} and you are Friends now!'
                 cat = 'success'
             else:
-                if old_row and old_row['status'] > 0:
+                if old_status > 0:
                     msg = 'Friend request already sent'
                 else:
                     msg = 'Friend request sent...'
-                cat = 'info'
         elif new_status == 0:
-            if old_row and old_row['status'] > 0:
+            if old_status > 0:
                 msg = 'Friendship withdrawn'
-            elif old_row and old_row['status'] > 0:
+            elif old_status < 0:
                 msg = 'Block withdrawn'
             else:
-                msg = ('Social relationship to User {} remains neutral'
-                       .format(other_name))
-            cat = 'info'
-        elif new_status < 0:
-            if reverse_row and reverse_row['status'] < 0:
-                if old_row and old_row['status'] < 0:
-                    msg = ('User {} already mutually blocked'
-                           .format(other_name))
-                else:
-                    msg = 'User {} mutually blocked'.format(other_name)
-            else:
-                if old_row and old_row['status'] < 0:
-                    msg = 'User {} already blocked'.format(other_name)
-                else:
-                    msg = 'User {} blocked'.format(other_name)
-            cat = 'info'
-        flask.flash(msg, cat)
+                msg = 'Social relationship to User {} remains neutral'
+        else:
+            msg = 'User {} '
+            if old_status < 0:
+                msg += 'already '
+            if reverse_status < 0:
+                msg += 'mutually '
+            msg += 'blocked'
+        flask.flash(msg.format(other_name), cat)
 
         # Done.
         return flask.redirect(flask.url_for('friend_request'), 303)
