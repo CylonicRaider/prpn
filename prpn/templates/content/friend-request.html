@@ -1,12 +1,14 @@
 {%extends "base.html"%}
-{%set subtitle = "Request Friendship"%}
+{%set is_block = request.path.endswith("/block")%}
+{%set subtitle = "Block User" if is_block else "Request Friendship"%}
 {%block nav%}
 {{nav_breadcrumb(url_for("user_list", friends="yes"), "Friends")}}
-{{nav_breadcrumb("", "Request", True)}}
+{{nav_breadcrumb("", "Block" if is_block else "Request", True)}}
 {%endblock%}
 {%block content%}
-      <h1>Request Friendship</h1>
-      <form action="" method="post" class="row align-items-baseline">
+      <h1>{{subtitle}}</h1>
+      <form action="{{url_for('friend_request')}}" method="post" class="row align-items-baseline">
+        <input type="hidden" name="action" value="{%if is_block%}block{%else%}friend{%endif%}"/>
         {%set name = request.args.get('name')%}
         <label for="other" class="form-label col-lg-3 mt-3 mt-lg-1 text-lg-end">
           User:
@@ -15,7 +17,7 @@
           <input class="form-control d-inline-block" id="other" name="other" required="required" {%if name%}value="{{name}}"{%else%}autofocus="autofocus"{%endif%}/>
         </div>
         <div class="col-lg-9 offset-lg-3 mt-3 d-flex flex-wrap gap-2">
-          <input type="submit" class="btn btn-primary me-auto" value="Request Friendship"/>
+          <input type="submit" class="btn {%if is_block%}btn-danger{%else%}btn-success{%endif%} me-auto" value="{%if is_block%}Block User{%else%}Request Friendship{%endif%}"/>
           <a href="{{url_for('index')}}" class="btn btn-outline-secondary">Back to main page</a>
         </div>
       </form>

@@ -314,3 +314,9 @@ def register_at(app):
             if result is not None:
                 return result
         return handle_friend_request()
+
+    @app.route('/friend/block')
+    def friend_block():
+        # Not permitting POST here since the default action of the actual
+        # handler (i.e. request Friendship) would be confusing.
+        return handle_friend_request()
