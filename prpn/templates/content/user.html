@@ -136,7 +136,7 @@
           {%elif may_edit%}
           <a class="btn btn-primary" href="{{add_query(edit='yes')}}">Edit</a>
           {%endif%}
-          <a class="btn btn-outline-primary me-auto" href="{{url_for('friend_request', name=profile_data.name)}}">Request Friendship</a>
+          <a class="btn btn-outline-success me-auto" href="{{url_for('friend_request', name=profile_data.name)}}">Request Friendship</a>
           {%if user_info.user_status >= 3%}
           <a class="btn btn-outline-secondary" href="{{url_for('user_list')}}">Back to overview</a>
           {%else%}

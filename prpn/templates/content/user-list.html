@@ -52,7 +52,7 @@
             <td><span class="user-name">{{entry.name}}</span></td>
             {%if friend_mode%}
             <td class="py-0">
-              <a class="btn btn-outline-secondary btn-sm btn-tight" href="{{url_for('friend_block', name=entry.name)}}">Block...</a>
+              <a class="btn btn-outline-danger btn-sm btn-tight" href="{{url_for('friend_block', name=entry.name)}}">Block...</a>
             </td>
             {%else%}
             <td class="py-0">
@@ -72,8 +72,8 @@
               {%if entry.hasApplication%}
               <a class="btn btn-outline-secondary btn-sm btn-tight" href="{{url_for('application_review', uid=entry.id)}}">Application...</a>
               {%endif%}
-              <a class="btn btn-outline-secondary btn-sm btn-tight" href="{{url_for('friend_request', name=entry.name)}}">Friend...</a>
-              <a class="btn btn-outline-secondary btn-sm btn-tight" href="{{url_for('friend_block', name=entry.name)}}">Block...</a>
+              <a class="btn btn-outline-success btn-sm btn-tight" href="{{url_for('friend_request', name=entry.name)}}">Friend...</a>
+              <a class="btn btn-outline-danger btn-sm btn-tight" href="{{url_for('friend_block', name=entry.name)}}">Block...</a>
             </td>
             {%endif%}
           </tr>
