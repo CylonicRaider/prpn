@@ -315,8 +315,13 @@ def register_at(app):
                 return result
         return handle_friend_request()
 
-    @app.route('/friend/block')
-    def friend_block():
+    @app.route('/friend/withdraw')
+    def friend_withdraw():
         # Not permitting POST here since the default action of the actual
         # handler (i.e. request Friendship) would be confusing.
+        return handle_friend_request()
+
+    @app.route('/friend/block')
+    def friend_block():
+        # See friend_withdraw() for notes on POST.
         return handle_friend_request()
