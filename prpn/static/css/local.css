@@ -41,6 +41,9 @@
   padding: 0.125rem 0.25rem;
   margin: -0.125rem 0;
 }
+.btn-group-border > .btn:not(.active):not(:hover):not(:focus):not(:hover) {
+  border-color: var(--bs-secondary);
+}
 
 dl.inverted > dt {
   font-weight: normal;
