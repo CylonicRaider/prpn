@@ -2,6 +2,9 @@
 {%import "lib/badges.html" as badges%}
 {%set subtitle = ("Friends" if friend_mode else "Users")%}
 {%block nav%}
+{%if friend_mode and user_info.user_status >= 3%}
+{{nav_breadcrumb(url_for("user_list"), "Users")}}
+{%endif%}
 {{nav_breadcrumb("", subtitle, True)}}
 {%if not friend_mode%}
 {{nav_breadcrumb(url_for("user", name=user_info.user_name), "Profile")}}
@@ -49,7 +52,7 @@
           {%for entry in entries%}
           <tr>
             {%+if not friend_mode%}<td>{{entry.id}}</td>{%endif+%}
-            <td><span class="user-name">{{entry.name}}</span></td>
+            <td><a href="{{url_for('user', name=entry.name)}}"><span class="user-name">{{entry.name}}</span></a></td>
             {%if friend_mode%}
             <td class="py-0">
               <span class="btn-group btn-group-border">

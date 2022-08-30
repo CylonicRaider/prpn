@@ -46,6 +46,9 @@
                 View user profiles
               </a>
               {%endif%}
+              <a href="{{url_for('user_list', friends='yes')}}" class="list-group-item list-group-item-action">
+                View Friends
+              </a>
               <a href="{{url_for('transfer')}}" class="list-group-item list-group-item-action">
                 Transfer printing points
               </a>

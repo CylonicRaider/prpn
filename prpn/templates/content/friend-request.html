@@ -2,6 +2,9 @@
 {%set mode = "block" if request.path.endswith("/block") else "neutral" if request.path.endswith("/withdraw") else "friend"%}
 {%set subtitle = {"friend": "Request Friendship", "neutral": "Withdraw Social Relationship", "block": "Block User"}[mode]%}
 {%block nav%}
+{%if user_info.user_status >= 3%}
+{{nav_breadcrumb(url_for("user_list"), "Users")}}
+{%endif%}
 {{nav_breadcrumb(url_for("user_list", friends="yes"), "Friends")}}
 {{nav_breadcrumb("", {"friend": "Request", "neutral": "Withdraw", "block": "Block"}[mode], True)}}
 {%endblock%}
