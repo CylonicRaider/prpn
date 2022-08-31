@@ -67,7 +67,7 @@
               {{badges.profile_visibility(entry.visibility)}}
               {%endif%}
               {%if entry.id == user_info.user_id%}
-              <span class="badge rounded-pill bg-info text-dark">YOU</span>
+              {{badges.badge('You', 'bg-info text-dark')}}
               {%endif%}
             </td>
             <td>{{entry.points}}</td>
