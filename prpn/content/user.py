@@ -194,8 +194,29 @@ def handle_user_post(name, user_info, db):
             db.update(sql, values)
     return flask.redirect(flask.url_for('user', name=profile_name), 303)
 
-def handle_friend_request():
-    return flask.render_template('content/friend-request.html')
+def handle_friend_request(user_info, db):
+    other_name = flask.request.args.get('name')
+    user_exists, fwd_status, rev_status = False, None, None
+    if other_name:
+        entry = db.query('SELECT id, '
+                                'friendReqsFwd.status AS fwdStatus, '
+                                'friendReqsRev.status AS revStatus '
+                         'FROM users '
+                         'LEFT JOIN friendRequests AS friendReqsFwd ON '
+                             'friendReqsFwd.subject = ? AND '
+                             'friendReqsFwd.friend = id '
+                         'LEFT JOIN friendRequests AS friendReqsRev ON '
+                             'friendReqsRev.subject = id AND '
+                             'friendReqsRev.friend = ? '
+                         'WHERE name = ?',
+                         (user_info['user_id'], user_info['user_id'],
+                          other_name))
+        if entry:
+            user_exists = True
+            fwd_status = entry['fwdStatus'] or 0
+            rev_status = entry['revStatus'] or 0
+    return flask.render_template('content/friend-request.html',
+        user_exists=True, fwd_status=fwd_status, rev_status=rev_status)
 
 def handle_friend_request_post(user_info, db):
     other_name = flask.request.form.get('other')
@@ -308,20 +329,23 @@ def register_at(app):
     @app.route('/friend/request', methods=('GET', 'POST'))
     @app.prpn.requires_auth(2)
     def friend_request():
+        user_info = app.prpn.get_user_info()
+        db = app.prpn.get_database()
         if flask.request.method == 'POST':
-            result = handle_friend_request_post(app.prpn.get_user_info(),
-                                                app.prpn.get_database())
+            result = handle_friend_request_post(user_info, db)
             if result is not None:
                 return result
-        return handle_friend_request()
+        return handle_friend_request(user_info, db)
 
     @app.route('/friend/withdraw')
     def friend_withdraw():
         # Not permitting POST here since the default action of the actual
         # handler (i.e. request Friendship) would be confusing.
-        return handle_friend_request()
+        return handle_friend_request(app.prpn.get_user_info(),
+                                     app.prpn.get_database())
 
     @app.route('/friend/block')
     def friend_block():
         # See friend_withdraw() for notes on POST.
-        return handle_friend_request()
+        return handle_friend_request(app.prpn.get_user_info(),
+                                     app.prpn.get_database())

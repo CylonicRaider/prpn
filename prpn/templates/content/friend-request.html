@@ -1,4 +1,5 @@
 {%extends "base.html"%}
+{%import "lib/badges.html" as badges%}
 {%set mode = "block" if request.path.endswith("/block") else "neutral" if request.path.endswith("/withdraw") else "friend"%}
 {%set subtitle = {"friend": "Request Friendship", "neutral": "Withdraw Social Relationship", "block": "Block User"}[mode]%}
 {%block nav%}
@@ -17,8 +18,25 @@
           User:
         </label>
         <div class="col-lg-9 mt-lg-3">
-          <input class="form-control d-inline-block" id="other" name="other" required="required" {%if name%}value="{{name}}"{%else%}autofocus="autofocus"{%endif%}/>
+          {%if name%}
+          <input type="hidden" name="other" value="{{name}}"/>
+          <span class="form-control d-inline-block">{{name}}</span>
+          {%else%}
+          <input class="form-control d-inline-block" id="other" name="other" required="required" autofocus="autofocus"/>
+          {%endif%}
         </div>
+        {%if name%}
+        <label class="form-label col-lg-3 mt-3 mt-lg-1 text-lg-end">
+          Current status:
+        </label>
+        <div class="col-lg-9 mt-lg-3">
+          {%if not user_exists%}
+          {{badges.badge("No such User")}}
+          {%else%}
+          {{badges.friendship_status(fwd_status, rev_status)}}
+          {%endif%}
+        </div>
+        {%endif%}
         <div class="col-lg-9 offset-lg-3 mt-3 d-flex flex-wrap gap-2">
           <input type="submit" class="btn btn-{{ {'friend': 'success', 'neutral': 'warning', 'block': 'danger'}[mode] }} me-auto" value="{{ {'neutral': 'Withdraw Relationship'}.get(mode, subtitle) }}"/>
           <a href="{{url_for('user_list', friends=True)}}" class="btn btn-outline-secondary">Back to Friend list</a>
