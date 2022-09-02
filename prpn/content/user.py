@@ -19,6 +19,12 @@ SUBMIT_DESCS = (
     ('description', None, 4096, 'Description')
 )
 
+FRIEND_CHANGE_DESCS = (
+    ( 1, 'friend', 'Request Friendship', 'Friend'),
+    ( 0, 'neutral', 'Neutral', 'Neutral'),
+    (-1, 'block', 'Block', 'Counter-block')
+)
+
 def init_schema(curs):
     curs.execute('CREATE TABLE IF NOT EXISTS userProfiles ('
                      'user INTEGER PRIMARY KEY REFERENCES allUsers '
@@ -194,7 +200,7 @@ def handle_user_post(name, user_info, db):
             db.update(sql, values)
     return flask.redirect(flask.url_for('user', name=profile_name), 303)
 
-def handle_friend_request(user_info, db):
+def handle_friend_change(user_info, db, form_id='friend-change'):
     other_name = flask.request.args.get('name')
     user_exists, fwd_status, rev_status = False, None, None
     if other_name:
@@ -215,17 +221,29 @@ def handle_friend_request(user_info, db):
             user_exists = True
             fwd_status = entry['fwdStatus'] or 0
             rev_status = entry['revStatus'] or 0
-    return flask.render_template('content/friend-request.html',
-        user_exists=True, fwd_status=fwd_status, rev_status=rev_status)
+    return flask.render_template('content/' + form_id + '.html',
+        user_exists=True, fwd_status=fwd_status, rev_status=rev_status,
+        all_changes=FRIEND_CHANGE_DESCS)
 
-def handle_friend_request_post(user_info, db):
-    other_name = flask.request.form.get('other')
+def handle_friend_request(user_info, db):
+    return handle_friend_change(user_info, db, 'friend-request')
+
+def handle_friend_change_post(user_info, db):
+    other_name = (flask.request.form.get('name') or
+                  flask.request.form.get('other'))
     if not other_name:
         return flask.abort(400)
 
     action = flask.request.form.get('action')
+    if not action:
+        flask.flash('Please specify new Friendship status', 'error')
+        if 'name' not in flask.request.args:
+            return flask.redirect(flask.url_for('friend_change',
+                                                name=other_name),
+                                  303)
+        return None
     try:
-        new_status = {None: 1, 'friend': 1, 'neutral': 0, 'block': -1}[action]
+        new_status = {'friend': 1, 'neutral': 0, 'block': -1}[action]
     except KeyError:
         return flask.abort(400)
 
@@ -299,7 +317,8 @@ def handle_friend_request_post(user_info, db):
         flask.flash(msg.format(other_name), cat)
 
         # Done.
-        return flask.redirect(flask.url_for('friend_request'), 303)
+        return flask.redirect(flask.url_for('friend_change', name=other_name),
+                              303)
 
 def register_at(app):
     @app.route('/user')
@@ -326,26 +345,29 @@ def register_at(app):
                 return result
         return handle_user_get(name, user_info, db)
 
-    @app.route('/friend/request', methods=('GET', 'POST'))
+    @app.route('/friend/change', methods=('GET', 'POST'))
     @app.prpn.requires_auth(2)
-    def friend_request():
+    def friend_change():
         user_info = app.prpn.get_user_info()
         db = app.prpn.get_database()
         if flask.request.method == 'POST':
-            result = handle_friend_request_post(user_info, db)
+            result = handle_friend_change_post(user_info, db)
             if result is not None:
                 return result
-        return handle_friend_request(user_info, db)
+        return handle_friend_change(user_info, db)
+
+    @app.route('/friend/request')
+    @app.prpn.requires_auth(2)
+    def friend_request():
+        return handle_friend_request(app.prpn.get_user_info(),
+                                     app.prpn.get_database())
 
     @app.route('/friend/withdraw')
     def friend_withdraw():
-        # Not permitting POST here since the default action of the actual
-        # handler (i.e. request Friendship) would be confusing.
         return handle_friend_request(app.prpn.get_user_info(),
                                      app.prpn.get_database())
 
     @app.route('/friend/block')
     def friend_block():
-        # See friend_withdraw() for notes on POST.
         return handle_friend_request(app.prpn.get_user_info(),
                                      app.prpn.get_database())

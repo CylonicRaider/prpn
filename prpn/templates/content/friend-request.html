@@ -11,7 +11,7 @@
 {%endblock%}
 {%block content%}
       <h1>{{subtitle}}</h1>
-      <form action="{{url_for('friend_request')}}" method="post" class="row align-items-baseline">
+      <form action="{{url_for('friend_change')}}" method="post" class="row align-items-baseline">
         <input type="hidden" name="action" value="{{mode}}"/>
         {%set name = request.args.get('name')%}
         <label for="other" class="form-label col-lg-3 mt-3 mt-lg-1 text-lg-end">

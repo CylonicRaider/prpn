@@ -1,0 +1,61 @@
+{%extends "base.html"%}
+{%import "lib/badges.html" as badges%}
+{%set subtitle = "Change Friendship Status"%}
+{%block nav%}
+{%if user_info.user_status >= 3%}
+{{nav_breadcrumb(url_for("user_list"), "Users")}}
+{%endif%}
+{{nav_breadcrumb(url_for("user_list", friends="yes"), "Friends")}}
+{{nav_breadcrumb("", "Change", True)}}
+{%endblock%}
+{%block content%}
+      <h1>Change Friendship Status</h1>
+      <form action="" method="post" class="row align-items-baseline">
+        {%set name = request.args.get('name')%}
+        <label for="name" class="form-label col-lg-3 mt-3 mt-lg-1 text-lg-end">
+          User:
+        </label>
+        <div class="col-lg-9 mt-lg-3">
+          {%if name%}
+          <input type="hidden" name="name" value="{{name}}"/>
+          <span class="form-control d-inline-block">{{name}}</span>
+          {%else%}
+          <input class="form-control d-inline-block" id="name" name="name" required="required" autofocus="autofocus"/>
+          {%endif%}
+        </div>
+        {%if name%}
+        <label class="form-label col-lg-3 mt-3 mt-lg-1 text-lg-end">
+          Current status:
+        </label>
+        <div class="col-lg-9 mt-lg-3">
+          {%if not user_exists%}
+          {{badges.badge("No such User")}}
+          {%else%}
+          {{badges.friendship_status(fwd_status, rev_status)}}
+          {%endif%}
+        </div>
+        {%endif%}
+        <label class="form-label col-lg-3 mt-3 mt-lg-1 text-lg-end">
+          New status:
+        </label>
+        <div class="col-lg-9 mt-lg-3">
+          {%set new_action = request.args.get('action') or {None: None, 1: 'friend', 0: 'neutral', -1: 'block'}[fwd_status]%}
+          {%for (id, keyword, label, counter_label) in all_changes%}
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="action" id="action-{{keyword}}" value="{{keyword}}"
+              {%-if new_action == keyword%} checked="checked"{%endif-%}/>
+            <label class="form-check-label" for="action-{{keyword}}">{{counter_label if rev_status == id else label}}</label>
+          </div>
+          {%endfor%}
+        </div>
+        <div class="col-lg-9 offset-lg-3 mt-3 d-flex flex-wrap gap-2">
+          <button type="submit" class="btn btn-primary">Apply change</button>
+          {%if name%}
+          <a class="btn btn-secondary me-auto" href="{{url_for('friend_change')}}">Select another user</button>
+          {%else%}
+          <button type="submit" class="btn btn-secondary me-auto" formmethod="get">Check status</button>
+          {%endif%}
+          <a href="{{url_for('user_list', friends=True)}}" class="btn btn-outline-secondary">Back to Friend list</a>
+        </div>
+      </form>
+{%endblock%}
