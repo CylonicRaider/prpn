@@ -236,7 +236,7 @@ def handle_friend_change_post(user_info, db):
 
     action = flask.request.form.get('action')
     if not action:
-        flask.flash('Please specify new Friendship status', 'error')
+        flask.flash('New Friendship status was not selected', 'error')
         if 'name' not in flask.request.args:
             return flask.redirect(flask.url_for('friend_change',
                                                 name=other_name),
