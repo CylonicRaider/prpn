@@ -229,8 +229,7 @@ def handle_friend_request(user_info, db):
     return handle_friend_change(user_info, db, 'friend-request')
 
 def handle_friend_change_post(user_info, db):
-    other_name = (flask.request.form.get('name') or
-                  flask.request.form.get('other'))
+    other_name = flask.request.form.get('name')
     if not other_name:
         return flask.abort(400)
 
@@ -355,19 +354,3 @@ def register_at(app):
             if result is not None:
                 return result
         return handle_friend_change(user_info, db)
-
-    @app.route('/friend/request')
-    @app.prpn.requires_auth(2)
-    def friend_request():
-        return handle_friend_request(app.prpn.get_user_info(),
-                                     app.prpn.get_database())
-
-    @app.route('/friend/withdraw')
-    def friend_withdraw():
-        return handle_friend_request(app.prpn.get_user_info(),
-                                     app.prpn.get_database())
-
-    @app.route('/friend/block')
-    def friend_block():
-        return handle_friend_request(app.prpn.get_user_info(),
-                                     app.prpn.get_database())
