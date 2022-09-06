@@ -55,10 +55,7 @@
             <td><a href="{{url_for('user', name=entry.name)}}"><span class="user-name">{{entry.name}}</span></a></td>
             {%if friend_mode%}
             <td class="py-0">
-              <span class="btn-group btn-group-border">
-                <a class="btn btn-outline-warning btn-sm btn-tight" href="{{url_for('friend_change', name=entry.name, action='neutral')}}">Unfriend...</a>
-                <a class="btn btn-outline-danger btn-sm btn-tight" href="{{url_for('friend_change', name=entry.name, action='block')}}">Block...</a>
-              </span>
+              <a class="btn btn-outline-secondary btn-sm btn-tight" href="{{url_for('friend_change', name=entry.name)}}">Unfriend/Block...</a>
             </td>
             {%else%}
             <td class="py-0">
@@ -78,11 +75,7 @@
               {%if entry.hasApplication%}
               <a class="btn btn-outline-secondary btn-sm btn-tight" href="{{url_for('application_review', uid=entry.id)}}">Application...</a>
               {%endif%}
-              <span class="btn-group btn-group-border">
-                <a class="btn btn-outline-success btn-sm btn-tight" href="{{url_for('friend_change', name=entry.name, action='friend')}}">Friend...</a>
-                <a class="btn btn-outline-warning btn-sm btn-tight" href="{{url_for('friend_change', name=entry.name, action='neutral')}}">Unfriend...</a>
-                <a class="btn btn-outline-danger btn-sm btn-tight" href="{{url_for('friend_change', name=entry.name, action='block')}}">Block...</a>
-              </span>
+              <a class="btn btn-outline-secondary btn-sm btn-tight" href="{{url_for('friend_change', name=entry.name)}}">Change Friendship...</a>
             </td>
             {%endif%}
           </tr>
