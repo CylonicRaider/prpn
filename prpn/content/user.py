@@ -50,6 +50,19 @@ def init_schema(curs):
                  ')')
     curs.execute('CREATE INDEX IF NOT EXISTS friendRequests_friend_subject '
                  'ON friendRequests(friend, subject)')
+    curs.execute('CREATE VIEW IF NOT EXISTS friendStatuses AS '
+                     'SELECT usersSubj.id AS subject, '
+                            'usersFriend.id AS friend, '
+                            'friendReqsFwd.status AS fwdStatus, '
+                            'friendReqsRev.status AS revStatus '
+                     'FROM users AS usersSubj '
+                     'JOIN users AS usersFriend '
+                     'LEFT JOIN friendRequests AS friendReqsFwd ON '
+                         'friendReqsFwd.subject = usersSubj.id AND '
+                         'friendReqsFwd.friend = usersFriend.id '
+                     'LEFT JOIN friendRequests AS friendReqsRev ON '
+                         'friendReqsRev.subject = usersFriend.id AND '
+                         'friendReqsRev.friend = usersSubj.id')
     curs.execute('CREATE VIEW IF NOT EXISTS friends AS '
                      'SELECT a.subject AS subject, a.friend AS friend '
                      'FROM friendRequests AS a '
@@ -204,19 +217,10 @@ def handle_friend_change(user_info, db, form_id='friend-change'):
     other_name = flask.request.args.get('name')
     user_exists, fwd_status, rev_status = False, None, None
     if other_name:
-        entry = db.query('SELECT id, '
-                                'friendReqsFwd.status AS fwdStatus, '
-                                'friendReqsRev.status AS revStatus '
-                         'FROM users '
-                         'LEFT JOIN friendRequests AS friendReqsFwd ON '
-                             'friendReqsFwd.subject = ? AND '
-                             'friendReqsFwd.friend = id '
-                         'LEFT JOIN friendRequests AS friendReqsRev ON '
-                             'friendReqsRev.subject = id AND '
-                             'friendReqsRev.friend = ? '
-                         'WHERE name = ?',
-                         (user_info['user_id'], user_info['user_id'],
-                          other_name))
+        entry = db.query('SELECT fwdStatus, revStatus FROM friendStatuses '
+                         'JOIN users ON friend = id '
+                         'WHERE subject = ? AND name = ?',
+                         (user_info['user_id'], other_name))
         if entry:
             user_exists = True
             fwd_status = entry['fwdStatus'] or 0
