@@ -105,7 +105,7 @@
                 {%endif%}
               </dd>
               <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Printing points:</dt>
-              <dd class="col-sm-8 col-md-9 col-lg-10 mb-0">
+              <dd class="col-sm-8 col-md-9 col-lg-10">
                 {%+if profile_data.points == None%}<i>N/A</i>{%else%}{{profile_data.points}}{%endif+%}
                 {%if user_info.user_id == profile_data.id%}
                 <a class="btn btn-outline-primary btn-sm btn-tight ms-1" href="{{url_for('transfer')}}">Transfer...</a>
@@ -113,6 +113,29 @@
                 <a class="btn btn-outline-primary btn-sm btn-tight ms-1" href="{{url_for('transfer', recipient=profile_data.name)}}">Transfer...</a>
                 {%endif%}
               </dd>
+              {%if user_info.user_id != profile_data.id%}
+              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Friendship status:</dt>
+              <dd class="col-sm-8 col-md-9 col-lg-10 mb-0">
+                {{badges.friendship_status(profile_data.friendFwd or 0, profile_data.friendRev or 0)}}
+                <span class="btn-group btn-group-border">
+                  {%if profile_data.friendFwd == 0 and profile_data.friendRev >= 0%}
+                  <a class="btn btn-outline-success btn-text-secondary-inact btn-sm btn-tight" href="{{url_for('friend_change', name=profile_data.name, action='friend')}}">
+                    {{"Accept Friendship" if profile_data.friendRev > 0 else "Request Friendship"}}
+                  </a>
+                  {%endif%}
+                  {%if profile_data.friendFwd != 0%}
+                  <a class="btn btn-outline-warning btn-text-secondary-inact btn-sm btn-tight" href="{{url_for('friend_change', name=profile_data.name, action='neutral')}}">
+                    {{"Unfriend" if profile_data.friendFwd > 0 else "Unblock"}}
+                  </a>
+                  {%endif%}
+                  {%if profile_data.friendFwd >= 0%}
+                  <a class="btn btn-outline-danger btn-text-secondary-inact btn-sm btn-tight" href="{{url_for('friend_change', name=profile_data.name, action='block')}}">
+                    Block
+                  </a>
+                  {%endif%}
+                </span>
+              </dd>
+              {%endif%}
             </dl>
           </div>
         </div>
@@ -129,14 +152,24 @@
           </dd>
         </dl>
         <nav class="d-flex flex-wrap align-items-baseline gap-2">
+          {%set can_friend = profile_data.friendFwd == 0 and profile_data.friendRev >= 0%}
+          {%if is_editing or may_edit or can_friend%}
           <span class="form-label">Actions:</span>
+          {%endif%}
           {%if is_editing%}
           <button type="submit" class="btn btn-primary">Save changes</button>
-          <a class="btn btn-secondary" href="{{add_query(edit=None)}}">Cancel editing</a>
+          <a class="btn btn-secondary me-auto" href="{{add_query(edit=None)}}">Cancel editing</a>
           {%elif may_edit%}
-          <a class="btn btn-primary" href="{{add_query(edit='yes')}}">Edit</a>
+          <a class="btn btn-primary{%if not can_friend%} me-auto{%endif%}" href="{{add_query(edit='yes')}}">Edit</a>
           {%endif%}
-          <a class="btn btn-outline-success me-auto" href="{{url_for('friend_change', name=profile_data.name, action='friend')}}">Request Friendship</a>
+          {%if can_friend and not is_editing%}
+          <a class="btn btn-success me-auto" href="{{url_for('friend_change', name=profile_data.name, action='friend')}}">
+            {{-"Request Friendship" if profile_data.friendRev == 0 else "Accept Friendship"-}}
+          </a>
+          {%endif%}
+          {%if not is_editing and not may_edit and not can_friend%}
+          <span class="me-auto"></span>
+          {%endif%}
           {%if user_info.user_status >= 3%}
           <a class="btn btn-outline-secondary" href="{{url_for('user_list')}}">Back to user list</a>
           {%else%}

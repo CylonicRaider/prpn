@@ -126,12 +126,17 @@ def handle_friend_list(user_info, db):
          entries=entries, offset=offset, amount=PAGE_SIZE, has_more=has_more)
 
 def handle_user_get(name, acc_info, db):
-    profile_row = db.query('SELECT *, EXISTS(SELECT * FROM allApplications '
-                                   'WHERE uid = id) AS hasApplication '
+    profile_row = db.query('SELECT allUsers.*, userProfiles.*, '
+                                  'EXISTS(SELECT * FROM allApplications '
+                                         'WHERE uid = id) AS hasApplication, '
+                                  'friendStatuses.fwdStatus AS friendFwd, '
+                                  'friendStatuses.revStatus AS friendRev '
                                'FROM allUsers '
                                'LEFT JOIN userProfiles ON id = user '
+                               'JOIN friendStatuses ON subject = ? AND '
+                                                      'friend = id '
                                'WHERE status >= 2 AND name = ?',
-                           (name,))
+                           (acc_info['user_id'], name))
     if profile_row is None:
         profile_data = {'id': None, 'visibility': -1}
     else:
@@ -155,6 +160,10 @@ def handle_user_get(name, acc_info, db):
         )
     if not profile_data.get('displayName'):
         profile_data['displayName'] = name
+    if profile_data.get('friendFwd') is None:
+        profile_data['friendFwd'] = 0
+    if profile_data.get('friendRev') is None:
+        profile_data['friendRev'] = 0
     may_edit = (profile_data['visible'] and (
         acc_info['user_id'] == profile_data['id'] or
         acc_info['user_status'] >= 3

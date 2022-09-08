@@ -41,7 +41,10 @@
   padding: 0.125rem 0.25rem;
   margin: -0.125rem 0;
 }
-.btn-group-border > .btn:not(.active):not(:hover):not(:focus):not(:hover) {
+.btn-text-secondary-inact:not(.active):not(:hover):not(:focus):not(:active) {
+  color: var(--bs-secondary);
+}
+.btn-group-border > .btn:not(.active):not(:hover):not(:focus):not(:active) {
   border-color: var(--bs-secondary);
 }
 
