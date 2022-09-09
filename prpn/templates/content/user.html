@@ -152,7 +152,7 @@
           </dd>
         </dl>
         <nav class="d-flex flex-wrap align-items-baseline gap-2">
-          {%set can_friend = profile_data.friendFwd == 0 and profile_data.friendRev >= 0%}
+          {%set can_friend = user_info.user_id != profile_data.id and profile_data.friendFwd == 0 and profile_data.friendRev >= 0%}
           {%if is_editing or may_edit or can_friend%}
           <span class="form-label">Actions:</span>
           {%endif%}

@@ -224,9 +224,11 @@ def handle_user_post(name, user_info, db):
 
 def handle_friend_change(user_info, db, form_id='friend-change'):
     other_name = flask.request.args.get('name')
+
     user_exists, fwd_status, rev_status = False, None, None
     if other_name:
-        entry = db.query('SELECT fwdStatus, revStatus FROM friendStatuses '
+        entry = db.query('SELECT friend, fwdStatus, revStatus '
+                         'FROM friendStatuses '
                          'JOIN users ON friend = id '
                          'WHERE subject = ? AND name = ?',
                          (user_info['user_id'], other_name))
@@ -234,6 +236,12 @@ def handle_friend_change(user_info, db, form_id='friend-change'):
             user_exists = True
             fwd_status = entry['fwdStatus'] or 0
             rev_status = entry['revStatus'] or 0
+
+            if entry['friend'] == user_info['user_id']:
+                flask.flash('Cannot befriend or block yourself', 'error')
+                return flask.redirect(flask.url_for('friend_change',
+                    action=flask.request.args.get('action')), 302)
+
     return flask.render_template('content/' + form_id + '.html',
         user_exists=True, fwd_status=fwd_status, rev_status=rev_status,
         all_changes=FRIEND_CHANGE_DESCS)
@@ -267,6 +275,11 @@ def handle_friend_change_post(user_info, db):
             flask.flask('No such user', 'error')
             return None
         other_id = other_row['id']
+
+        # Avoid introducing hard-to-interpret state.
+        if other_id == user_info['user_id']:
+            flask.flash('Cannot befriend or block yourself', 'error')
+            return None
 
         # Retrieve the pre-update status (for more expressive flashing).
         old_row = db.query('SELECT status FROM friendRequests '
