@@ -222,7 +222,7 @@ def handle_user_post(name, user_info, db):
             db.update(sql, values)
     return flask.redirect(flask.url_for('user', name=profile_name), 303)
 
-def handle_friend_change(user_info, db, form_id='friend-change'):
+def handle_friend_change(user_info, db):
     other_name = flask.request.args.get('name')
 
     user_exists, fwd_status, rev_status = False, None, None
@@ -242,12 +242,9 @@ def handle_friend_change(user_info, db, form_id='friend-change'):
                 return flask.redirect(flask.url_for('friend_change',
                     action=flask.request.args.get('action')), 302)
 
-    return flask.render_template('content/' + form_id + '.html',
+    return flask.render_template('content/friend-change.html',
         user_exists=True, fwd_status=fwd_status, rev_status=rev_status,
         all_changes=FRIEND_CHANGE_DESCS)
-
-def handle_friend_request(user_info, db):
-    return handle_friend_change(user_info, db, 'friend-request')
 
 def handle_friend_change_post(user_info, db):
     other_name = flask.request.form.get('name')
