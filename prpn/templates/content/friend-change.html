@@ -52,10 +52,11 @@
           <button type="submit" class="btn btn-primary">Apply change</button>
           {%if name%}
           <a class="btn btn-secondary me-auto" href="{{url_for('friend_change')}}">Select another user</button>
+          <a class="btn btn-outline-secondary" href="{{url_for('user', name=name)}}">Back to profile</a>
           {%else%}
           <button type="submit" class="btn btn-secondary me-auto" formmethod="get">Check status</button>
           {%endif%}
-          <a href="{{url_for('user_list', friends=True)}}" class="btn btn-outline-secondary">Back to Friend list</a>
+          <a class="btn btn-outline-secondary" href="{{url_for('user_list', friends=True)}}">Back to Friend list</a>
         </div>
       </form>
 {%endblock%}
