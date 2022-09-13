@@ -142,28 +142,39 @@ def handle_user_get(name, acc_info, db):
     else:
         profile_data = dict(profile_row)
         profile_data.pop('user', None)
+
     visibility = profile_data['visibility'] or 0
-    if (visibility < 2 and not (acc_info['user_id'] == profile_data['id'] or
-                                acc_info['user_status'] >= 3 and
-                                    visibility >= 0 and
-                                    flask.request.args.get('force')) or
-            profile_row is None):
-        profile_data = {
-            'visible': False,
-            'visibility': visibility
-        }
-    else:
+    really_visible = False
+    if profile_row is not None:
+        if (acc_info['user_id'] == profile_data['id'] or
+                (acc_info['user_status'] >= 3 and
+                 flask.request.args.get('force'))):
+            # Every profile is visible to its owner and Enhanced Users.
+            really_visible = True
+        elif visibility >= 2 and profile_data.get('friendRev', 0) >= 0:
+            # Public profiles are visible to everyone who has not been
+            # blocked.
+            really_visible = True
+        elif (visibility >= 1 and profile_data.get('friendFwd', 0) > 0 and
+                                  profile_data.get('friendRev', 0) > 0):
+            # Friends-only profiles are visible to Friends.
+            really_visible = True
+
+    if really_visible:
         profile_data.update(
             visible=True,
-            visibility=visibility,
             badges=badges.get_user_badges(db, profile_data['id'])
         )
+    else:
+        profile_data = {'visible': False}
+    profile_data['visibility'] = visibility
     if not profile_data.get('displayName'):
         profile_data['displayName'] = name
-    if profile_data.get('friendFwd') is None:
+    if not profile_data.get('friendFwd'):
         profile_data['friendFwd'] = 0
-    if profile_data.get('friendRev') is None:
+    if not profile_data.get('friendRev'):
         profile_data['friendRev'] = 0
+
     may_edit = (profile_data['visible'] and (
         acc_info['user_id'] == profile_data['id'] or
         acc_info['user_status'] >= 3
