@@ -76,7 +76,7 @@
                 {%for (id, name, label, details) in all_visibilities%}
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="visibility" id="visibility-{{name}}" value="{{name}}"
-                  {%-if profile_data.visibility == id%} checked="checked"{%endif-%}/>
+                    {%-if profile_data.visibility == id%} checked="checked"{%endif-%}/>
                   <label class="form-check-label" for="visibility-{{name}}">{{label}} <small class="fst-italic">({{details}})</small></label>
                 </div>
                 {%endfor%}

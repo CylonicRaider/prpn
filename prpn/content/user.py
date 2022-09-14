@@ -239,9 +239,9 @@ def handle_friend_change(user_info, db):
     user_exists, fwd_status, rev_status = False, None, None
     if other_name:
         entry = db.query('SELECT friend, fwdStatus, revStatus '
-                         'FROM friendStatuses '
-                         'JOIN users ON friend = id '
-                         'WHERE subject = ? AND name = ?',
+                             'FROM friendStatuses '
+                             'JOIN users ON friend = id '
+                             'WHERE subject = ? AND name = ?',
                          (user_info['user_id'], other_name))
         if entry:
             user_exists = True
@@ -291,13 +291,13 @@ def handle_friend_change_post(user_info, db):
 
         # Retrieve the pre-update status (for more expressive flashing).
         old_row = db.query('SELECT status FROM friendRequests '
-                           'WHERE subject = ? AND friend = ?',
+                               'WHERE subject = ? AND friend = ?',
                            (user_info['user_id'], other_id))
         old_status = old_row['status'] if old_row else 0
 
         # If other has blocked us, create no false hopes.
         reverse_row = db.query('SELECT status FROM friendRequests '
-                               'WHERE subject = ? AND friend = ?',
+                                   'WHERE subject = ? AND friend = ?',
                                (other_id, user_info['user_id']))
         if reverse_row and reverse_row['status'] < 0 and new_status > 0:
             flask.flash('User {} has blocked you'.format(other_name), 'error')
@@ -307,16 +307,16 @@ def handle_friend_change_post(user_info, db):
         # Perform the status change.
         if new_status == 0:
             db.update('DELETE FROM friendRequests '
-                      'WHERE subject = ? AND friend = ?',
+                          'WHERE subject = ? AND friend = ?',
                       (user_info['user_id'], other_id))
         else:
             updated = db.update('UPDATE friendRequests SET status = ? '
-                                'WHERE subject = ? AND friend = ?',
+                                    'WHERE subject = ? AND friend = ?',
                                 (new_status, user_info['user_id'], other_id))
             if not updated:
                 db.insert('INSERT INTO friendRequests(subject, friend, '
                                                      'status) '
-                          'VALUES (?, ?, ?)',
+                              'VALUES (?, ?, ?)',
                           (user_info['user_id'], other_id, new_status))
 
         # Formulate an appropriate response.
