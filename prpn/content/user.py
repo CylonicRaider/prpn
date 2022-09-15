@@ -100,6 +100,7 @@ def handle_user_list(db):
     else: # Preferred spelling: name
         order_sql = 'LOWER(name) ASC, name ASC'
     offset = tmplutil.get_request_int64p('offset')
+
     entries = db.query_many('SELECT id, name, status, points, visibility, '
                                    'EXISTS(SELECT * FROM allApplications '
                                           'WHERE uid = id) AS hasApplication '
@@ -115,11 +116,19 @@ def handle_user_list(db):
         offset=offset, amount=PAGE_SIZE, has_more=has_more)
 
 def handle_friend_list(user_info, db):
+    sort = flask.request.args.get('sort') or 'name'
+    if sort == '-name':
+        order_sql = 'LOWER(name) DESC, name DESC'
+    else: # Preferred spelling: name
+        order_sql = 'LOWER(name) ASC, name ASC'
     offset = tmplutil.get_request_int64p('offset')
+
     entries = db.query_many('SELECT id, name FROM friends '
                                 'JOIN users ON id = friend '
-                                'WHERE subject = ?',
-                            (user_info['user_id'],))
+                                'WHERE subject = ? '
+                                'ORDER BY ' + order_sql +
+                                ' LIMIT ? OFFSET ?',
+                            (user_info['user_id'], PAGE_SIZE + 1, offset))
     has_more = (len(entries) > PAGE_SIZE)
     entries = entries[:PAGE_SIZE]
     return flask.render_template('content/user-list.html', friend_mode=True,
