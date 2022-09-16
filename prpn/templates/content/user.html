@@ -173,7 +173,7 @@
           {%if user_info.user_status >= 3%}
           <a class="btn btn-outline-secondary" href="{{url_for('user_list')}}">Back to user list</a>
           {%else%}
-          <a class="btn btn-outline-secondary" href="{{url_for('user_list', friends='yes')}}">Back to Friend list</a>
+          <a class="btn btn-outline-secondary" href="{{url_for('friend_list')}}">Back to Friend list</a>
           {%endif%}
           <a class="btn btn-outline-secondary" href="{{url_for('index')}}">Back to main page</a>
         </nav>

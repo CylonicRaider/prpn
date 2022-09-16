@@ -33,7 +33,7 @@
             <li><a class="dropdown-item{%if cur_filter == 'NONUSER_FINAL'%} active{%endif%}" href="{{add_query(filter='NONUSER_FINAL')}}">Final Non-Users only</a></li>
           </ul>
         </div>
-        <a class="btn btn-outline-secondary" href="{{url_for('user_list', friends='yes')}}">View Friends</a>
+        <a class="btn btn-outline-secondary" href="{{url_for('friend_list')}}">View Friends</a>
         <a class="btn btn-outline-secondary" href="{{url_for('application_review_list')}}">Review applications</a>
       </nav>
       {%endif%}

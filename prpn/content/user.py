@@ -366,14 +366,12 @@ def register_at(app):
     @app.route('/user')
     @app.prpn.requires_auth(2)
     def user_list():
-        # For non-Enhanced Users, this redirects to one's own profile page.
-        # Eventually, this could display a Friend listing instead.
+        # User listing is not available to non-Enhanced Users; they get
+        # redirected to the closest service available, viz. the Friends
+        # listing.
         user_info = app.prpn.get_user_info()
-        if flask.request.args.get('friends'):
-            return handle_friend_list(user_info, app.prpn.get_database())
-        elif user_info['user_status'] < 3:
-            return flask.redirect(flask.url_for('user',
-                                                name=user_info['user_name']))
+        if user_info['user_status'] < 3 or flask.request.args.get('friends'):
+            return flask.redirect(flask.url_for('friend_list'))
         return handle_user_list(app.prpn.get_database())
 
     @app.route('/user/<name>', methods=('GET', 'POST'))
@@ -386,6 +384,12 @@ def register_at(app):
             if result is not None:
                 return result
         return handle_user_get(name, user_info, db)
+
+    @app.route('/friend')
+    @app.prpn.requires_auth(2)
+    def friend_list():
+        return handle_friend_list(app.prpn.get_user_info(),
+                                  app.prpn.get_database())
 
     @app.route('/friend/change', methods=('GET', 'POST'))
     @app.prpn.requires_auth(2)
