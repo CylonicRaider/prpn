@@ -53,8 +53,8 @@ def init_schema(curs):
     curs.execute('CREATE VIEW IF NOT EXISTS friendStatuses AS '
                      'SELECT usersSubj.id AS subject, '
                             'usersFriend.id AS friend, '
-                            'friendReqsFwd.status AS fwdStatus, '
-                            'friendReqsRev.status AS revStatus '
+                            'COALESCE(friendReqsFwd.status, 0) AS fwdStatus, '
+                            'COALESCE(friendReqsRev.status, 0) AS revStatus '
                      'FROM users AS usersSubj '
                      'JOIN users AS usersFriend '
                      'LEFT JOIN friendRequests AS friendReqsFwd ON '
@@ -254,8 +254,8 @@ def handle_friend_change(user_info, db):
                          (user_info['user_id'], other_name))
         if entry:
             user_exists = True
-            fwd_status = entry['fwdStatus'] or 0
-            rev_status = entry['revStatus'] or 0
+            fwd_status = entry['fwdStatus']
+            rev_status = entry['revStatus']
 
             if entry['friend'] == user_info['user_id']:
                 flask.flash('Cannot befriend or block yourself', 'error')

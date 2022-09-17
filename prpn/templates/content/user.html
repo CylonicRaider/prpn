@@ -116,7 +116,7 @@
               {%if user_info.user_id != profile_data.id%}
               <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Friendship status:</dt>
               <dd class="col-sm-8 col-md-9 col-lg-10 mb-0">
-                {{badges.friendship_status(profile_data.friendFwd or 0, profile_data.friendRev or 0)}}
+                {{badges.friendship_status(profile_data.friendFwd, profile_data.friendRev)}}
                 <span class="btn-group btn-group-border">
                   {%if profile_data.friendFwd == 0 and profile_data.friendRev >= 0%}
                   <a class="btn btn-outline-success btn-text-secondary-inact btn-sm btn-tight" href="{{url_for('friend_change', name=profile_data.name, action='friend')}}">
