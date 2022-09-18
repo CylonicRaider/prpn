@@ -116,17 +116,29 @@ def handle_user_list(db):
         offset=offset, amount=PAGE_SIZE, has_more=has_more)
 
 def handle_friend_list(user_info, db):
+    criterion = flask.request.args.get('filter') or 'FRIENDS'
     sort = flask.request.args.get('sort') or 'name'
+    if criterion == 'INBOX':
+        filter_sql = 'WHERE fwdStatus = 0 AND revStatus > 0'
+    elif criterion == 'OUTBOX':
+        filter_sql = 'WHERE fwdStatus > 0 AND revStatus <= 0'
+    elif criterion == 'BLOCKED':
+        filter_sql = 'WHERE fwdStatus < 0'
+    elif criterion == 'ALL':
+        filter_sql = 'WHERE fwdStatus <> 0 OR revStatus > 0'
+    else: # Preferred spelling: FRIENDS
+        filter_sql = 'WHERE fwdStatus > 0 AND revStatus > 0'
     if sort == '-name':
         order_sql = 'LOWER(name) DESC, name DESC'
     else: # Preferred spelling: name
         order_sql = 'LOWER(name) ASC, name ASC'
     offset = tmplutil.get_request_int64p('offset')
 
-    entries = db.query_many('SELECT id, name FROM friends '
-                                'JOIN users ON id = friend '
-                                'WHERE subject = ? '
-                                'ORDER BY ' + order_sql +
+    entries = db.query_many('SELECT id, name, fwdStatus, revStatus '
+                                'FROM friendStatuses '
+                                'JOIN users ON subject = ? AND friend = id ' +
+                                filter_sql +
+                                ' ORDER BY ' + order_sql +
                                 ' LIMIT ? OFFSET ?',
                             (user_info['user_id'], PAGE_SIZE + 1, offset))
     has_more = (len(entries) > PAGE_SIZE)
