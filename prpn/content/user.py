@@ -70,6 +70,23 @@ def init_schema(curs):
                                                  'a.friend = b.subject '
                      'WHERE a.status > 0 AND b.status > 0')
 
+def profile_visible(visibility, fwd_rel, rev_rel, profile_owner, viewer_info,
+                    allow_override=True):
+    # The Friendship relations are "from" the viewer "to" the profile owner.
+    if viewer_info['user_id'] == profile_owner or (allow_override and
+            viewer_info['user_status'] >= 3):
+        # Users may view their own profiles, and Enhanced Users may view all
+        # profiles.
+        return True
+    elif visibility >= 2 and rev_rel >= 0:
+        # Public profiles are visible to non-blocked Users.
+        return True
+    elif visibility >= 1 and fwd_rel > 0 and rev_rel > 0:
+        # Friends-only profiles are visible to Friends.
+        return True
+    else:
+        return False
+
 def handle_user_list(db):
     criterion = flask.request.args.get('filter') or 'USER'
     sort = flask.request.args.get('sort') or 'name'
@@ -111,7 +128,9 @@ def handle_user_list(db):
                                 ' LIMIT ? OFFSET ?',
                             (PAGE_SIZE + 1, offset))
     has_more = (len(entries) > PAGE_SIZE)
-    entries = entries[:PAGE_SIZE]
+    # For visible=True, note that this listing is only accessible to Enhanced
+    # Users, which can visit all profile pages anyway.
+    entries = [dict(e, visible=True) for e in entries[:PAGE_SIZE]]
     return flask.render_template('content/user-list.html', entries=entries,
         offset=offset, amount=PAGE_SIZE, has_more=has_more)
 
@@ -134,15 +153,20 @@ def handle_friend_list(user_info, db):
         order_sql = 'LOWER(name) ASC, name ASC'
     offset = tmplutil.get_request_int64p('offset')
 
-    entries = db.query_many('SELECT id, name, fwdStatus, revStatus '
+    entries = db.query_many('SELECT id, name, visibility, '
+                                   'fwdStatus, revStatus '
                                 'FROM friendStatuses '
-                                'JOIN users ON subject = ? AND friend = id ' +
+                                'JOIN users ON subject = ? AND friend = id '
+                                'LEFT JOIN userProfiles ON user = friend ' +
                                 filter_sql +
                                 ' ORDER BY ' + order_sql +
                                 ' LIMIT ? OFFSET ?',
                             (user_info['user_id'], PAGE_SIZE + 1, offset))
     has_more = (len(entries) > PAGE_SIZE)
-    entries = entries[:PAGE_SIZE]
+    entries = [dict(e, visible=profile_visible(e['visibility'] or 0,
+                                               e['fwdStatus'], e['revStatus'],
+                                               e['id'], user_info))
+               for e in entries[:PAGE_SIZE]]
     return flask.render_template('content/user-list.html', friend_mode=True,
          entries=entries, offset=offset, amount=PAGE_SIZE, has_more=has_more)
 
@@ -167,19 +191,14 @@ def handle_user_get(name, acc_info, db):
     visibility = profile_data['visibility'] or 0
     really_visible = False
     if profile_row is not None:
-        if (acc_info['user_id'] == profile_data['id'] or
-                (acc_info['user_status'] >= 3 and
-                 flask.request.args.get('force'))):
-            # Every profile is visible to its owner and Enhanced Users.
-            really_visible = True
-        elif visibility >= 2 and profile_data.get('friendRev', 0) >= 0:
-            # Public profiles are visible to everyone who has not been
-            # blocked.
-            really_visible = True
-        elif (visibility >= 1 and profile_data.get('friendFwd', 0) > 0 and
-                                  profile_data.get('friendRev', 0) > 0):
-            # Friends-only profiles are visible to Friends.
-            really_visible = True
+        really_visible = profile_visible(
+            visibility,
+            profile_data.get('friendFwd', 0),
+            profile_data.get('friendRev', 0),
+            profile_data['id'],
+            acc_info,
+            bool(flask.request.args.get('force'))
+        )
 
     if really_visible:
         profile_data.update(

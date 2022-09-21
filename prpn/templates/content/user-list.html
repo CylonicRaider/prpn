@@ -65,7 +65,13 @@
           {%for entry in entries%}
           <tr>
             {%+if not friend_mode%}<td>{{entry.id}}</td>{%endif+%}
-            <td><a href="{{url_for('user', name=entry.name)}}"><span class="user-name">{{entry.name}}</span></a></td>
+            <td>
+              {%if entry.visible%}
+              <a href="{{url_for('user', name=entry.name)}}"><span class="user-name">{{entry.name}}</span></a>
+              {%else%}
+              <span class="user-name">{{entry.name}}</span>
+              {%endif%}
+            </td>
             {%if friend_mode%}
             <td class="py-0">
               {{badges.friendship_status(entry.fwdStatus, entry.revStatus)}}
