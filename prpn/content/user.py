@@ -276,17 +276,26 @@ def handle_user_post(name, user_info, db):
 def handle_friend_change(user_info, db):
     other_name = flask.request.args.get('name')
 
-    user_exists, fwd_status, rev_status = False, None, None
+    user_exists, user_visible = False, False
+    fwd_status, rev_status = None, None
     if other_name:
-        entry = db.query('SELECT friend, fwdStatus, revStatus '
+        entry = db.query('SELECT friend, visibility, fwdStatus, revStatus '
                              'FROM friendStatuses '
                              'JOIN users ON friend = id '
+                             'LEFT JOIN userProfiles ON user = friend '
                              'WHERE subject = ? AND name = ?',
                          (user_info['user_id'], other_name))
         if entry:
             user_exists = True
             fwd_status = entry['fwdStatus']
             rev_status = entry['revStatus']
+            user_visible = profile_visible(
+                entry['visibility'] or 0,
+                fwd_status,
+                rev_status,
+                entry['friend'],
+                user_info
+            )
 
             if entry['friend'] == user_info['user_id']:
                 flask.flash('Cannot befriend or block yourself', 'error')
@@ -294,7 +303,8 @@ def handle_friend_change(user_info, db):
                     action=flask.request.args.get('action')), 302)
 
     return flask.render_template('content/friend-change.html',
-        user_exists=True, fwd_status=fwd_status, rev_status=rev_status,
+        user_exists=user_exists, user_visible=user_visible,
+        fwd_status=fwd_status, rev_status=rev_status,
         all_changes=FRIEND_CHANGE_DESCS)
 
 def handle_friend_change_post(user_info, db):
