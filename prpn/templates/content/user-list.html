@@ -11,17 +11,24 @@
 {%endif%}
 {%endblock%}
 {%block content%}
-      <h1>{%if friend_mode%}Friend{%else%}User{%endif%} Listing</h1>
+      {%if friend_mode%}
+      {%set cur_filter = request.args.get('filter') or 'FRIENDS'%}
+      {%else%}
+      {%set cur_filter = request.args.get('filter') or 'USER'%}
+      {%endif%}
+      <h1>{%if friend_mode%}{{ {
+        'INBOX': 'Friend Request',
+        'OUTBOX': 'Friend Request',
+        'BLOCKED': 'Blocked User'
+      }.get(cur_filter, 'Friend') }}{%else%}User{%endif%} Listing</h1>
       <nav class="d-flex flex-wrap align-items-baseline gap-2">
         <span class="form-label me-1">View:</span>
         {%if friend_mode%}
-        {%set cur_filter = request.args.get('filter') or 'FRIENDS'%}
         <a class="btn btn-outline-success{%if cur_filter == 'FRIENDS'%} active{%endif%}" href="{{add_query(filter='FRIENDS')}}">Friends</a>
         <a class="btn btn-outline-primary{%if cur_filter == 'INBOX'%} active{%endif%}" href="{{add_query(filter='INBOX')}}">Request inbox</a>
         <a class="btn btn-outline-info{%if cur_filter == 'OUTBOX'%} active{%endif%}" href="{{add_query(filter='OUTBOX')}}">Request outbox</a>
         <a class="btn btn-outline-danger me-auto{%if cur_filter == 'BLOCKED'%} active{%endif%}" href="{{add_query(filter='BLOCKED')}}">Blocked</a>
         {%else%}
-        {%set cur_filter = request.args.get('filter') or 'USER'%}
         <a class="btn btn-outline-info{%if cur_filter == 'ALL'%} active{%endif%}" href="{{add_query(filter='ALL')}}">All</a>
         <div class="btn-group">
           <a class="btn btn-outline-success{%if cur_filter == 'USER'%} active{%endif%}" href="{{add_query(filter='USER')}}">Users</a>
