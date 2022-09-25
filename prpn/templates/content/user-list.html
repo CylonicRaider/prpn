@@ -47,10 +47,10 @@
           </ul>
         </div>
         {%endif%}
+        {%if user_info.user_status >= 3%}
         {%if friend_mode%}
         <a class="btn btn-outline-secondary" href="{{url_for('user_list')}}">View users</a>
         {%endif%}
-        {%if user_info.user_status >= 3%}
         <a class="btn btn-outline-secondary" href="{{url_for('application_review_list')}}">Review applications</a>
         {%endif%}
         {%if not friend_mode%}
@@ -143,9 +143,6 @@
         <a class="btn btn-outline-success" href="{{url_for('friend_change', action='friend')}}">Request Friendship...</a>
         {%endif%}
         {{render_pagination(offset, amount, len(entries) + has_more)}}
-        {%if friend_mode%}
-        <a class="btn btn-outline-secondary" href="{{url_for('user_list')}}">Back to user list</a>
-        {%endif%}
         <a class="btn btn-outline-secondary" href="{{url_for('index')}}">Back to main page</a>
       </nav>
 {%endblock%}
