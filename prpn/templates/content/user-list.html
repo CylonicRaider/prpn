@@ -140,7 +140,12 @@
       {%endif%}
       <nav class="d-flex flex-wrap gap-2">
         {%if friend_mode%}
+        {%if cur_filter == 'BLOCKED'%}
+        <a class="btn btn-outline-danger" href="{{url_for('friend_change', action='block')}}">Block User...</a>
+        {%elif cur_filter in ('INBOX', 'OUTBOX')%}
+        {%else%}
         <a class="btn btn-outline-success" href="{{url_for('friend_change', action='friend')}}">Request Friendship...</a>
+        {%endif%}
         {%endif%}
         {{render_pagination(offset, amount, len(entries) + has_more)}}
         <a class="btn btn-outline-secondary" href="{{url_for('index')}}">Back to main page</a>
