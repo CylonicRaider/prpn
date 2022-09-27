@@ -240,8 +240,7 @@ def get_application_status(eai, now):
 
 def get_application_counts(db):
     def len_to_str(rows):
-        l = len(rows)
-        return '10+' if l > 10 else str(l) if l else ''
+        return tmplutil.len_to_str(len(rows))
 
     now = time.time()
     pending = len_to_str(db.query_many(

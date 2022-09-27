@@ -167,8 +167,10 @@ def handle_friend_list(user_info, db):
                                                e['fwdStatus'], e['revStatus'],
                                                e['id'], user_info))
                for e in entries[:PAGE_SIZE]]
+    counts = get_friend_request_counts(user_info, db)
     return flask.render_template('content/user-list.html', friend_mode=True,
-         entries=entries, offset=offset, amount=PAGE_SIZE, has_more=has_more)
+         entries=entries, offset=offset, amount=PAGE_SIZE, has_more=has_more,
+         request_counts=counts)
 
 def handle_user_get(name, acc_info, db):
     profile_row = db.query('SELECT allUsers.*, userProfiles.*, '
@@ -402,6 +404,28 @@ def handle_friend_change_post(user_info, db):
         # Done.
         return flask.redirect(flask.url_for('friend_change', name=other_name),
                               303)
+
+def get_friend_request_counts(user_info, db):
+    def len_to_str(rows):
+        return tmplutil.len_to_str(len(rows))
+
+    inbox = len_to_str(db.query_many(
+        'SELECT 1 FROM friendStatuses '
+        'WHERE subject = ? AND fwdStatus = 0 AND revStatus > 0 '
+        'LIMIT 11',
+        (user_info['user_id'],)
+    ))
+    outbox = len_to_str(db.query_many(
+        'SELECT 1 FROM friendStatuses '
+        'WHERE subject = ? AND fwdStatus > 0 AND revStatus <= 0 '
+        'LIMIT 11',
+        (user_info['user_id'],)
+    ))
+
+    return {'inbox': inbox, 'outbox': outbox}
+
+def get_index_info(user_info, db):
+    return {'friend_counts': get_friend_request_counts(user_info, db)}
 
 def register_at(app):
     @app.route('/user')

@@ -48,6 +48,11 @@
               {%endif%}
               <a href="{{url_for('friend_list')}}" class="list-group-item list-group-item-action">
                 View Friends
+                {%for key, cls in (('inbox', 'primary'), ('outbox', 'info'))%}
+                {%if friend_counts[key]%}
+                <span class="badge rounded-pill bg-{{cls}}{%if cls == 'info'%} text-dark{%endif%}">{{friend_counts[key]}}</span>
+                {%endif%}
+                {%endfor%}
               </a>
               <a href="{{url_for('transfer')}}" class="list-group-item list-group-item-action">
                 Transfer printing points

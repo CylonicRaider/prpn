@@ -20,6 +20,9 @@ def get_request_int64p(name, default=0):
         return None
     return result
 
+def len_to_str(l, limit=10):
+    return str(l) + '+' if l > limit else str(l) if l else ''
+
 def add_query_ex(values, include_path=True):
     new_args = [(k, v) for k, v in dict(flask.request.args, **values).items()
                        if v is not None]

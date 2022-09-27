@@ -25,8 +25,12 @@
         <span class="form-label me-1">View:</span>
         {%if friend_mode%}
         <a class="btn btn-outline-success{%if cur_filter == 'FRIENDS'%} active{%endif%}" href="{{add_query(filter='FRIENDS')}}">Friends</a>
-        <a class="btn btn-outline-primary{%if cur_filter == 'INBOX'%} active{%endif%}" href="{{add_query(filter='INBOX')}}">Request inbox</a>
-        <a class="btn btn-outline-info{%if cur_filter == 'OUTBOX'%} active{%endif%}" href="{{add_query(filter='OUTBOX')}}">Request outbox</a>
+        <a class="btn btn-outline-primary{%if cur_filter == 'INBOX'%} active{%endif%}" href="{{add_query(filter='INBOX')}}">Request inbox
+          {%-if request_counts.inbox%} {{badges.badge(request_counts.inbox, 'bg-danger')}}{%endif-%}
+        </a>
+        <a class="btn btn-outline-info{%if cur_filter == 'OUTBOX'%} active{%endif%}" href="{{add_query(filter='OUTBOX')}}">Request outbox
+          {%-if request_counts.outbox%} {{badges.badge(request_counts.inbox, 'bg-danger')}}{%endif-%}
+        </a>
         <a class="btn btn-outline-danger me-auto{%if cur_filter == 'BLOCKED'%} active{%endif%}" href="{{add_query(filter='BLOCKED')}}">Blocked</a>
         {%else%}
         <a class="btn btn-outline-info{%if cur_filter == 'ALL'%} active{%endif%}" href="{{add_query(filter='ALL')}}">All</a>
