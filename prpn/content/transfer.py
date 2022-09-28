@@ -4,11 +4,18 @@ import flask
 MAX_AMOUNT = 2 ** 63 - 1
 
 def handle_get(user_info, db):
-    row = db.query('SELECT points FROM users WHERE id = ?',
-                   (user_info['user_id'],))
-    cur_balance = None if row is None else row['points']
+    user_row = db.query('SELECT points FROM users WHERE id = ?',
+                        (user_info['user_id'],))
+    cur_balance = None if user_row is None else user_row['points']
+
+    friend_rows = db.query_many('SELECT name FROM users '
+                                    'JOIN friends ON friend = id '
+                                    'WHERE subject = ?',
+                                (user_info['user_id'],))
+    friend_names = [row['name'] for row in friend_rows]
+
     return flask.render_template('content/transfer.html',
-                                 cur_balance=cur_balance)
+        cur_balance=cur_balance, friend_names=friend_names)
 
 def handle_post(user_info, db):
     recipient_type = flask.request.form['recipient-type']
