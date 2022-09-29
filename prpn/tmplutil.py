@@ -44,6 +44,11 @@ def render_timestamp(ts):
     ))
 
 def render_pagination(offset, page_size, cur_page_size, offset_var='offset'):
+    if offset == 0 and cur_page_size < page_size:
+        return Markup(
+            '<div class="pagination null-pagination mx-auto"></div>'
+        )
+
     more_av = (cur_page_size + offset % page_size > page_size)
     cp, po = divmod(offset, page_size)
     pages = []
