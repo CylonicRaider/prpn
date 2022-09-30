@@ -37,7 +37,7 @@ def handle_post(app, user_info):
                 flask.flash('Insufficient funds', 'error')
                 return None
             try:
-                db.update('INSERT INTO lottery(user) VALUES (?)',
+                db.insert('INSERT INTO lottery(user) VALUES (?)',
                           (user_info['user_id'],))
             except sqlite3.IntegrityError:
                 flask.flash('You are already enrolled into the '

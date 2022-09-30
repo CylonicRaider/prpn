@@ -272,7 +272,7 @@ def handle_user_post(name, user_info, db):
                 ''.join(', {}'.format(a[0])  for a in assignments),
                 ''.join(', :{}'.format(a[0]) for a in assignments)
             ))
-            db.update(sql, values)
+            db.insert(sql, values)
     return flask.redirect(flask.url_for('user', name=profile_name), 303)
 
 def handle_friend_change(user_info, db):

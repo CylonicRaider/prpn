@@ -121,7 +121,7 @@ def handle_post(user_info, app_info, app):
                        'comments = NULL, revealAt = NULL WHERE user = ?',
                    (now, text, user_info['user_id']))
     if not ok:
-        db.update('INSERT INTO applications(user, timestamp, content) '
+        db.insert('INSERT INTO applications(user, timestamp, content) '
                       'VALUES (?, ?, ?)',
                   (user_info['user_id'], now, text))
     app_info.update(timestamp=now, content=text, comments=None, revealAt=None)
