@@ -29,7 +29,7 @@
         </label>
         <div class="col-lg-9 mt-lg-3">
           {%if not user_exists%}
-          {{badges.badge("No such User")}}
+          {{badges.badge('No such User')}}
           {%else%}
           {{badges.friendship_status(fwd_status, rev_status)}}
           {%endif%}

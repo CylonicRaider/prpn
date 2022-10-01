@@ -120,17 +120,17 @@
                 <span class="btn-group btn-group-border">
                   {%if profile_data.friendFwd <= 0 and profile_data.friendRev >= 0%}
                   <a class="btn btn-outline-success btn-text-secondary-inact btn-sm btn-tight" href="{{url_for('friend_change', name=profile_data.name, action='friend')}}">
-                    {{"Accept Friendship" if profile_data.friendRev > 0 else "Request Friendship"}}...
+                    {{'Accept Friendship' if profile_data.friendRev > 0 else 'Request Friendship'}}...
                   </a>
                   {%endif%}
                   {%if profile_data.friendFwd != 0%}
                   <a class="btn btn-outline-warning btn-text-secondary-inact btn-sm btn-tight" href="{{url_for('friend_change', name=profile_data.name, action='neutral')}}">
-                    {{"Unfriend" if profile_data.friendFwd > 0 else "Unblock"}}...
+                    {{'Unfriend' if profile_data.friendFwd > 0 else 'Unblock'}}...
                   </a>
                   {%endif%}
                   {%if profile_data.friendFwd >= 0%}
                   <a class="btn btn-outline-danger btn-text-secondary-inact btn-sm btn-tight" href="{{url_for('friend_change', name=profile_data.name, action='block')}}">
-                    {{"Counter-block" if profile_data.friendRev < 0 else "Block"}}...
+                    {{'Counter-block' if profile_data.friendRev < 0 else 'Block'}}...
                   </a>
                   {%endif%}
                 </span>
@@ -143,7 +143,7 @@
           <dt class="card-header border-secondary">Description:</dt>
           <dd class="card-body mb-0">
             {%if is_editing%}
-            <textarea class="form-control font-monospace" name="description" rows="5">{{profile_data.description or ""}}</textarea>
+            <textarea class="form-control font-monospace" name="description" rows="5">{{profile_data.description or ''}}</textarea>
             {%elif profile_data.description == None%}
             <i>None provided</i>
             {%else%}
@@ -164,7 +164,7 @@
           {%endif%}
           {%if can_friend and not is_editing%}
           <a class="btn btn-success me-auto" href="{{url_for('friend_change', name=profile_data.name, action='friend')}}">
-            {{-"Request Friendship" if profile_data.friendRev == 0 else "Accept Friendship"-}}
+            {{-'Request Friendship' if profile_data.friendRev == 0 else 'Accept Friendship'-}}
           </a>
           {%endif%}
           {%if not is_editing and not may_edit and not can_friend%}
