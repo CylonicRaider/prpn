@@ -88,6 +88,9 @@
               {{badges.friendship_status(entry.fwdStatus, entry.revStatus)}}
             </td>
             <td class="py-0">
+              {%if entry.visible%}
+              <a class="btn btn-outline-primary btn-sm btn-tight" href="{{url_for('user', name=entry.name)}}">Profile...</a>
+              {%endif%}
               {%if entry.id != user_info.user_id%}
               <span class="btn-group btn-group-border">
                 {%if entry.fwdStatus <= 0 and entry.revStatus >= 0%}
