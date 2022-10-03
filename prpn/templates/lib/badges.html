@@ -50,7 +50,7 @@
     {%-if fwd_status > 0 and rev_status > 0-%}
       {%set text, short_text, color = 'Friends', 'Friends', 'bg-success'%}
     {%-elif fwd_status > 0-%}
-      {%set text, short_text, color = 'Friendship requested', 'Fr. req.', 'bg-info'%}
+      {%set text, short_text, color = 'Friendship requested', 'Fr. req.', 'bg-info text-dark'%}
     {%-else-%}
       {%set text, short_text, color = 'Has requested Friendship', 'Has req. Fr.', 'bg-primary'%}
     {%-endif-%}

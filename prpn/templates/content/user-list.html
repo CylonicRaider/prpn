@@ -31,12 +31,12 @@
         <a class="btn btn-outline-primary{%if cur_filter == 'INBOX'%} active{%endif%}" href="{{add_query(filter='INBOX')}}">Request inbox
           {%-if request_counts.inbox%} {{badges.badge(request_counts.inbox, 'bg-danger')}}{%endif-%}
         </a>
-        <a class="btn btn-outline-info{%if cur_filter == 'OUTBOX'%} active{%endif%}" href="{{add_query(filter='OUTBOX')}}">Request outbox
+        <a class="btn btn-outline-info btn-text-secondary-inact{%if cur_filter == 'OUTBOX'%} active{%endif%}" href="{{add_query(filter='OUTBOX')}}">Request outbox
           {%-if request_counts.outbox%} {{badges.badge(request_counts.outbox, 'bg-danger')}}{%endif-%}
         </a>
         <a class="btn btn-outline-danger me-auto{%if cur_filter == 'BLOCKED'%} active{%endif%}" href="{{add_query(filter='BLOCKED')}}">Blocked</a>
         {%else%}
-        <a class="btn btn-outline-info{%if cur_filter == 'ALL'%} active{%endif%}" href="{{add_query(filter='ALL')}}">All</a>
+        <a class="btn btn-outline-info btn-text-secondary-inact{%if cur_filter == 'ALL'%} active{%endif%}" href="{{add_query(filter='ALL')}}">All</a>
         <div class="btn-group">
           <a class="btn btn-outline-success{%if cur_filter == 'USER'%} active{%endif%}" href="{{add_query(filter='USER')}}">Users</a>
           <button class="btn btn-outline-success dropdown-toggle dropdown-toggle-split{%if cur_filter in ('USER_REGULAR', 'USER_ENHANCED')%} active{%endif%}" data-bs-toggle="dropdown"></button>
@@ -46,7 +46,7 @@
           </ul>
         </div>
         <div class="btn-group me-auto">
-          <a class="btn btn-outline-warning{%if cur_filter == 'NONUSER'%} active{%endif%}" href="{{add_query(filter='NONUSER')}}">Non-Users</a>
+          <a class="btn btn-outline-warning btn-text-secondary-inact{%if cur_filter == 'NONUSER'%} active{%endif%}" href="{{add_query(filter='NONUSER')}}">Non-Users</a>
           <button class="btn btn-outline-warning dropdown-toggle dropdown-toggle-split{%if cur_filter in ('NONUSER_PENDING', 'NONUSER_FINAL')%} active{%endif%}" data-bs-toggle="dropdown"></button>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item{%if cur_filter == 'NONUSER_PENDING'%} active{%endif%}" href="{{add_query(filter='NONUSER_PENDING')}}">P.U.E.s only</a></li>

@@ -14,12 +14,12 @@
       <nav class="d-flex flex-wrap align-items-baseline gap-2">
         <span class="form-label me-1">Filter:</span>
         {%set cur_filter = request.args.get('filter') or 'PENDING'%}
-        <a class="btn btn-outline-info{%if cur_filter == 'ALL'%} active{%endif%}" href="{{add_query(filter='ALL')}}">All</a>
+        <a class="btn btn-outline-info btn-text-secondary-inact{%if cur_filter == 'ALL'%} active{%endif%}" href="{{add_query(filter='ALL')}}">All</a>
         <a class="btn btn-outline-primary{%if cur_filter == 'PENDING'%} active{%endif%}" href="{{add_query(filter='PENDING')}}">Pending</a>
         <a class="btn btn-outline-secondary{%if cur_filter == 'RESOLVED'%} active{%endif%}" href="{{add_query(filter='RESOLVED')}}">Resolved</a>
         <a class="btn btn-outline-success{%if cur_filter == 'ACCEPTED'%} active{%endif%}" href="{{add_query(filter='ACCEPTED')}}">Accepted</a>
         <div class="btn-group me-auto">
-          <a class="btn btn-outline-warning{%if cur_filter == 'REJECTED'%} active{%endif%}" href="{{add_query(filter='REJECTED')}}">Rejected</a>
+          <a class="btn btn-outline-warning btn-text-secondary-inact{%if cur_filter == 'REJECTED'%} active{%endif%}" href="{{add_query(filter='REJECTED')}}">Rejected</a>
           <button class="btn btn-outline-warning dropdown-toggle dropdown-toggle-split{%if cur_filter in ('REJECTED_HIDDEN', 'REJECTED_PUBLIC')%} active{%endif%}" data-bs-toggle="dropdown"></button>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item{%if cur_filter == 'REJECTED_HIDDEN'%} active{%endif%}" href="{{add_query(filter='REJECTED_HIDDEN')}}">Hidden</a></li>
