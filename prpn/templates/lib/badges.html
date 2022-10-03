@@ -10,7 +10,7 @@
 {%macro get_or_default(mapping, key)%}{{key if mapping == None else mapping.get(key, mapping[None])}}{%endmacro%}
 
 {%macro badge(text, cls='bg-secondary', title=None)-%}
-  <span class="badge rounded-pill {{cls}}"{%if title%} title="{{title}}"{%endif%}>{{text | upper}}</span>
+  <span class="badge rounded-pill {{cls}}"{%if title%} title="{{title}}" data-bs-toggle="tooltip"{%endif%}>{{text | upper}}</span>
 {%-endmacro%}
 
 {%macro mapped_badge(value, class_mapping, text_mapping=None, title_mapping=None, title_prefix=None)-%}

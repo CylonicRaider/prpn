@@ -98,7 +98,8 @@ def render_sortctl(label, keyword, default=None, query_var='sort'):
         else:
             arrow = '\u2195'
             tooltip = '(not sorted; click to sort)'
-    result = [Markup('<a class="sort-control" href="%s" title="%s">') %
+    result = [Markup('<a class="sort-control" href="%s" title="%s" '
+                        'data-bs-toggle="tooltip">') %
               (link, tooltip)]
     if label:
         result.extend((label, ' '))

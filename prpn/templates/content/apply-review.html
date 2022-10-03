@@ -3,6 +3,7 @@
 {%set subtitle = "Detail \u2014 Application Review"%}
 {%block extrahead%}
 {{load_script('js/localize-time.js')}}
+{{load_script('js/convert-tooltips.js')}}
 {%endblock%}
 {%block nav%}
 {{nav_breadcrumb(url_for("application"), "Application")}}
@@ -81,7 +82,7 @@
           </div>
           {%for (name, abbrev, description) in mandatory_items%}
           <div class="col-12">
-            <div class="form-check" title="&quot;...{{description}}...&quot;">
+            <div class="form-check" title="&quot;...{{description}}...&quot;" data-bs-toggle="tooltip">
               <input class="form-check-input" type="checkbox" name="missing-{{name}}" id="missing-{{name}}"/>
               <label class="form-check-label" for="missing-{{name}}">{{abbrev}}</label>
             </div>
@@ -94,7 +95,7 @@
           </div>
           {%for (name, abbrev, description) in prohibited_items%}
           <div class="col-12">
-            <div class="form-check" title="&quot;{{description}}...&quot;">
+            <div class="form-check" title="&quot;{{description}}...&quot;" data-bs-toggle="tooltip">
               <input class="form-check-input" type="checkbox" name="prohibited-{{name}}" id="prohibited-{{name}}"/>
               <label class="form-check-label" for="prohibited-{{name}}">{{abbrev}}</label>
             </div>

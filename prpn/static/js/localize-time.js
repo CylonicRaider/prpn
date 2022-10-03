@@ -1,3 +1,4 @@
+// BEFORE: convert-tooltips.js
 
 function leftpad(string, length, fill) {
   string = String(string);
@@ -17,6 +18,7 @@ function formatLocalDateTime(date) {
 function localizeDatetime(node) {
   node.title = '(' + node.dateTime.replace(/T/, ' ').replace(/Z$/, ' UTC') +
                ')';
+  node.dataset.bsToggle = 'tooltip';
   node.textContent = formatLocalDateTime(new Date(node.dateTime));
 }
 
