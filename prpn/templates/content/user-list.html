@@ -85,7 +85,7 @@
             </td>
             {%if friend_mode%}
             <td class="py-0">
-              {{badges.friendship_status(entry.fwdStatus, entry.revStatus)}}
+              {{badges.friendship_status(entry.fwdStatus, entry.revStatus, short=True)}}
             </td>
             <td class="py-0">
               {%if entry.visible%}

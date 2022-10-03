@@ -35,24 +35,27 @@
   {{mapped_badge(status, PROFILE_VISIBILITY_CLASSES, PROFILE_VISIBILITY_NAMES, PROFILE_VISIBILITY_NAMES, 'Profile visibility: ')}}
 {%-endmacro%}
 
-{%macro friendship_status(fwd_status, rev_status)-%}
+{%macro friendship_status(fwd_status, rev_status, short=False)-%}
   {%-if fwd_status < 0 or rev_status < 0-%}
     {%-if fwd_status < 0 and rev_status < 0-%}
-      {{badge('Mutually blocked', 'bg-danger')}}
+      {%set text, short_text, color = 'Mutually blocked', 'Mut. bl.', 'bg-danger'%}
     {%-elif fwd_status < 0-%}
-      {{badge('Blocked', 'bg-danger')}}
+      {%-if rev_status != 0%}{{friendship_status(0, rev_status, short)}} {%endif-%}
+      {%set text, short_text, color = 'Blocked', 'Blocked', 'bg-danger'%}
     {%-else-%}
-      {{badge('Has blocked you', 'bg-danger')}}
+      {%-if fwd_status != 0%}{{friendship_status(fwd_status, 0, short)}} {%endif-%}
+      {%set text, short_text, color = 'Has blocked you', 'Has bl. you', 'bg-danger'%}
     {%-endif-%}
   {%-elif fwd_status > 0 or rev_status > 0-%}
     {%-if fwd_status > 0 and rev_status > 0-%}
-      {{badge('Friends', 'bg-success')}}
+      {%set text, short_text, color = 'Friends', 'Friends', 'bg-success'%}
     {%-elif fwd_status > 0-%}
-      {{badge('Friendship requested', 'bg-info')}}
+      {%set text, short_text, color = 'Friendship requested', 'Fr. req.', 'bg-info'%}
     {%-else-%}
-      {{badge('Has requested Friendship', 'bg-primary')}}
+      {%set text, short_text, color = 'Has requested Friendship', 'Has req. Fr.', 'bg-primary'%}
     {%-endif-%}
   {%-else-%}
-    {{badge('Neutral')}}
+    {%set text, short_text, color = 'Neutral', 'Neutral', 'bg-secondary'%}
   {%-endif-%}
+  {{badge((short_text if short else text), color, ('Friendship status: ' + text if short else None))}}
 {%-endmacro%}
