@@ -170,9 +170,6 @@ def handle_friend_list(user_info, db):
     elif criterion == 'BLOCKED':
         table_sql = 'friendStatuses_fwd'
         filter_sql = 'WHERE fwdStatus < 0'
-    elif criterion == 'ALL':
-        table_sql = 'friendStatuses'
-        filter_sql = 'WHERE fwdStatus <> 0 OR revStatus > 0'
     else: # Preferred spelling: FRIENDS
         table_sql = 'friends'
         filter_sql = ''
