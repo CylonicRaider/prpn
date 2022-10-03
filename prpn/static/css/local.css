@@ -39,6 +39,9 @@
 
 .btn-tight {
   padding: 0.125rem 0.25rem;
+}
+.btn-very-tight {
+  padding: 0.125rem 0.25rem;
   margin: -0.125rem 0;
 }
 .btn-text-secondary-inact:not(.active):not(:hover):not(:focus):not(:active) {
