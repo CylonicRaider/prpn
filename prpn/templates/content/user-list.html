@@ -29,7 +29,7 @@
           {%-if request_counts.inbox%} {{badges.badge(request_counts.inbox, 'bg-danger')}}{%endif-%}
         </a>
         <a class="btn btn-outline-info{%if cur_filter == 'OUTBOX'%} active{%endif%}" href="{{add_query(filter='OUTBOX')}}">Request outbox
-          {%-if request_counts.outbox%} {{badges.badge(request_counts.inbox, 'bg-danger')}}{%endif-%}
+          {%-if request_counts.outbox%} {{badges.badge(request_counts.outbox, 'bg-danger')}}{%endif-%}
         </a>
         <a class="btn btn-outline-danger me-auto{%if cur_filter == 'BLOCKED'%} active{%endif%}" href="{{add_query(filter='BLOCKED')}}">Blocked</a>
         {%else%}

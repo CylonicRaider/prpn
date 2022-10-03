@@ -40,6 +40,8 @@ def init_schema(curs):
     curs.execute('CREATE INDEX IF NOT EXISTS allUsers_points ON '
                      'allUsers(points)')
 
+    # FIXME: The bulk queries using friendStatuses may need to be massaged
+    #        into a form that does not do full table scans.
     curs.execute('CREATE TABLE IF NOT EXISTS friendRequests ('
                      'subject INTEGER REFERENCES allUsers ON DELETE CASCADE, '
                      'friend INTEGER REFERENCES allUsers ON DELETE CASCADE, '
@@ -63,12 +65,34 @@ def init_schema(curs):
                      'LEFT JOIN friendRequests AS friendReqsRev ON '
                          'friendReqsRev.subject = usersFriend.id AND '
                          'friendReqsRev.friend = usersSubj.id')
+    curs.execute('CREATE VIEW IF NOT EXISTS friendStatuses_fwd AS '
+                     'SELECT fwd.subject AS subject, '
+                            'fwd.friend AS friend, '
+                            'fwd.status AS fwdStatus, '
+                            'COALESCE(rev.status, 0) AS revStatus '
+                     'FROM friendRequests AS fwd '
+                     'LEFT JOIN friendRequests AS rev ON '
+                         'rev.subject = fwd.friend AND '
+                         'rev.friend = fwd.subject')
+    curs.execute('CREATE VIEW IF NOT EXISTS friendStatuses_rev AS '
+                     'SELECT rev.friend AS subject, '
+                            'rev.subject AS friend, '
+                            'COALESCE(fwd.status, 0) AS fwdStatus, '
+                            'rev.status AS revStatus '
+                     'FROM friendRequests AS rev '
+                     'LEFT JOIN friendRequests AS fwd ON '
+                         'fwd.subject = rev.friend AND '
+                         'fwd.friend = rev.subject')
     curs.execute('CREATE VIEW IF NOT EXISTS friends AS '
-                     'SELECT a.subject AS subject, a.friend AS friend '
-                     'FROM friendRequests AS a '
-                     'JOIN friendRequests AS b ON a.subject = b.friend AND '
-                                                 'a.friend = b.subject '
-                     'WHERE a.status > 0 AND b.status > 0')
+                     'SELECT fwd.subject AS subject, '
+                            'fwd.friend AS friend, '
+                            'fwd.status AS fwdStatus, '
+                            'rev.status AS revStatus '
+                     'FROM friendRequests AS fwd '
+                     'JOIN friendRequests AS rev ON '
+                         'rev.subject = fwd.friend AND '
+                         'rev.friend = fwd.subject '
+                     'WHERE fwd.status > 0 AND rev.status > 0')
 
 def profile_visible(visibility, fwd_rel, rev_rel, profile_owner, viewer_info,
                     allow_override=True):
@@ -138,15 +162,20 @@ def handle_friend_list(user_info, db):
     criterion = flask.request.args.get('filter') or 'FRIENDS'
     sort = flask.request.args.get('sort') or 'name'
     if criterion == 'INBOX':
+        table_sql = 'friendStatuses_rev'
         filter_sql = 'WHERE fwdStatus = 0 AND revStatus > 0'
     elif criterion == 'OUTBOX':
+        table_sql = 'friendStatuses_fwd'
         filter_sql = 'WHERE fwdStatus > 0 AND revStatus <= 0'
     elif criterion == 'BLOCKED':
+        table_sql = 'friendStatuses_fwd'
         filter_sql = 'WHERE fwdStatus < 0'
     elif criterion == 'ALL':
+        table_sql = 'friendStatuses'
         filter_sql = 'WHERE fwdStatus <> 0 OR revStatus > 0'
     else: # Preferred spelling: FRIENDS
-        filter_sql = 'WHERE fwdStatus > 0 AND revStatus > 0'
+        table_sql = 'friends'
+        filter_sql = ''
     if sort == '-name':
         order_sql = 'LOWER(name) DESC, name DESC'
     else: # Preferred spelling: name
@@ -155,9 +184,9 @@ def handle_friend_list(user_info, db):
 
     entries = db.query_many('SELECT id, name, visibility, '
                                    'fwdStatus, revStatus '
-                                'FROM friendStatuses '
-                                'JOIN users ON subject = ? AND friend = id '
-                                'LEFT JOIN userProfiles ON user = friend ' +
+                                'FROM ' + table_sql +
+                                ' JOIN users ON subject = ? AND friend = id '
+                                'LEFT JOIN userProfiles ON user = id ' +
                                 filter_sql +
                                 ' ORDER BY ' + order_sql +
                                 ' LIMIT ? OFFSET ?',
@@ -410,13 +439,13 @@ def get_friend_request_counts(user_info, db):
         return tmplutil.len_to_str(len(rows))
 
     inbox = len_to_str(db.query_many(
-        'SELECT 1 FROM friendStatuses '
+        'SELECT 1 FROM friendStatuses_rev '
         'WHERE subject = ? AND fwdStatus = 0 AND revStatus > 0 '
         'LIMIT 11',
         (user_info['user_id'],)
     ))
     outbox = len_to_str(db.query_many(
-        'SELECT 1 FROM friendStatuses '
+        'SELECT 1 FROM friendStatuses_fwd '
         'WHERE subject = ? AND fwdStatus > 0 AND revStatus <= 0 '
         'LIMIT 11',
         (user_info['user_id'],)
