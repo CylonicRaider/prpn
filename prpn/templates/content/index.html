@@ -1,5 +1,8 @@
 {%extends "base.html"%}
 {%import "lib/badges.html" as badges%}
+{%block extrahead%}
+{{load_script('js/convert-tooltips.js')}}
+{%endblock%}
 {%block content%}
       <h1 class="text-center">Printing Point Management Administration</h1>
       {%if user_info.logged_in%}

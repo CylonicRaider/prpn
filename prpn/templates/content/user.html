@@ -1,6 +1,9 @@
 {%extends "base.html"%}
 {%import "lib/badges.html" as badges%}
 {%set subtitle = "User Profile"%}
+{%block extrahead%}
+{{load_script('js/convert-tooltips.js')}}
+{%endblock%}
 {%block nav%}
 {%if user_info.user_status >= 3%}
 {{nav_breadcrumb(url_for("user_list"), "Users")}}
