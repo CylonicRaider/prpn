@@ -2,7 +2,7 @@
 {%import "lib/badges.html" as badges%}
 {%set subtitle = ("Friends" if friend_mode else "Users")%}
 {%block extrahead%}
-{{load_script('js/convert-tooltips.js')}}
+{{load_script("js/convert-tooltips.js")}}
 {%endblock%}
 {%block nav%}
 {%if friend_mode and user_info.user_status >= 3%}
