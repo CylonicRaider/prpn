@@ -40,8 +40,8 @@ def init_schema(curs):
     curs.execute('CREATE INDEX IF NOT EXISTS allUsers_points ON '
                      'allUsers(points)')
 
-    # FIXME: The bulk queries using friendStatuses may need to be massaged
-    #        into a form that does not do full table scans.
+    # FIXME: The bulk queries using friendStatuses and friends (haha) might
+    #        need further optimization.
     curs.execute('CREATE TABLE IF NOT EXISTS friendRequests ('
                      'subject INTEGER REFERENCES allUsers ON DELETE CASCADE, '
                      'friend INTEGER REFERENCES allUsers ON DELETE CASCADE, '
