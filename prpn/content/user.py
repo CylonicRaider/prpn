@@ -143,6 +143,7 @@ def handle_user_list(db):
     offset = tmplutil.get_request_int64p('offset')
 
     entries = db.query_many('SELECT id, name, status, points, visibility, '
+                                   'displayName, '
                                    'EXISTS(SELECT * FROM allApplications '
                                           'WHERE uid = id) AS hasApplication '
                                 'FROM allUsers '
@@ -179,7 +180,7 @@ def handle_friend_list(user_info, db):
         order_sql = 'LOWER(name) ASC, name ASC'
     offset = tmplutil.get_request_int64p('offset')
 
-    entries = db.query_many('SELECT id, name, visibility, '
+    entries = db.query_many('SELECT id, name, visibility, displayName, '
                                    'fwdStatus, revStatus '
                                 'FROM ' + table_sql +
                                 ' JOIN users ON subject = ? AND friend = id '

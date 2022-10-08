@@ -85,6 +85,9 @@
               {%else%}
               <span class="user-name">{{entry.name}}</span>
               {%endif%}
+              {%if entry.displayName and entry.displayName != entry.name%}
+              (<span class="user-name">{{entry.displayName}}</span>)
+              {%endif%}
             </td>
             {%if friend_mode%}
             <td class="py-0">
