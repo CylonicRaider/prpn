@@ -19,11 +19,11 @@
       {%else%}
       {%set cur_filter = request.args.get('filter') or 'USER'%}
       {%endif%}
-      <h1>{%if friend_mode%}{{ {
+      <h1>{{ "User" if not friend_mode else {
         'INBOX': 'Friend Request',
         'OUTBOX': 'Friend Request',
         'BLOCKED': 'Blocked User'
-      }.get(cur_filter, 'Friend') }}{%else%}User{%endif%} Listing</h1>
+      }.get(cur_filter, 'Friend') }} Listing</h1>
       <nav class="d-flex flex-wrap align-items-baseline gap-2">
         <span class="form-label me-1">View:</span>
         {%if friend_mode%}
