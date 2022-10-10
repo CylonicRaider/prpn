@@ -2,9 +2,6 @@
 {%import "lib/badges.html" as badges%}
 {%set subtitle = "Change Friendship Status"%}
 {%block nav%}
-{%if user_info.user_status >= 3%}
-{{nav_breadcrumb(url_for("user_list"), "Users")}}
-{%endif%}
 {{nav_breadcrumb(url_for("friend_list"), "Friends")}}
 {{nav_breadcrumb("", "Change", True)}}
 {%endblock%}
