@@ -59,3 +59,14 @@
   {%-endif-%}
   {{badge((short_text if short else text), color, ('Friendship status: ' + text if short else None))}}
 {%-endmacro%}
+
+{%macro vanity_badge(desc)-%}
+  {%-if desc.amount is defined and desc.amount != 1-%}
+    <span class="badge-group"{%if desc.description%} title="{{desc.description}}" data-bs-toggle="tooltip"{%endif%}>
+      {{-badge(desc.label, "user-badge user-badge-" + desc.id)-}}
+      {{-badge("\u00D7" ~ desc.amount)-}}
+    </span>
+  {%-else-%}
+    {{badge(desc.label, "user-badge user-badge-" + desc.id, desc.description)}}
+  {%-endif-%}
+{%-endmacro%}

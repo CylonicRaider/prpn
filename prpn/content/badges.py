@@ -4,17 +4,26 @@ import math
 import click
 import flask
 
-# ID: (Label, Sort hint, Buy-yourself cost, Buy-yourself limit)
+# ID: (Label, Sort hint, Buy-yourself cost, Buy-yourself limit, Description)
 BADGE_DEFS = {
-    'noob': ('Noob', 0, 0, 1),
-    'badge': ('Badge', 99, None, None),
-    'magic': ('Magic', 100, None, None),
-    't1': ('Bronze', 1, 10, None),
-    't2': ('Silver', 1, 100, None),
-    't3': ('Gold', 1, 1000, None),
-    't4': ('Platinum', 1, 10000, None),
-    't5': ('Diamond', 1, 100000, None),
-    't6': ('Unobtainium', 1, 1000000, None),
+    'noob': ('Noob', 0, 0, 1,
+        'Found the Badge Store and chose to get this badge'),
+    'badge': ('Badge', 99, None, None,
+        '?'),
+    'magic': ('Magic', 100, None, None,
+        '???'),
+    't1': ('Bronze', 1, 10, None,
+        'Had 10 printing points to spend'),
+    't2': ('Silver', 1, 100, None,
+        'Had 100 printing points to spend'),
+    't3': ('Gold', 1, 1000, None,
+        'Had 1K printing points to spend'),
+    't4': ('Platinum', 1, 10000, None,
+        'Had 10K printing points to spend'),
+    't5': ('Diamond', 1, 100000, None,
+        'Had 100K printing points to spend'),
+    't6': ('Unobtainium', 1, 1000000, None,
+        'Had 1M printing points to spend'),
 }
 
 def init_schema(curs):
@@ -34,11 +43,14 @@ def get_label(bid):
     return get_trait(bid, 0, bid)
 def get_sort_key(bid):
     return (get_trait(bid, 1, math.inf), bid)
+def get_description(bid):
+    return get_trait(bid, 4, None)
 
 def get_user_badges(db, uid):
     rows = db.query_many('SELECT * FROM badges WHERE user = ? AND amount > 0',
                          (uid,))
     result = [{'id': r['badge'], 'label': get_label(r['badge']),
+               'description': get_description(r['badge']),
                'amount': r['amount']} for r in rows]
     result.sort(key=lambda entry: get_sort_key(entry['id']))
     return result
@@ -69,7 +81,8 @@ def handle_get(user_info, db):
         if group is None:
             continue
         record = {'id': bid, 'label': desc[0], 'price': desc[2],
-                  'limit': desc[3], 'owned': owned_badges.get(bid, 0)}
+                  'limit': desc[3], 'description': desc[4],
+                  'owned': owned_badges.get(bid, 0)}
         record['available'] = (math.inf if record['limit'] is None else
                                max(record['limit'] - record['owned'], 0))
         try:

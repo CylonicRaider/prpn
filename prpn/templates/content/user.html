@@ -93,14 +93,7 @@
                 <i>None</i>
                 {%else%}
                 {%for entry in profile_data.badges%}
-                {%if entry.amount == 1%}
-                <span class="badge rounded-pill user-badge user-badge-{{entry.id}}">{{entry.label | upper}}</span>
-                {%else%}
-                <span class="badge-group">
-                  <span class="badge rounded-pill user-badge user-badge-{{entry.id}}">{{entry.label | upper}}</span>
-                  <span class="badge rounded-pill bg-secondary">&times;{{entry.amount}}</span>
-                </span>
-                {%endif%}
+                {{badges.vanity_badge(entry)}}
                 {%endfor%}
                 {%endif%}
                 {%if user_info.user_id == profile_data.id%}
