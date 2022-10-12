@@ -19,9 +19,9 @@
           (title_prefix + get_or_default(title_mapping, value) if title_prefix != None else None))}}
 {%-endmacro%}
 
-{%macro user_status(status, short=False)%}
+{%macro user_status(status, short=False)-%}
   {{mapped_badge(status, USER_STATUS_CLASSES, (USER_STATUS_SHORT_NAMES if short else USER_STATUS_NAMES), USER_STATUS_NAMES, 'User status: ')}}
-{%endmacro%}
+{%-endmacro%}
 
 {%macro application_status(status)-%}
   <span class="badge-group">
