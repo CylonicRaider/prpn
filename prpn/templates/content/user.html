@@ -17,7 +17,7 @@
 {%endif%}
 {%endblock%}
 {%block content%}
-      <h1>User Profile: <span class="user-name">{{profile_data.displayName}}</span></h1>
+      <h1>User Profile: <span class="user-name-display">{{profile_data.displayName}}</span></h1>
       {%if not profile_data.visible%}
       {%if user_info.user_status >= 3%}
       {%if profile_data.visibility >= 0%}
@@ -53,7 +53,7 @@
               <dd class="col-sm-8 col-md-9 col-lg-10">
                 <span class="user-name">{{profile_data.name}}</span>
                 {%if profile_data.displayName != profile_data.name and not is_editing%}
-                (display as: <span class="user-name">{{profile_data.displayName}}</span>)
+                (display as: <span class="user-name-display">{{profile_data.displayName}}</span>)
                 {%endif%}
               </dd>
               {%if is_editing%}

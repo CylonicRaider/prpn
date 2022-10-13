@@ -16,6 +16,10 @@
 
 .user-name {
   unicode-bidi: embed;
+  font-family: var(--bs-font-monospace);
+}
+.user-name-display {
+  unicode-bidi: embed;
   font-style: italic;
 }
 
