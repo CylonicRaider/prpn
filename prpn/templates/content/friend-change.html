@@ -15,9 +15,9 @@
         <div class="col-lg-9 mt-lg-3">
           {%if name%}
           <input type="hidden" name="name" value="{{name}}"/>
-          <span class="form-control d-inline-block">{{name}}</span>
+          <span class="form-control d-inline-block user-name">{{name}}</span>
           {%else%}
-          <input class="form-control d-inline-block" id="name" name="name" required="required" autofocus="autofocus"/>
+          <input class="form-control d-inline-block user-name" id="name" name="name" required="required" autofocus="autofocus"/>
           {%endif%}
         </div>
         {%if name%}
