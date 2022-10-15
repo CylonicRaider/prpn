@@ -13,7 +13,9 @@
             <div class="card-body">
               <dl class="mb-0 row">
                 <dt class="col-md-4 mb-0 text-md-end">User name:</dt>
-                <dd class="col-md-8"><span class="user-name">{{user_info.user_name}}</span></dd>
+                <dd class="col-md-8"><span class="user-name">{{user_info.user_name}}</span>
+                  {%-if display_name and display_name != user_info.user_name%} (display as: <span class="user-name-display">{{display_name}}</span>){%endif-%}
+                </dd>
                 <dt class="col-md-4 mb-0 text-md-end">Status:</dt>
                 <dd class="col-md-8">{{badges.user_status(user_info.user_status)}}</dd>
                 <dt class="col-md-4 mb-0 text-md-end">Printing points:</dt>

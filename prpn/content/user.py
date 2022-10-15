@@ -452,7 +452,13 @@ def get_friend_request_counts(user_info, db):
     return {'inbox': inbox, 'outbox': outbox}
 
 def get_index_info(user_info, db):
-    return {'friend_counts': get_friend_request_counts(user_info, db)}
+    profile_row = db.query('SELECT displayName FROM userProfiles '
+                               'WHERE user = ?',
+                           (user_info['user_id'],))
+    display_name = None if profile_row is None else profile_row['displayName']
+
+    return {'display_name': display_name,
+            'friend_counts': get_friend_request_counts(user_info, db)}
 
 def register_at(app):
     @app.route('/user')
