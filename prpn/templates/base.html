@@ -33,7 +33,7 @@
           {%block nav%}{%endblock%}
           {%if user_info.logged_in%}
           <form action="{{url_for('logout')}}" method="post" class="d-flex ms-auto align-items-baseline">
-            <span>{{user_info.user_type}}: <b>{{user_info.user_name}}</b></span>
+            <span>{{user_info.user_type}}: <b class="user-name">{{user_info.user_name}}</b></span>
             <button type="submit" class="btn btn-outline-primary ms-1">Log out</button>
           </form>
           {%else%}
