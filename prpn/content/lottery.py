@@ -64,6 +64,13 @@ def get_index_info(user_info, db):
     awarded = None if row is None else row['awarded']
     return {'lottery_awarded': awarded}
 
+def get_profile_info(user_id, db):
+    lot_data = db.query('SELECT * FROM lottery WHERE user = ?', (user_id,))
+    if not lot_data:
+        return {'status': 'NONE'}
+    return {'status': 'PARTICIPATING', 'awarded': lot_data['awarded'],
+            'totalAwarded': lot_data['totalAwarded']}
+
 def register_at(app):
     @app.route('/lottery', methods=('GET', 'POST'))
     @app.prpn.requires_auth(2)

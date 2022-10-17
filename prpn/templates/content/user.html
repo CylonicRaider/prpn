@@ -135,6 +135,24 @@
             </dl>
           </div>
         </div>
+        {%if profile_data.has_extra%}
+        <dl class="card border-info mb-3">
+          <dt class="card-header border-info bg-info bg-opacity-10">Details:</dt>
+          <dd class="card-body mb-0">
+            <dl class="row mb-0 align-items-baseline">
+              {%with lottery = profile_data.lottery_extra%}
+              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Lottery:</dt>
+              <dd class="col-sm-8 col-md-9 col-lg-10 mb-0">
+                {{badges.lottery_status(lottery.status)}}
+                {%if lottery.status == 'PARTICIPATING'%}
+                (<b>{{lottery.awarded}}</b> awarded, <b>{{lottery.totalAwarded}}</b> total)
+                {%endif%}
+              </dd>
+              {%endwith%}
+            </dl>
+          </dd>
+        </dl>
+        {%endif%}
         <dl class="card border-secondary mb-3">
           <dt class="card-header border-secondary">Description:</dt>
           <dd class="card-body mb-0">

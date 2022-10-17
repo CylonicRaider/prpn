@@ -2,7 +2,7 @@
 import flask
 
 from .. import tmplutil
-from . import badges
+from . import badges, lottery
 
 PAGE_SIZE = 10
 
@@ -243,6 +243,12 @@ def handle_user_get(name, acc_info, db):
         profile_data['friendFwd'] = 0
     if not profile_data.get('friendRev'):
         profile_data['friendRev'] = 0
+
+    if profile_data['visible'] and acc_info['user_status'] >= 3:
+        profile_data.update(
+            has_extra=True,
+            lottery_extra=lottery.get_profile_info(profile_data['id'], db)
+        )
 
     may_edit = (profile_data['visible'] and (
         acc_info['user_id'] == profile_data['id'] or

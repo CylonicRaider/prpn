@@ -7,6 +7,9 @@
 {%set PROFILE_VISIBILITY_NAMES = {0: 'Private', 1: 'Friends', 2: 'Public', None: 'Unknown'}%}
 {%set PROFILE_VISIBILITY_CLASSES = {0: 'bg-danger', 1: 'bg-warning text-dark', 2: 'bg-success', None: 'bg-secondary'}%}
 
+{%set LOTTERY_STATUS_CLASSES = {'NONE': 'bg-danger', 'PARTICIPATING': 'bg-success'}%}
+{%set LOTTERY_STATUS_NAMES = {'NONE': 'None', 'PARTICIPATING': 'Participating'}%}
+
 {%macro get_or_default(mapping, key)%}{{key if mapping == None else mapping.get(key, mapping[None])}}{%endmacro%}
 
 {%macro badge(text, cls='bg-secondary', title=None)-%}
@@ -69,4 +72,8 @@
   {%-else-%}
     {{badge(desc.label, "user-badge user-badge-" + desc.id, desc.description)}}
   {%-endif-%}
+{%-endmacro%}
+
+{%macro lottery_status(status)-%}
+  {{mapped_badge(status, LOTTERY_STATUS_CLASSES, LOTTERY_STATUS_NAMES)}}
 {%-endmacro%}
