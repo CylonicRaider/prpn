@@ -20,7 +20,7 @@
         'INBOX': 'Friend Request',
         'OUTBOX': 'Friend Request',
         'BLOCKED': 'Blocked User'
-      }.get(cur_filter, 'Friend') }} Listing</h1>
+      }.get(cur_filter, 'Friend') }} Listing{%if friend_mode and subject_id != user_info.user_id%}: <span class="user-name">{{subject_name}}</span>{%endif%}</h1>
       <nav class="d-flex flex-wrap align-items-baseline gap-2">
         <span class="form-label me-1">View:</span>
         {%if friend_mode%}
@@ -52,6 +52,9 @@
         </div>
         {%endif%}
         {%if user_info.user_status >= 3%}
+        {%if friend_mode and subject_id != user_info.user_id%}
+        <a class="btn btn-outline-secondary" href="{{add_query(user=None)}}">Reset viewed User</a>
+        {%else%}
         {%if friend_mode%}
         <a class="btn btn-outline-secondary" href="{{url_for('user_list')}}">View users</a>
         {%endif%}
@@ -59,6 +62,7 @@
         {%endif%}
         {%if not friend_mode%}
         <a class="btn btn-outline-secondary" href="{{url_for('friend_list')}}">View Friends</a>
+        {%endif%}
         {%endif%}
       </nav>
       {%if entries%}
@@ -149,7 +153,7 @@
       }.get(cur_filter, 'Friends') }}{%else%}users{%endif%}</i></p>
       {%endif%}
       <nav class="d-flex flex-wrap gap-2">
-        {%if friend_mode%}
+        {%if friend_mode and subject_id == user_info.user_id%}
         {%if cur_filter == 'BLOCKED'%}
         <a class="btn btn-outline-danger" href="{{url_for('friend_change', action='block')}}">Block User...</a>
         {%elif cur_filter in ('INBOX', 'OUTBOX')%}

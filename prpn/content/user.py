@@ -180,6 +180,14 @@ def handle_friend_list(user_info, db):
         order_sql = 'LOWER(name) ASC, name ASC'
     offset = tmplutil.get_request_int64p('offset')
 
+    subject, subject_name = user_info['user_id'], user_info['user_name']
+    if user_info['user_status'] >= 3 and flask.request.args.get('user'):
+        subject_row = db.query('SELECT id, name FROM users WHERE name = ?',
+                               (flask.request.args.get('user'),))
+        if subject_row:
+            subject = subject_row['id']
+            subject_name = subject_row['name']
+
     entries = db.query_many('SELECT id, name, visibility, displayName, '
                                    'fwdStatus, revStatus '
                                 'FROM ' + table_sql +
@@ -188,14 +196,15 @@ def handle_friend_list(user_info, db):
                                 filter_sql +
                                 ' ORDER BY ' + order_sql +
                                 ' LIMIT ? OFFSET ?',
-                            (user_info['user_id'], PAGE_SIZE + 1, offset))
+                            (subject, PAGE_SIZE + 1, offset))
     has_more = (len(entries) > PAGE_SIZE)
     entries = [dict(e, visible=profile_visible(e['visibility'] or 0,
                                                e['fwdStatus'], e['revStatus'],
                                                e['id'], user_info))
                for e in entries[:PAGE_SIZE]]
-    counts = get_friend_request_counts(user_info, db)
+    counts = get_friend_request_counts({'user_id': subject}, db)
     return flask.render_template('content/user-list.html', friend_mode=True,
+         subject_id=subject, subject_name=subject_name,
          entries=entries, offset=offset, amount=PAGE_SIZE, has_more=has_more,
          request_counts=counts)
 
