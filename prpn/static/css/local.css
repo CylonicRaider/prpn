@@ -48,10 +48,16 @@
   padding: 0.125rem 0.25rem;
   margin: -0.125rem 0;
 }
+.btn-text-primary-inact:not(.active):not(:hover):not(:focus):not(:active) {
+  color: var(--bs-primary);
+}
+.btn-group-primary-border > .btn:not(.active):not(:hover):not(:focus):not(:active) {
+  border-color: var(--bs-primary);
+}
 .btn-text-secondary-inact:not(.active):not(:hover):not(:focus):not(:active) {
   color: var(--bs-secondary);
 }
-.btn-group-border > .btn:not(.active):not(:hover):not(:focus):not(:active) {
+.btn-group-secondary-border > .btn:not(.active):not(:hover):not(:focus):not(:active) {
   border-color: var(--bs-secondary);
 }
 

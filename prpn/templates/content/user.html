@@ -113,7 +113,7 @@
               <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Friendship status:</dt>
               <dd class="col-sm-8 col-md-9 col-lg-10 mb-0">
                 {{badges.friendship_status(profile_data.friendFwd, profile_data.friendRev)}}
-                <span class="btn-group btn-group-border">
+                <span class="btn-group btn-group-secondary-border">
                   {%if profile_data.friendFwd <= 0 and profile_data.friendRev >= 0%}
                   <a class="btn btn-outline-success btn-text-secondary-inact btn-sm btn-very-tight" href="{{url_for('friend_change', name=profile_data.name, action='friend')}}">
                     {{'Accept Friendship' if profile_data.friendRev > 0 else 'Request Friendship'}}...
@@ -142,11 +142,29 @@
             <dl class="row mb-0 align-items-baseline">
               {%with lottery = profile_data.lottery_extra%}
               <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Lottery:</dt>
-              <dd class="col-sm-8 col-md-9 col-lg-10 mb-0">
+              <dd class="col-sm-8 col-md-9 col-lg-10">
                 {{badges.lottery_status(lottery.status)}}
                 {%if lottery.status == 'PARTICIPATING'%}
                 (<b>{{lottery.awarded}}</b> awarded, <b>{{lottery.totalAwarded}}</b> total)
                 {%endif%}
+              </dd>
+              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Friends:</dt>
+              <dd class="col-sm-8 col-md-9 col-lg-10 mb-0">
+                Show:
+                <span class="btn-group btn-group-primary-border">
+                  <a class="btn btn-outline-success btn-text-primary-inact btn-sm btn-very-tight" href="{{url_for('friend_list', user=profile_data.name, filter='FRIENDS')}}">
+                    Friends
+                  </a>
+                  <a class="btn btn-outline-primary btn-text-primary-inact btn-sm btn-very-tight" href="{{url_for('friend_list', user=profile_data.name, filter='INBOX')}}">
+                    Inbox
+                  </a>
+                  <a class="btn btn-outline-info btn-text-primary-inact btn-sm btn-very-tight" href="{{url_for('friend_list', user=profile_data.name, filter='OUTBOX')}}">
+                    Outbox
+                  </a>
+                  <a class="btn btn-outline-danger btn-text-primary-inact btn-sm btn-very-tight" href="{{url_for('friend_list', user=profile_data.name, filter='BLOCKED')}}">
+                    Blocked
+                  </a>
+                </span>
               </dd>
               {%endwith%}
             </dl>
