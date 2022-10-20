@@ -16,11 +16,18 @@
       {%else%}
       {%set cur_filter = request.args.get('filter') or 'USER'%}
       {%endif%}
-      <h1>{{ "User" if not friend_mode else {
+      {%set others_friends_mode = friend_mode and subject_id != user_info.user_id%}
+      {%set title_cat = 'User' if not friend_mode else {
         'INBOX': 'Friend Request',
         'OUTBOX': 'Friend Request',
         'BLOCKED': 'Blocked User'
-      }.get(cur_filter, 'Friend') }} Listing{%if friend_mode and subject_id != user_info.user_id%}: <span class="user-name">{{subject_name}}</span>{%endif%}</h1>
+      }.get(cur_filter, 'Friend')%}
+      <h1>{{title_cat}} Listing{%if others_friends_mode and subject_id != None%}: <span class="user-name">{{subject_name}}</span>{%endif%}</h1>
+      {%if others_friends_mode and subject_id == None%}
+      <div class="alert alert-danger">
+        <strong>Error:</strong> User <span class="user-name">{{subject_name}}</span> does not exist.
+      </div>
+      {%endif%}
       <nav class="d-flex flex-wrap align-items-baseline gap-2">
         <span class="form-label me-1">View:</span>
         {%if friend_mode%}
@@ -52,7 +59,7 @@
         </div>
         {%endif%}
         {%if user_info.user_status >= 3%}
-        {%if friend_mode and subject_id != user_info.user_id%}
+        {%if others_friends_mode%}
         <a class="btn btn-outline-secondary" href="{{add_query(user=None)}}">Reset viewed User</a>
         {%else%}
         {%if friend_mode%}
@@ -153,7 +160,7 @@
       }.get(cur_filter, 'Friends') }}{%else%}users{%endif%}</i></p>
       {%endif%}
       <nav class="d-flex flex-wrap gap-2">
-        {%if friend_mode and subject_id == user_info.user_id%}
+        {%if friend_mode and not others_friends_mode%}
         {%if cur_filter == 'BLOCKED'%}
         <a class="btn btn-outline-danger" href="{{url_for('friend_change', action='block')}}">Block User...</a>
         {%elif cur_filter in ('INBOX', 'OUTBOX')%}

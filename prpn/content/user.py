@@ -182,27 +182,37 @@ def handle_friend_list(user_info, db):
 
     subject, subject_name = user_info['user_id'], user_info['user_name']
     if user_info['user_status'] >= 3 and flask.request.args.get('user'):
-        subject_row = db.query('SELECT id, name FROM users WHERE name = ?',
-                               (flask.request.args.get('user'),))
+        subject_name = flask.request.args.get('user')
+        subject_row = db.query('SELECT id FROM users WHERE name = ?',
+                               (subject_name,))
         if subject_row:
             subject = subject_row['id']
-            subject_name = subject_row['name']
+        else:
+            subject = None
 
-    entries = db.query_many('SELECT id, name, visibility, displayName, '
-                                   'fwdStatus, revStatus '
-                                'FROM ' + table_sql +
-                                ' JOIN users ON subject = ? AND friend = id '
-                                'LEFT JOIN userProfiles ON user = id ' +
-                                filter_sql +
-                                ' ORDER BY ' + order_sql +
-                                ' LIMIT ? OFFSET ?',
-                            (subject, PAGE_SIZE + 1, offset))
-    has_more = (len(entries) > PAGE_SIZE)
-    entries = [dict(e, visible=profile_visible(e['visibility'] or 0,
-                                               e['fwdStatus'], e['revStatus'],
-                                               e['id'], user_info))
-               for e in entries[:PAGE_SIZE]]
-    counts = get_friend_request_counts({'user_id': subject}, db)
+    if subject is not None:
+        entries = db.query_many('SELECT id, name, visibility, displayName, '
+                                       'fwdStatus, revStatus '
+                                    'FROM ' + table_sql +
+                                    ' JOIN users ON subject = ? AND '
+                                                   'friend = id '
+                                    'LEFT JOIN userProfiles ON user = id ' +
+                                    filter_sql +
+                                    ' ORDER BY ' + order_sql +
+                                    ' LIMIT ? OFFSET ?',
+                                (subject, PAGE_SIZE + 1, offset))
+        has_more = (len(entries) > PAGE_SIZE)
+        entries = [dict(e, visible=profile_visible(e['visibility'] or 0,
+                                                   e['fwdStatus'],
+                                                   e['revStatus'],
+                                                   e['id'], user_info))
+                   for e in entries[:PAGE_SIZE]]
+        counts = get_friend_request_counts({'user_id': subject}, db)
+    else:
+        entries = []
+        offset, has_more = 0, False
+        counts = {'inbox': 0, 'outbox': 0}
+
     return flask.render_template('content/user-list.html', friend_mode=True,
          subject_id=subject, subject_name=subject_name,
          entries=entries, offset=offset, amount=PAGE_SIZE, has_more=has_more,
