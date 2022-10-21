@@ -34,143 +34,154 @@
       {%else%}
       {%set is_editing = may_edit and request.args.get('edit')%}
       {%if is_editing%}
-      <form action="" method="post">
+      <form action="" method="post" class="user-profile">
         <input type="hidden" name="user" value="{{profile_name}}"/>
       {%else%}
       <div class="user-profile">
       {%endif%}
-        <div class="card border-primary mb-3">
-          <div class="card-header border-primary text-primary bg-primary bg-opacity-10 fw-bold">Basics:</div>
-          <div class="card-body">
-            <dl class="row mb-0 align-items-baseline">
-              {%if user_info.user_status >= 3%}
-              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">User ID:</dt>
-              <dd class="col-sm-8 col-md-9 col-lg-10">
-                {{profile_data.id}}
-              </dd>
-              {%endif%}
-              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">User name:</dt>
-              <dd class="col-sm-8 col-md-9 col-lg-10">
-                <span class="user-name">{{profile_data.name}}</span>
-                {%if profile_data.displayName != profile_data.name and not is_editing%}
-                (display as: <span class="user-name-display">{{profile_data.displayName}}</span>)
-                {%endif%}
-              </dd>
-              {%if is_editing%}
-              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Display name:</dt>
-              <dd class="col-sm-8 col-md-9 col-lg-10">
-                <input type="text" name="display-name" value="{{profile_data.displayName}}" class="form-control d-inline-block"/>
-              </dd>
-              {%endif%}
-              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Status:</dt>
-              <dd class="col-sm-8 col-md-9 col-lg-10">
-                {{badges.user_status(profile_data.status)}}
-                {%if profile_data.hasApplication%}
-                {%if user_info.user_status >= 3%}
-                <a class="btn btn-outline-secondary btn-sm btn-very-tight ms-1" href="{{url_for('application_review', uid=profile_data.id)}}">View application</a>
-                {%elif user_info.user_id == profile_data.id%}
-                <a class="btn btn-outline-primary btn-sm btn-very-tight ms-1" href="{{url_for('application')}}">Finish application process</a>
-                {%endif%}
-                {%endif%}
-              </dd>
-              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Profile visibility:</dt>
-              <dd class="col-sm-8 col-md-9 col-lg-10">
-                {%if is_editing%}
-                {%for (id, name, label, details) in all_visibilities%}
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="visibility" id="visibility-{{name}}" value="{{name}}"
-                    {%-if profile_data.visibility == id%} checked="checked"{%endif-%}/>
-                  <label class="form-check-label" for="visibility-{{name}}">{{label}} <small class="fst-italic">({{details}})</small></label>
-                </div>
-                {%endfor%}
-                {%else%}
-                {{badges.profile_visibility(profile_data.visibility)}}
-                {%endif%}
-              </dd>
-              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Badges:</dt>
-              <dd class="col-sm-8 col-md-9 col-lg-10">
-                {%if not profile_data.badges%}
-                <i>None</i>
-                {%else%}
-                {%for entry in profile_data.badges%}
-                {{badges.vanity_badge(entry)}}
-                {%endfor%}
-                {%endif%}
-                {%if user_info.user_id == profile_data.id%}
-                <a class="btn btn-outline-primary btn-sm btn-very-tight ms-1" href="{{url_for('badge_store')}}">Store</a>
-                {%endif%}
-              </dd>
-              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Printing points:</dt>
-              <dd class="col-sm-8 col-md-9 col-lg-10">
-                {%+if profile_data.points == None%}<i>N/A</i>{%else%}{{profile_data.points}}{%endif+%}
-                {%if user_info.user_id == profile_data.id%}
-                <a class="btn btn-outline-primary btn-sm btn-very-tight ms-1" href="{{url_for('transfer')}}">Transfer...</a>
-                {%else%}
-                <a class="btn btn-outline-primary btn-sm btn-very-tight ms-1" href="{{url_for('transfer', recipient=profile_data.name)}}">Transfer...</a>
-                {%endif%}
-              </dd>
-              {%if user_info.user_id != profile_data.id%}
-              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Friendship status:</dt>
-              <dd class="col-sm-8 col-md-9 col-lg-10 mb-0">
-                {{badges.friendship_status(profile_data.friendFwd, profile_data.friendRev)}}
-                <span class="btn-group btn-group-secondary-border">
-                  {%if profile_data.friendFwd <= 0 and profile_data.friendRev >= 0%}
-                  <a class="btn btn-outline-success btn-text-secondary-inact btn-sm btn-very-tight" href="{{url_for('friend_change', name=profile_data.name, action='friend')}}">
-                    {{'Accept Friendship' if profile_data.friendRev > 0 else 'Request Friendship'}}...
-                  </a>
+        <div class="row gx-3">
+          {%if profile_data.has_extra%}
+          {%set col_dt, col_dd = 'col-sm-4 col-md-3 col-xl-2 col-xxl-4 mb-0 text-sm-end', 'col-sm-8 col-md-9 col-xl-10 col-xxl-8'%}
+          {%else%}
+          {%set col_dt, col_dd = 'col-sm-4 col-md-3 col-xl-2 mb-0 text-sm-end', 'col-sm-8 col-md-9 col-xl-10'%}
+          {%endif%}
+          <div class="col{%if profile_data.has_extra%}-xxl-6{%endif%}">
+            <div class="card border-primary mb-3">
+              <div class="card-header border-primary text-primary bg-primary bg-opacity-10 fw-bold">Basics:</div>
+              <div class="card-body">
+                <dl class="row mb-0 align-items-baseline">
+                  {%if user_info.user_status >= 3%}
+                  <dt class="{{col_dt}}">User ID:</dt>
+                  <dd class="{{col_dd}}">
+                    {{profile_data.id}}
+                  </dd>
                   {%endif%}
-                  {%if profile_data.friendFwd != 0%}
-                  <a class="btn btn-outline-warning btn-text-secondary-inact btn-sm btn-very-tight" href="{{url_for('friend_change', name=profile_data.name, action='neutral')}}">
-                    {{'Unfriend' if profile_data.friendFwd > 0 else 'Unblock'}}...
-                  </a>
+                  <dt class="{{col_dt}}">User name:</dt>
+                  <dd class="{{col_dd}}">
+                    <span class="user-name">{{profile_data.name}}</span>
+                    {%if profile_data.displayName != profile_data.name and not is_editing%}
+                    (display as: <span class="user-name-display">{{profile_data.displayName}}</span>)
+                    {%endif%}
+                  </dd>
+                  {%if is_editing%}
+                  <dt class="{{col_dt}}">Display name:</dt>
+                  <dd class="{{col_dd}}">
+                    <input type="text" name="display-name" value="{{profile_data.displayName}}" class="form-control d-inline-block"/>
+                  </dd>
                   {%endif%}
-                  {%if profile_data.friendFwd >= 0%}
-                  <a class="btn btn-outline-danger btn-text-secondary-inact btn-sm btn-very-tight" href="{{url_for('friend_change', name=profile_data.name, action='block')}}">
-                    {{'Counter-block' if profile_data.friendRev < 0 else 'Block'}}...
-                  </a>
+                  <dt class="{{col_dt}}">Status:</dt>
+                  <dd class="{{col_dd}}">
+                    {{badges.user_status(profile_data.status)}}
+                    {%if profile_data.hasApplication%}
+                    {%if user_info.user_status >= 3%}
+                    <a class="btn btn-outline-secondary btn-sm btn-very-tight ms-1" href="{{url_for('application_review', uid=profile_data.id)}}">View application</a>
+                    {%elif user_info.user_id == profile_data.id%}
+                    <a class="btn btn-outline-primary btn-sm btn-very-tight ms-1" href="{{url_for('application')}}">Finish application process</a>
+                    {%endif%}
+                    {%endif%}
+                  </dd>
+                  <dt class="{{col_dt}}">Profile visibility:</dt>
+                  <dd class="{{col_dd}}">
+                    {%if is_editing%}
+                    {%for (id, name, label, details) in all_visibilities%}
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="visibility" id="visibility-{{name}}" value="{{name}}"
+                        {%-if profile_data.visibility == id%} checked="checked"{%endif-%}/>
+                      <label class="form-check-label" for="visibility-{{name}}">{{label}} <small class="fst-italic">({{details}})</small></label>
+                    </div>
+                    {%endfor%}
+                    {%else%}
+                    {{badges.profile_visibility(profile_data.visibility)}}
+                    {%endif%}
+                  </dd>
+                  <dt class="{{col_dt}}">Badges:</dt>
+                  <dd class="{{col_dd}}">
+                    {%if not profile_data.badges%}
+                    <i>None</i>
+                    {%else%}
+                    {%for entry in profile_data.badges%}
+                    {{badges.vanity_badge(entry)}}
+                    {%endfor%}
+                    {%endif%}
+                    {%if user_info.user_id == profile_data.id%}
+                    <a class="btn btn-outline-primary btn-sm btn-very-tight ms-1" href="{{url_for('badge_store')}}">Store</a>
+                    {%endif%}
+                  </dd>
+                  <dt class="{{col_dt}}">Printing points:</dt>
+                  <dd class="{{col_dd}}">
+                    {%+if profile_data.points == None%}<i>N/A</i>{%else%}{{profile_data.points}}{%endif+%}
+                    {%if user_info.user_id == profile_data.id%}
+                    <a class="btn btn-outline-primary btn-sm btn-very-tight ms-1" href="{{url_for('transfer')}}">Transfer...</a>
+                    {%else%}
+                    <a class="btn btn-outline-primary btn-sm btn-very-tight ms-1" href="{{url_for('transfer', recipient=profile_data.name)}}">Transfer...</a>
+                    {%endif%}
+                  </dd>
+                  {%if user_info.user_id != profile_data.id%}
+                  <dt class="{{col_dt}}">Friendship status:</dt>
+                  <dd class="{{col_dd}} mb-0">
+                    {{badges.friendship_status(profile_data.friendFwd, profile_data.friendRev)}}
+                    <span class="btn-group btn-group-secondary-border">
+                      {%if profile_data.friendFwd <= 0 and profile_data.friendRev >= 0%}
+                      <a class="btn btn-outline-success btn-text-secondary-inact btn-sm btn-very-tight" href="{{url_for('friend_change', name=profile_data.name, action='friend')}}">
+                        {{'Accept Friendship' if profile_data.friendRev > 0 else 'Request Friendship'}}...
+                      </a>
+                      {%endif%}
+                      {%if profile_data.friendFwd != 0%}
+                      <a class="btn btn-outline-warning btn-text-secondary-inact btn-sm btn-very-tight" href="{{url_for('friend_change', name=profile_data.name, action='neutral')}}">
+                        {{'Unfriend' if profile_data.friendFwd > 0 else 'Unblock'}}...
+                      </a>
+                      {%endif%}
+                      {%if profile_data.friendFwd >= 0%}
+                      <a class="btn btn-outline-danger btn-text-secondary-inact btn-sm btn-very-tight" href="{{url_for('friend_change', name=profile_data.name, action='block')}}">
+                        {{'Counter-block' if profile_data.friendRev < 0 else 'Block'}}...
+                      </a>
+                      {%endif%}
+                    </span>
+                  </dd>
                   {%endif%}
-                </span>
+                </dl>
+              </div>
+            </div>
+          </div>
+          {%if profile_data.has_extra%}
+          <div class="col-xxl-6">
+            <dl class="card border-info mb-3">
+              <dt class="card-header border-info bg-info bg-opacity-10">Details:</dt>
+              <dd class="card-body mb-0">
+                <dl class="row mb-0 align-items-baseline">
+                  {%with lottery = profile_data.lottery_extra%}
+                  <dt class="{{col_dt}}">Lottery:</dt>
+                  <dd class="{{col_dd}}">
+                    {{badges.lottery_status(lottery.status)}}
+                    {%if lottery.status == 'PARTICIPATING'%}
+                    (<b>{{lottery.awarded}}</b> awarded, <b>{{lottery.totalAwarded}}</b> total)
+                    {%endif%}
+                  </dd>
+                  <dt class="{{col_dt}} mb-0 text-sm-end">Friends:</dt>
+                  <dd class="{{col_dd}} mb-0">
+                    Show:
+                    <span class="btn-group btn-group-primary-border">
+                      <a class="btn btn-outline-success btn-text-primary-inact btn-sm btn-very-tight" href="{{url_for('friend_list', user=profile_data.name, filter='FRIENDS')}}">
+                        Friends
+                      </a>
+                      <a class="btn btn-outline-primary btn-text-primary-inact btn-sm btn-very-tight" href="{{url_for('friend_list', user=profile_data.name, filter='INBOX')}}">
+                        Inbox
+                      </a>
+                      <a class="btn btn-outline-info btn-text-primary-inact btn-sm btn-very-tight" href="{{url_for('friend_list', user=profile_data.name, filter='OUTBOX')}}">
+                        Outbox
+                      </a>
+                      <a class="btn btn-outline-danger btn-text-primary-inact btn-sm btn-very-tight" href="{{url_for('friend_list', user=profile_data.name, filter='BLOCKED')}}">
+                        Blocked
+                      </a>
+                    </span>
+                  </dd>
+                  {%endwith%}
+                </dl>
               </dd>
-              {%endif%}
             </dl>
           </div>
+          {%endif%}
         </div>
-        {%if profile_data.has_extra%}
-        <dl class="card border-info mb-3">
-          <dt class="card-header border-info bg-info bg-opacity-10">Details:</dt>
-          <dd class="card-body mb-0">
-            <dl class="row mb-0 align-items-baseline">
-              {%with lottery = profile_data.lottery_extra%}
-              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Lottery:</dt>
-              <dd class="col-sm-8 col-md-9 col-lg-10">
-                {{badges.lottery_status(lottery.status)}}
-                {%if lottery.status == 'PARTICIPATING'%}
-                (<b>{{lottery.awarded}}</b> awarded, <b>{{lottery.totalAwarded}}</b> total)
-                {%endif%}
-              </dd>
-              <dt class="col-sm-4 col-md-3 col-lg-2 mb-0 text-sm-end">Friends:</dt>
-              <dd class="col-sm-8 col-md-9 col-lg-10 mb-0">
-                Show:
-                <span class="btn-group btn-group-primary-border">
-                  <a class="btn btn-outline-success btn-text-primary-inact btn-sm btn-very-tight" href="{{url_for('friend_list', user=profile_data.name, filter='FRIENDS')}}">
-                    Friends
-                  </a>
-                  <a class="btn btn-outline-primary btn-text-primary-inact btn-sm btn-very-tight" href="{{url_for('friend_list', user=profile_data.name, filter='INBOX')}}">
-                    Inbox
-                  </a>
-                  <a class="btn btn-outline-info btn-text-primary-inact btn-sm btn-very-tight" href="{{url_for('friend_list', user=profile_data.name, filter='OUTBOX')}}">
-                    Outbox
-                  </a>
-                  <a class="btn btn-outline-danger btn-text-primary-inact btn-sm btn-very-tight" href="{{url_for('friend_list', user=profile_data.name, filter='BLOCKED')}}">
-                    Blocked
-                  </a>
-                </span>
-              </dd>
-              {%endwith%}
-            </dl>
-          </dd>
-        </dl>
-        {%endif%}
         <dl class="card border-secondary mb-3">
           <dt class="card-header border-secondary">Description:</dt>
           <dd class="card-body mb-0">
