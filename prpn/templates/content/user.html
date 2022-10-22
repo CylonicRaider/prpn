@@ -108,7 +108,7 @@
                     {%endif%}
                   </dd>
                   <dt class="{{col_dt}}">Printing points:</dt>
-                  <dd class="{{col_dd}}">
+                  <dd class="{{col_dd}}{%if user_info.user_id == profile_data.id%} mb-0{%endif%}">
                     {%+if profile_data.points == None%}<i>N/A</i>{%else%}{{profile_data.points}}{%endif+%}
                     {%if user_info.user_id == profile_data.id%}
                     <a class="btn btn-outline-primary btn-sm btn-very-tight ms-1" href="{{url_for('transfer')}}">Transfer...</a>
