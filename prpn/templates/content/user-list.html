@@ -76,17 +76,23 @@
       <table class="table table-hover align-baseline">
         <thead>
           <tr>
-            {%+if not friend_mode%}<th>{{render_sortctl('ID', 'id')}}</th>{%endif+%}
+            {%if not friend_mode%}
+            <th>{{render_sortctl('ID', 'id')}}</th>
+            {%endif%}
             <th>{{render_sortctl('User', 'name', 'name')}}</th>
             <th>Status</th>
-            {%+if not friend_mode%}<th>{{render_sortctl('Points', 'points')}}</th>{%endif+%}
+            {%if not friend_mode%}
+            <th>{{render_sortctl('Points', 'points')}}</th>
+            {%endif%}
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {%for entry in entries%}
           <tr>
-            {%+if not friend_mode%}<td>{{entry.id}}</td>{%endif+%}
+            {%if not friend_mode%}
+            <td>{{entry.id}}</td>
+            {%endif%}
             <td>
               {%if entry.visible%}
               <a href="{{url_for('user', name=entry.name)}}"><span class="user-name">{{entry.name}}</span></a>
