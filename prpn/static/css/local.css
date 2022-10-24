@@ -45,8 +45,8 @@
   padding: 0.125rem 0.25rem;
 }
 .btn-very-tight {
-  padding: 0.125rem 0.25rem;
-  margin: -0.125rem 0;
+  padding: 0 0.25rem;
+  margin: -1px 0;
 }
 .btn-text-primary-inact:not(.active):not(:hover):not(:focus):not(:active) {
   color: var(--bs-primary);
