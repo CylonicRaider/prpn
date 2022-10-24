@@ -384,7 +384,7 @@ def handle_friend_change_post(user_info, db):
         other_row = db.query('SELECT id FROM users WHERE name = ?',
                              (other_name,))
         if not other_row:
-            flask.flask('No such user', 'error')
+            flask.flash('No such user', 'error')
             return None
         other_id = other_row['id']
 
