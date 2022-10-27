@@ -175,6 +175,9 @@
         {%endif%}
         {%endif%}
         {{render_pagination(offset, amount, len(entries) + has_more)}}
+        {%if others_friends_mode and subject_id != None%}
+        <a class="btn btn-outline-secondary" href="{{url_for('user', name=subject_name)}}">Back to profile</a>
+        {%endif%}
         <a class="btn btn-outline-secondary" href="{{url_for('index')}}">Back to main page</a>
       </nav>
 {%endblock%}
