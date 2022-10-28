@@ -179,7 +179,7 @@ def render_form(title, action, fields, method=Ellipsis, enctype=Ellipsis):
                 Markup('  </div>')
             ))
 
-    result.extend((Markup('</form>'), ''))
+    result.append(Markup('</form>'))
     return Markup('\n').join(result)
 
 def execute_form_or_redirect(params, template_name, **template_params):
