@@ -9,7 +9,7 @@ class TestAuthProvider(AuthProvider):
         if form_id not in ('register', 'login'):
             return super().prepare_form(form_id)
         return (200, '', (
-            ('name', 'text', 'User name:'),
+            ('name', 'text', 'User name:', None, 'user-name'),
             (None, 'submit', 'Submit')
         ))
 
