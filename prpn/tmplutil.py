@@ -135,22 +135,22 @@ def render_form(title, action, fields, method=Ellipsis, enctype=Ellipsis):
 
         if ftype in ('submit', 'reset', 'button'):
             result.extend((
-                Markup('  <div class="d-grid%s">') % extra_classes,
+                Markup('  <div class="d-grid">'),
                 Markup('    <button type="%s"%s '
-                                   'class="btn btn-primary">%s</button>') %
-                    (ftype, value_attrs, label),
+                                   'class="btn btn-primary%s">%s</button>') %
+                    (ftype, value_attrs, extra_classes, label),
                 Markup('  </div>')
             ))
 
         elif ftype in ('checkbox', 'radio'):
             result.extend((
-                Markup('  <div class="form-check mb-3%s">') % extra_classes,
+                Markup('  <div class="form-check mb-3">'),
                 Markup('    <input type="%s" id="%s"%s '
                                   'class="form-check-input"/>') %
                     (ftype, name, value_attrs),
                 Markup('    <label for="%s" '
-                                  'class="form-check-label">%s</label>') %
-                    (name, label),
+                                  'class="form-check-label%s">%s</label>') %
+                    (name, extra_classes, label),
                 Markup('  </div>')
             ))
 
@@ -173,12 +173,13 @@ def render_form(title, action, fields, method=Ellipsis, enctype=Ellipsis):
                 aft = Markup(' autofocus="autofocus"')
                 has_autofocus = True
             result.extend((
-                Markup('  <div class="mb-3%s">') % extra_classes,
+                Markup('  <div class="mb-3">'),
                 Markup('    <label for="%s" class="form-label">%s</label>') %
                     (name, label),
                 Markup('    <input type="%s" id="%s" name="%s"%s%s '
-                                  'class="form-control"/>') %
-                    (ftype, name, name, maybe_attr('value', value), aft),
+                                  'class="form-control%s"/>') %
+                    (ftype, name, name, maybe_attr('value', value), aft,
+                     extra_classes),
                 Markup('  </div>')
             ))
 
