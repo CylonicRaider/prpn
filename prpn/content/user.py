@@ -457,24 +457,40 @@ def handle_friend_change_post(user_info, db):
         return flask.redirect(flask.url_for('friend_change', name=other_name),
                               303)
 
-def get_friend_request_counts(user_info, db):
+def get_friend_request_counts(user_info, db, extended=False):
     def len_to_str(rows):
         return tmplutil.len_to_str(len(rows))
 
-    inbox = len_to_str(db.query_many(
+    result = {}
+
+    result['inbox'] = len_to_str(db.query_many(
         'SELECT 1 FROM friendStatuses_rev '
         'WHERE subject = ? AND fwdStatus = 0 AND revStatus > 0 '
         'LIMIT 11',
         (user_info['user_id'],)
     ))
-    outbox = len_to_str(db.query_many(
+    result['outbox'] = len_to_str(db.query_many(
         'SELECT 1 FROM friendStatuses_fwd '
         'WHERE subject = ? AND fwdStatus > 0 AND revStatus <= 0 '
         'LIMIT 11',
         (user_info['user_id'],)
     ))
 
-    return {'inbox': inbox, 'outbox': outbox}
+    if extended:
+        result['friends'] = len_to_str(db.query_many(
+            'SELECT 1 FROM friends '
+            'WHERE subject = ? '
+            'LIMIT 11',
+            (user_info['user_id'],)
+        ))
+        result['blocked'] = len_to_str(db.query_many(
+            'SELECT 1 FROM friendStatuses_fwd '
+            'WHERE subject = ? AND fwdStatus < 0 '
+            'LIMIT 11',
+            (user_info['user_id'],)
+        ))
+
+    return result
 
 def get_index_info(user_info, db):
     profile_row = db.query('SELECT displayName FROM userProfiles '
