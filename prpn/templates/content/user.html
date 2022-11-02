@@ -157,21 +157,27 @@
                     (<b>{{lottery.awarded}}</b> awarded, <b>{{lottery.totalAwarded}}</b> total)
                     {%endif%}
                   </dd>
+                  {%endwith%}
+                  {%with counts = profile_data.friend_request_counts%}
                   <dt class="{{col_dt}} mb-0 text-sm-end">Friends:</dt>
                   <dd class="{{col_dd}} mb-0">
                     Show:
                     <span class="btn-group btn-group-primary-border">
                       <a class="btn btn-outline-success btn-text-primary-inact btn-sm btn-very-tight" href="{{url_for('friend_list', user=profile_data.name, filter='FRIENDS')}}">
                         Friends
+                        {%-if counts.friends%} {{badges.badge(counts.friends, 'bg-danger')}}{%endif-%}
                       </a>
                       <a class="btn btn-outline-primary btn-text-primary-inact btn-sm btn-very-tight" href="{{url_for('friend_list', user=profile_data.name, filter='INBOX')}}">
                         Inbox
+                        {%-if counts.inbox%} {{badges.badge(counts.inbox, 'bg-danger')}}{%endif-%}
                       </a>
                       <a class="btn btn-outline-info btn-text-primary-inact btn-sm btn-very-tight" href="{{url_for('friend_list', user=profile_data.name, filter='OUTBOX')}}">
                         Outbox
+                        {%-if counts.outbox%} {{badges.badge(counts.outbox, 'bg-danger')}}{%endif-%}
                       </a>
                       <a class="btn btn-outline-danger btn-text-primary-inact btn-sm btn-very-tight" href="{{url_for('friend_list', user=profile_data.name, filter='BLOCKED')}}">
                         Blocked
+                        {%-if counts.blocked%} {{badges.badge(counts.blocked, 'bg-danger')}}{%endif-%}
                       </a>
                     </span>
                   </dd>

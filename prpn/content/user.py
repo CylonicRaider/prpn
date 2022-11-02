@@ -266,7 +266,10 @@ def handle_user_get(name, acc_info, db):
     if profile_data['visible'] and acc_info['user_status'] >= 3:
         profile_data.update(
             has_extra=True,
-            lottery_extra=lottery.get_profile_info(profile_data['id'], db)
+            lottery_extra=lottery.get_profile_info(profile_data['id'], db),
+            friend_request_counts=get_friend_request_counts(
+                {'user_id': profile_data['id']}, db, True
+            )
         )
 
     may_edit = (profile_data['visible'] and (
