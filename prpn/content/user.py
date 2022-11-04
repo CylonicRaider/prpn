@@ -111,6 +111,18 @@ def profile_visible(visibility, fwd_rel, rev_rel, profile_owner, viewer_info,
     else:
         return False
 
+def friendship_to_filter(fwdStatus, revStatus):
+    if fwdStatus < 0:
+        return 'BLOCKED'
+    elif fwdStatus > 0 and revStatus > 0:
+        return 'FRIENDS'
+    elif fwdStatus > 0:
+        return 'OUTBOX'
+    elif revStatus > 0:
+        return 'INBOX'
+    else:
+        return None
+
 def handle_user_list(db):
     criterion = flask.request.args.get('filter') or 'USER'
     sort = flask.request.args.get('sort') or 'name'
@@ -202,11 +214,13 @@ def handle_friend_list(user_info, db):
                                     ' LIMIT ? OFFSET ?',
                                 (subject, PAGE_SIZE + 1, offset))
         has_more = (len(entries) > PAGE_SIZE)
-        entries = [dict(e, visible=profile_visible(e['visibility'] or 0,
-                                                   e['fwdStatus'],
-                                                   e['revStatus'],
-                                                   e['id'], user_info))
-                   for e in entries[:PAGE_SIZE]]
+        for i, e in enumerate(entries[:PAGE_SIZE]):
+            entries[i] = dict(e,
+                visible=profile_visible(e['visibility'] or 0, e['fwdStatus'],
+                                        e['revStatus'], e['id'], user_info),
+                opposite_filter=friendship_to_filter(e['revStatus'],
+                                                     e['fwdStatus'])
+            )
         counts = get_friend_request_counts({'user_id': subject}, db)
     else:
         entries = []

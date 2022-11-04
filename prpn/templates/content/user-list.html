@@ -13,16 +13,6 @@
 {%block content%}
       {%if friend_mode%}
       {%set cur_filter = request.args.get('filter') or 'FRIENDS'%}
-      {%set opposite_filter = {
-        'INBOX': 'OUTBOX',
-        'OUTBOX': 'INBOX'
-      }.get(cur_filter, cur_filter)%}
-      {%set opposite_desc = {
-        'FRIENDS': 'Friends',
-        'INBOX': 'Inbox',
-        'OUTBOX': 'Outbox',
-        'BLOCKED': 'Blocked'
-      }[opposite_filter]%}
       {%else%}
       {%set cur_filter = request.args.get('filter') or 'USER'%}
       {%endif%}
@@ -142,8 +132,14 @@
                 {%endif%}
               </span>
               {%endif%}
-              {%if user_info.user_status >= 3%}
-              <a class="btn btn-outline-secondary btn-sm btn-tight" href="{{url_for('friend_list', user=entry.name, filter=opposite_filter)}}">{{opposite_desc}}...</a>
+              {%if user_info.user_status >= 3 and entry.opposite_filter%}
+              {%set opposite_desc = {
+                'FRIENDS': 'Friends',
+                'INBOX': 'Friendship inbox',
+                'OUTBOX': 'Friendship outbox',
+                'BLOCKED': 'Blocked Users'
+              }[entry.opposite_filter]%}
+              <a class="btn btn-outline-secondary btn-sm btn-tight" href="{{url_for('friend_list', user=entry.name, filter=entry.opposite_filter)}}">{{opposite_desc}}...</a>
               {%endif%}
             </td>
             {%else%}
