@@ -111,9 +111,10 @@
               {%if entry.visible%}
               <a class="btn btn-outline-primary btn-sm btn-tight" href="{{url_for('user', name=entry.name)}}">Profile...</a>
               {%endif%}
+              {%if entry.id != user_info.user_id%}
               {%if others_friends_mode%}
               <a class="btn btn-outline-secondary btn-sm btn-tight" href="{{url_for('friend_change', name=entry.name)}}">Change Friendship...</a>
-              {%elif entry.id != user_info.user_id%}
+              {%else%}
               <span class="btn-group btn-group-secondary-border">
                 {%if entry.fwdStatus <= 0 and entry.revStatus >= 0%}
                 <a class="btn btn-outline-success btn-text-secondary-inact btn-sm btn-tight" href="{{url_for('friend_change', name=entry.name, action='friend')}}">
@@ -131,6 +132,7 @@
                 </a>
                 {%endif%}
               </span>
+              {%endif%}
               {%endif%}
               {%if user_info.user_status >= 3 and entry.opposite_filter%}
               {%set opposite_desc = {
